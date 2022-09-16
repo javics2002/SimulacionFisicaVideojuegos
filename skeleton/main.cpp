@@ -8,6 +8,12 @@
 #include <vector>
 #include <iostream>
 
+# define EMPTY(...)
+# define DEFER(...) __VA_ARGS__ EMPTY()
+# define OBSTRUCT(...) __VA_ARGS__ DEFER(EMPTY)()
+# define EXPAND(...) __VA_ARGS__
+
+constexpr int LAST_SCENE = '0' + 0;
 
 using namespace physx;
 
@@ -55,7 +61,7 @@ void initPhysics(bool interactive)
 
 	
 
-	p = new Particle({ 0, 0, 0 }, { 0, 10, 0 }, { 0, 0, 0 }, 0.99);
+	p = new Particle({ 0, 0, 0 }, { 0, 10, 0 });
 	}
 
 
@@ -92,6 +98,10 @@ void cleanupPhysics(bool interactive)
 	delete p;
 	}
 
+void LoadScene(int scene) {
+	std::cout << "Scene " << scene << " loaded.\n";
+}
+
 // Function called when a key is pressed
 void keyPress(unsigned char key, const PxTransform& camera)
 {
@@ -99,6 +109,18 @@ void keyPress(unsigned char key, const PxTransform& camera)
 
 	switch(toupper(key))
 	{
+	case '0':
+	case '1':
+	case '2':
+	case '3':
+	case '4':
+	case '5':
+	case '6':
+	case '7':
+	case '8':
+	case '9':
+		LoadScene(key - '0');
+		break;
 	//case 'B': break;
 	//case ' ':	break;
 	case ' ':
