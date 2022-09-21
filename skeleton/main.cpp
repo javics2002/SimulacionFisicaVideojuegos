@@ -1,19 +1,19 @@
 #include "core.hpp"
 #include "RenderUtils.hpp"
 #include "callbacks.hpp"
-#include "Particle.h"
+
+#include "Scene.h"
 
 #include <ctype.h>
 #include <PxPhysicsAPI.h>
 #include <vector>
 #include <iostream>
+#include <string>
 
 # define EMPTY(...)
 # define DEFER(...) __VA_ARGS__ EMPTY()
 # define OBSTRUCT(...) __VA_ARGS__ DEFER(EMPTY)()
 # define EXPAND(...) __VA_ARGS__
-
-constexpr int LAST_SCENE = '0' + 0;
 
 using namespace physx;
 
@@ -31,9 +31,8 @@ PxPvd*                  gPvd        = NULL;
 PxDefaultCpuDispatcher*	gDispatcher = NULL;
 PxScene*				gScene      = NULL;
 ContactReportCallback gContactReportCallback;
-Particle* p;
 
-
+Scene* mScene;
 
 // Initialize physics engine
 void initPhysics(bool interactive)
@@ -59,9 +58,7 @@ void initPhysics(bool interactive)
 	sceneDesc.simulationEventCallback = &gContactReportCallback;
 	gScene = gPhysics->createScene(sceneDesc);
 
-	
-
-	p = new Particle({ 0, 0, 0 }, { 0, 10, 0 });
+	mScene = new Scene();
 	}
 
 
@@ -75,7 +72,7 @@ void stepPhysics(bool interactive, double t)
 	gScene->simulate(t);
 	gScene->fetchResults(true);
 
-	p->Integrate(t);
+	mScene->Update(t);
 }
 
 // Function to clean data
@@ -95,12 +92,8 @@ void cleanupPhysics(bool interactive)
 	
 	gFoundation->release();
 
-	delete p;
+	mScene->ClearScene();
 	}
-
-void LoadScene(int scene) {
-	std::cout << "Scene " << scene << " loaded.\n";
-}
 
 // Function called when a key is pressed
 void keyPress(unsigned char key, const PxTransform& camera)
@@ -119,7 +112,7 @@ void keyPress(unsigned char key, const PxTransform& camera)
 	case '7':
 	case '8':
 	case '9':
-		LoadScene(key - '0');
+		mScene->LoadScene(key - '0');
 		break;
 	//case 'B': break;
 	//case ' ':	break;
