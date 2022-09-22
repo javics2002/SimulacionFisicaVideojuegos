@@ -9,6 +9,8 @@
 #include <vector>
 #include <iostream>
 #include <string>
+#include <iomanip>
+#include <sstream>
 
 # define EMPTY(...)
 # define DEFER(...) __VA_ARGS__ EMPTY()
@@ -32,7 +34,31 @@ PxDefaultCpuDispatcher*	gDispatcher = NULL;
 PxScene*				gScene      = NULL;
 ContactReportCallback gContactReportCallback;
 
-Scene* mScene;
+Scene* mScene = nullptr;
+
+// FPS
+clock_t startTime = 0;
+double fps;
+
+void updateWindowName(clock_t endTime) {
+	clock_t deltaTime = endTime - startTime;
+
+	fps++;
+
+	// Display every second
+	if (deltaTime > 1000) {
+		std::stringstream stream;
+		stream << std::fixed << std::setprecision(2) << fps;
+		std::string s = stream.str();
+
+		std::string name1 = "Simulacion Fisica Videojuegos (FPS: " + s + ")";
+
+		glutSetWindowTitle(name1.c_str());
+
+		fps = 0;
+		startTime = endTime;
+	}
+}
 
 // Initialize physics engine
 void initPhysics(bool interactive)
@@ -59,7 +85,7 @@ void initPhysics(bool interactive)
 	gScene = gPhysics->createScene(sceneDesc);
 
 	mScene = new Scene();
-	}
+}
 
 
 // Function to configure what happens in each step of physics
@@ -67,12 +93,17 @@ void initPhysics(bool interactive)
 // t: time passed since last call in milliseconds
 void stepPhysics(bool interactive, double t)
 {
+
 	PX_UNUSED(interactive);
 
 	gScene->simulate(t);
 	gScene->fetchResults(true);
 
 	mScene->Update(t);
+
+	clock_t endTime = clock();
+
+	updateWindowName(endTime);
 }
 
 // Function to clean data
@@ -93,7 +124,7 @@ void cleanupPhysics(bool interactive)
 	gFoundation->release();
 
 	mScene->ClearScene();
-	}
+}
 
 // Function called when a key is pressed
 void keyPress(unsigned char key, const PxTransform& camera)
