@@ -12,6 +12,17 @@ class Scene
 
 	enum ProjectileType{ PISTOL, ARTILLERY, FIREBALL, LASER };
 
+	struct Projectile {
+		double inverseMass; //inversa de la masa
+		double speed; //velocidad
+		double gravity; //gravedad
+		double initialHeight; //altura inicial
+		double angle;
+	};
+
+	const double g = -9.8;
+	const double c = 299792458;
+
 public:
 	Scene();
 	~Scene();
@@ -25,6 +36,8 @@ public:
 	void ClearScene();
 
 	void KeyPress(unsigned char key, const physx::PxTransform& camera);
-	void throwProyectile(ProjectileType type, const physx::PxTransform& camera);
+	void ThrowProyectile(ProjectileType type, const physx::PxTransform& camera);
+
+	Projectile Simulate(double simulatedVel, Projectile real);
 };
 
