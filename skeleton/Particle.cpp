@@ -26,3 +26,41 @@ void Particle::Integrate(double t)
 	vel += acc * t;
 	vel *= pow(damping, t);
 }
+
+Particle* Particle::SetVel(PxVec3 v)
+{
+	vel = v;
+	return this;
+}
+
+Particle* Particle::SetAcc(PxVec3 a)
+{
+	acc = a;
+	return this;
+}
+
+Particle* Particle::SetDamp(double damp)
+{
+	damping = damp;
+	return this;
+}
+
+Particle* Particle::SetIMass(double iMass)
+{
+	inverseMass = iMass;
+	return this;
+}
+
+Particle* Particle::SetColor(PxVec4 col)
+{
+	color = col;
+	renderItem->color = color;
+	return this;
+}
+
+Particle* Particle::SetShape(PxShape* shp)
+{
+	shape = shp;
+	renderItem->shape = shape;
+	return this;
+}

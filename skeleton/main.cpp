@@ -144,7 +144,7 @@ void keyPress(unsigned char key, const PxTransform& camera)
 	case '8':
 	case '9':
 		mScene->LoadScene(key - '0');
-		break;
+		return;
 	//case 'B': break;
 	//case ' ':	break;
 	case ' ':
@@ -154,6 +154,8 @@ void keyPress(unsigned char key, const PxTransform& camera)
 	default:
 		break;
 	}
+
+	mScene->KeyPress(key, camera);
 }
 
 void onCollision(physx::PxActor* actor1, physx::PxActor* actor2)

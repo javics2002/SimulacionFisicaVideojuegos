@@ -10,6 +10,8 @@ class Scene
 	int mID = 0;
 	vector<Particle*> mParticles;
 
+	enum ProjectileType{ PISTOL, ARTILLERY, FIREBALL, LASER };
+
 public:
 	Scene();
 	~Scene();
@@ -21,5 +23,8 @@ public:
 	Particle* GetParticle(int id);
 	bool RemoveParticle(int id);
 	void ClearScene();
+
+	void KeyPress(unsigned char key, const physx::PxTransform& camera);
+	void throwProyectile(ProjectileType type, const physx::PxTransform& camera);
 };
 

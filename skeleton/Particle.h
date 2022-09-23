@@ -23,5 +23,12 @@ public:
 		double iMass = 1, PxVec4 col = { 1, 1, 1, 1 }, PxShape* shp = nullptr);
 	~Particle();
 	void Integrate(double t);
+
+	Particle* SetVel(PxVec3 v);
+	Particle* SetAcc(PxVec3 a);
+	Particle* SetDamp(double damp);
+	Particle* SetIMass(double iMass);
+	Particle* SetColor(PxVec4 col);
+	Particle* SetShape(PxShape* shp);
 };
 
