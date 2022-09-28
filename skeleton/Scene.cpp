@@ -2,13 +2,17 @@
 #include "RenderUtils.hpp"
 #include <iostream>
 
+
 Scene::Scene()
 {
-	LoadScene(0);
+	LoadScene(LAST_SCENE);
+
 	cout << "Pulsa los numeros para cambiar entre las escenas.\n"
 		<< "0: Particula con velocidad constante\n"
 		<< "1: Particula con aceleracion y damping\n"
-		<< "2: Proyectiles\n";
+		<< "2: Proyectiles\n\n";
+
+	//generator = default_random_engine(rand());
 }
 
 Scene::~Scene()
@@ -34,7 +38,10 @@ void Scene::LoadScene(int newID)
 			<< "Z: Bala\n"
 			<< "X: Artilleria\n"
 			<< "C: Bola de fuego\n"
-			<< "V: Laser\n";
+			<< "V: Laser\n"
+			<< "B: Pelota de golf\n"
+			<< "N: Frisbee\n"
+			<< "M: Globo\n";
 
 		//Suelo
 		AddParticle((new Particle({0, 48.5, 0}))->SetColor({.93, .81, .61, 1.0})
@@ -60,10 +67,15 @@ void Scene::LoadScene(int newID)
 
 void Scene::Update(double t)
 {
-	for (auto p : mParticles) {
-		p->Integrate(t);
+	for (auto p = mParticles.begin(); p != mParticles.end(); ) {
+		//Sacamos las particulas muertas de nuestro vector
+		if (!(*p)->active) {
+			RemoveParticle(p);
+			continue;
+		}
 
-		//Borrar particulas que se hayan ido lejos
+		(*p)->Integrate(t);
+		p++;
 	}
 }
 
@@ -96,6 +108,15 @@ bool Scene::RemoveParticle(int id)
 	}
 	
 	mParticles.erase(it);
+	delete *it;
+	return true;
+}
+
+bool Scene::RemoveParticle(vector<Particle*>::iterator& it)
+{
+	Particle* aux = *it;
+	it = mParticles.erase(it);
+	delete aux;
 	return true;
 }
 
@@ -124,6 +145,15 @@ void Scene::KeyPress(unsigned char key, const physx::PxTransform& camera)
 		case 'V':
 			ThrowProyectile(LASER, camera);
 			break;
+		case 'B':
+			ThrowProyectile(GOLF, camera);
+			break;
+		case 'N':
+			ThrowProyectile(FRISBEE, camera);
+			break;
+		case 'M':
+			ThrowProyectile(BALLOON, camera);
+			break;
 		default:
 			break;
 		}
@@ -135,8 +165,8 @@ void Scene::KeyPress(unsigned char key, const physx::PxTransform& camera)
 
 void Scene::ThrowProyectile(ProjectileType type, const physx::PxTransform& camera)
 {
-	PxVec3 front = -camera.q.getBasisVector2().getNormalized();
-	PxVec3 up = -camera.q.getBasisVector0().getNormalized();
+	const PxVec3 front = -camera.q.getBasisVector2().getNormalized();
+	const PxVec3 up = -camera.q.getBasisVector0().getNormalized();
 
 	//Crea el proyectil delante de la camara
 	Particle* p = new Particle(camera.p + 1.5 * front);
@@ -153,9 +183,10 @@ void Scene::ThrowProyectile(ProjectileType type, const physx::PxTransform& camer
 		real.inverseMass = 1 / .18;
 		real.speed = 360;
 		real.gravity = g;
+		real.variation = .1;
 
 		//Velocidad deseada: 40 m/s
-		simulated = Simulate(40, real);
+		simulated.speed = 40;
 		break;
 	case ARTILLERY:
 		p->SetShape(CreateShape(PxSphereGeometry(.5)));
@@ -165,9 +196,10 @@ void Scene::ThrowProyectile(ProjectileType type, const physx::PxTransform& camer
 		real.inverseMass = 1 / 50.0;
 		real.speed = 1800;
 		real.gravity = g;
+		real.variation = .2;
 
 		//Velocidad deseada: 20 m/s
-		simulated = Simulate(20, real);
+		simulated.speed = 20;
 		break;
 	case FIREBALL:
 		p->SetShape(CreateShape(PxSphereGeometry(0.2)));
@@ -177,9 +209,10 @@ void Scene::ThrowProyectile(ProjectileType type, const physx::PxTransform& camer
 		real.inverseMass = 1 / 2.0;
 		real.speed = 10;
 		real.gravity = 1;
+		real.variation = .4;
 
 		//Velocidad deseada: 10 m/s
-		simulated = Simulate(10, real);
+		simulated.speed = 10;
 		break;
 	case LASER:
 		p->SetShape(CreateShape(PxSphereGeometry(0.1)));
@@ -189,22 +222,75 @@ void Scene::ThrowProyectile(ProjectileType type, const physx::PxTransform& camer
 		real.inverseMass = DBL_MAX;
 		real.speed = c;
 		real.gravity = 0;
+		real.variation = 0;
 
 		//Velocidad deseada: 50 m/s
-		simulated = Simulate(50, real);
+		simulated.speed = 50;
+		break;
+	case GOLF:
+		p->SetShape(CreateShape(PxSphereGeometry(0.13)));
+		p->SetColor({ .9, .9, .9, 1 });
+
+		//Masa real: 0.045 kg	Velocidad real: 30 m/s (A media distancia)
+		real.inverseMass = 1 / .045;
+		real.speed = 30;
+		real.gravity = g;
+		real.variation = 2;
+		real.angle = PxPi / 6;
+
+		//Velocidad deseada: 20 m/s
+		simulated.speed = 20;
+		break;
+	case FRISBEE:
+		p->SetShape(CreateShape(PxBoxGeometry(.2, .01, .2)));
+		p->SetColor({ .7, .01, 0, 1 });
+
+		//Masa real: .175 kg	Velocidad real: 10 m/s
+		real.inverseMass = 1 / .175;
+		real.speed = 10;
+		real.gravity = g;
+		real.variation = 1;
+		real.angle = PxPi / 12;
+
+		//Velocidad deseada: 50 m/s
+		simulated.speed = 5;
+		break;
+	case BALLOON:
+		p->SetShape(CreateShape(PxSphereGeometry(.3)));
+		p->SetColor({ 1, .3, .3, 1 });
+
+		//Masa real: 0.001 kg	Velocidad real: 0 m/s
+		real.inverseMass = 1 / .001;
+		real.speed = 0;
+		real.gravity = -.1 * g;
+		real.variation = 0.1;
+
+		//Velocidad deseada: 0 m/s
+		simulated.speed = 0;
 		break;
 	default:
 		return;
 	}
+		simulated = Simulate(simulated.speed, real);
 	
-	//Se lanza hacia el frente
-	p->SetVel(PxCos(simulated.angle) * simulated.speed * front + PxSin(simulated.angle) * simulated.speed * up);
+	//Se lanza hacia el frente con una varianza
+	PxVec3 dir = PxVec3(PxCos(simulated.angle) * simulated.speed * front 
+		+ PxSin(simulated.angle) * simulated.speed * up);
 
-	p->SetAcc({ 0, (float) simulated.gravity, 0 });
+	if (simulated.variation != 0) {
+		normal_distribution<> normal(0, simulated.variation);
+		dir = PxVec3(dir.x + normal(generator), dir.y + normal(generator), dir.z + normal(generator));
+	}
+	
+	p->SetVel(dir);
+	cout << "Direccion: " << dir.x << " " << dir.y << " " << dir.z << "\n";
+
+	p->SetAcc({ 0, float(simulated.gravity), 0 });
 	p->SetIMass(simulated.inverseMass);
+	p->SetLifetime(10);
 
 	cout << "Masa real: " << 1 / real.inverseMass << " kg	Velocidad real: " << real.speed << " m/s	Gravedad real: " << real.gravity << " m/s^2\n"
-		<< "Masa simulada: " << 1 / simulated.inverseMass << " kg	Velocidad simulada: " << simulated.speed << " m/s	Gravedad simulada: " << simulated.gravity << " m/s^2\n";
+		<< "Masa simulada: " << 1 / simulated.inverseMass << " kg	Velocidad simulada: " << simulated.speed << " m/s	Gravedad simulada: " << simulated.gravity << " m/s^2\n\n";
 
 	AddParticle(p);
 }
@@ -215,15 +301,21 @@ Scene::Projectile Scene::Simulate(double simulatedVel, Projectile real)
 	simulated.speed = simulatedVel;
 	simulated.initialHeight = real.initialHeight;
 	simulated.angle = real.angle;
+	simulated.variation = real.variation;
 
 	//Conserva la energia	E = mv
-	simulated.inverseMass = real.inverseMass * pow(simulated.speed / real.speed, 2);
+	if (real.speed == 0)
+		simulated.inverseMass = real.inverseMass;
+	else
+		simulated.inverseMass = real.inverseMass * pow(simulated.speed / real.speed, 2);
 
 	//Queremos que recorra la misma distancia	0 = p + vt + .5 * at^2
-	if (real.gravity != 0) {
-		double realFlightTime = sqrt(2 * real.initialHeight / abs(real.gravity));
-		double distanceReached = real.speed * realFlightTime;
-		double simulatedFlightTime = distanceReached / simulated.speed;
+	if (simulatedVel == 0)
+		simulated.gravity = real.gravity;
+	else if (real.gravity != 0) {
+		const double realFlightTime = sqrt(2 * real.initialHeight / abs(real.gravity));
+		const double distanceReached = real.speed * realFlightTime;
+		const double simulatedFlightTime = distanceReached / simulated.speed;
 
 		simulated.gravity = real.gravity * pow(realFlightTime, 2) / pow(simulatedFlightTime, 2);
 	}

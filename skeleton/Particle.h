@@ -5,6 +5,9 @@ class RenderItem;
 
 using namespace physx;
 
+//Cuando la particula se aleje de este radio, morira
+constexpr double squaredRadius = 1000000;
+
 class Particle
 {
 	PxTransform pose;
@@ -14,13 +17,14 @@ class Particle
 	double inverseMass;
 
 	PxVec4 color;
-	PxShape* shape;
+	PxShape* shape = nullptr;
 
-	RenderItem* renderItem;
+	RenderItem* renderItem = nullptr;
+
+	double lifetime;
 
 public:
-	Particle(PxVec3 p = { 0, 0, 0 }, PxVec3 v = {0, 0, 0}, PxVec3 a = {0, 0, 0}, double damp = .998,
-		double iMass = 1, PxVec4 col = { 1, 1, 1, 1 }, PxShape* shp = nullptr);
+	Particle(PxVec3 p = { 0, 0, 0 });
 	~Particle();
 	void Integrate(double t);
 
@@ -30,5 +34,8 @@ public:
 	Particle* SetIMass(double iMass);
 	Particle* SetColor(PxVec4 col);
 	Particle* SetShape(PxShape* shp);
+	Particle* SetLifetime(double life);
+
+	bool active;
 };
 

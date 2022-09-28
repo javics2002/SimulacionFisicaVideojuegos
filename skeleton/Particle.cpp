@@ -1,12 +1,12 @@
 #include "Particle.h"
 
 #include "RenderUtils.hpp"
+#include <climits>
 
-Particle::Particle(PxVec3 p, PxVec3 v, PxVec3 a, double damp, double iMass, PxVec4 col, PxShape* shp) :
-	pose(PxTransform(p)), vel(v), acc(a), damping(damp), inverseMass(iMass), color(col), shape(shp)
+Particle::Particle(PxVec3 p) : pose(PxTransform(p)), vel({ 0, 0, 0 }), acc({ 0, 0, 0 }),
+	damping(.998), inverseMass(1), color({ 1, 1, 1, 1 }), active(true), lifetime(DBL_MAX)
 {
-	if (shape == nullptr)
-		shape = CreateShape(PxSphereGeometry(1.0));
+	shape = CreateShape(PxSphereGeometry(1.0));
 
 	renderItem = new RenderItem(shape, &pose, color);
 }
@@ -25,6 +25,13 @@ void Particle::Integrate(double t)
 	pose.p += vel * t;
 	vel += acc * t;
 	vel *= pow(damping, t);
+
+	if (pose.p.y < 0 || pose.p.magnitudeSquared() > squaredRadius || lifetime < 0) {
+		active = false;
+		return;
+	}
+
+	lifetime -= t;
 }
 
 Particle* Particle::SetVel(PxVec3 v)
@@ -62,5 +69,11 @@ Particle* Particle::SetShape(PxShape* shp)
 {
 	shape = shp;
 	renderItem->shape = shape;
+	return this;
+}
+
+Particle* Particle::SetLifetime(double life)
+{
+	lifetime = life;
 	return this;
 }
