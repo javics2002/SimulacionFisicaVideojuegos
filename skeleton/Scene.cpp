@@ -184,6 +184,7 @@ void Scene::ThrowProyectile(ProjectileType type, const physx::PxTransform& camer
 		real.speed = 360;
 		real.gravity = g;
 		real.variation = .1;
+		p->SetDamp(.95);
 
 		//Velocidad deseada: 40 m/s
 		simulated.speed = 40;
@@ -197,6 +198,7 @@ void Scene::ThrowProyectile(ProjectileType type, const physx::PxTransform& camer
 		real.speed = 1800;
 		real.gravity = g;
 		real.variation = .2;
+		p->SetDamp(.9);
 
 		//Velocidad deseada: 20 m/s
 		simulated.speed = 20;
@@ -237,6 +239,7 @@ void Scene::ThrowProyectile(ProjectileType type, const physx::PxTransform& camer
 		real.gravity = g;
 		real.variation = 2;
 		real.angle = PxPi / 6;
+		p->SetDamp(0.8);
 
 		//Velocidad deseada: 20 m/s
 		simulated.speed = 20;
@@ -251,6 +254,7 @@ void Scene::ThrowProyectile(ProjectileType type, const physx::PxTransform& camer
 		real.gravity = g;
 		real.variation = 1;
 		real.angle = PxPi / 12;
+		p->SetDamp(0.7);
 
 		//Velocidad deseada: 50 m/s
 		simulated.speed = 5;
@@ -264,6 +268,7 @@ void Scene::ThrowProyectile(ProjectileType type, const physx::PxTransform& camer
 		real.speed = 0;
 		real.gravity = -.1 * g;
 		real.variation = 0.1;
+		p->SetDamp(.3);
 
 		//Velocidad deseada: 0 m/s
 		simulated.speed = 0;
