@@ -17,21 +17,20 @@ Scene::Scene()
 
 Scene::~Scene()
 {
-	ClearScene();
 }
 
 void Scene::LoadScene(int newID)
 {
-	ClearScene();
+	particles.Clear();
 
 	mID = newID;
 
 	switch (mID) {
 	case 0:
-		AddParticle((new Particle())->SetVel({ 0, 10, 0 })->SetColor({.98, .96, .3, 1.0}));
+		particles.Add((new Particle())->SetVel({ 0, 10, 0 })->SetColor({.98, .96, .3, 1.0}));
 		break;
 	case 1:
-		AddParticle((new Particle())->SetAcc({0, 2, 0})->SetDamp(.9)->SetColor({.31, .81, .96, 1.0}));
+		particles.Add((new Particle())->SetAcc({0, 2, 0})->SetDamp(.9)->SetColor({.31, .81, .96, 1.0}));
 		break;
 	case 2:
 		cout << "Puedes disparar proyectiles.\n"
@@ -44,17 +43,17 @@ void Scene::LoadScene(int newID)
 			<< "M: Globo\n";
 
 		//Suelo
-		AddParticle((new Particle({0, 48.5, 0}))->SetColor({.93, .81, .61, 1.0})
+		particles.Add((new Particle({0, 48.5, 0}))->SetColor({.93, .81, .61, 1.0})
 			->SetShape(CreateShape(PxBoxGeometry(1000, .5, 1000))));
 		
 		//Vallas
-		AddParticle((new Particle({50, 48.5, 40}))->SetColor({.2, .6, .9, 1.0})
+		particles.Add((new Particle({50, 48.5, 40}))->SetColor({.2, .6, .9, 1.0})
 			->SetShape(CreateShape(PxBoxGeometry(10, 1, .5))));
-		AddParticle((new Particle({40, 48.5, 50}))->SetColor({.2, .6, .9, 1.0})
+		particles.Add((new Particle({40, 48.5, 50}))->SetColor({.2, .6, .9, 1.0})
 			->SetShape(CreateShape(PxBoxGeometry(.5, 1, 10))));
 
 		//Diana
-		AddParticle((new Particle({ 42, 50, 42 }))->SetColor({ .8, .5, .4, 1.0 })
+		particles.Add((new Particle({ 42, 50, 42 }))->SetColor({ .8, .5, .4, 1.0 })
 			->SetShape(CreateShape(PxSphereGeometry(.6))));
 		break;
 	default:
@@ -67,65 +66,12 @@ void Scene::LoadScene(int newID)
 
 void Scene::Update(double t)
 {
-	for (auto p = mParticles.begin(); p != mParticles.end(); ) {
-		//Sacamos las particulas muertas de nuestro vector
-		if (!(*p)->active) {
-			RemoveParticle(p);
-			continue;
-		}
-
-		(*p)->Integrate(t);
-		p++;
-	}
-}
-
-int Scene::AddParticle(Particle* p)
-{
-	if (p != nullptr) {
-		mParticles.push_back(p);
-		return mParticles.size() - 1;
-	}
-	else return -1;
-}
-
-Particle* Scene::GetParticle(int id)
-{
-	if (id >= 0 && id < mParticles.size())
-		return mParticles[id];
-	else return nullptr;
-}
-
-bool Scene::RemoveParticle(int id)
-{
-	if (id < 0 && id >= mParticles.size())
-		return false;
-
-	vector<Particle*>::iterator it = mParticles.begin();
-	int i = 0;
-	while (i < id) {
-		it++;
-		i++;
-	}
-	
-	mParticles.erase(it);
-	delete *it;
-	return true;
-}
-
-bool Scene::RemoveParticle(vector<Particle*>::iterator& it)
-{
-	Particle* aux = *it;
-	it = mParticles.erase(it);
-	delete aux;
-	return true;
+	particles.Integrate(t);
 }
 
 void Scene::ClearScene()
 {
-	for (auto p : mParticles)
-		delete p;
-
-	mParticles.clear();
+	particles.Clear();
 }
 
 void Scene::KeyPress(unsigned char key, const physx::PxTransform& camera)
@@ -297,35 +243,5 @@ void Scene::ThrowProyectile(ProjectileType type, const physx::PxTransform& camer
 	cout << "Masa real: " << 1 / real.inverseMass << " kg	Velocidad real: " << real.speed << " m/s	Gravedad real: " << real.gravity << " m/s^2\n"
 		<< "Masa simulada: " << 1 / simulated.inverseMass << " kg	Velocidad simulada: " << simulated.speed << " m/s	Gravedad simulada: " << simulated.gravity << " m/s^2\n\n";
 
-	AddParticle(p);
-}
-
-Scene::Projectile Scene::Simulate(double simulatedVel, Projectile real)
-{
-	Projectile simulated;
-	simulated.speed = simulatedVel;
-	simulated.initialHeight = real.initialHeight;
-	simulated.angle = real.angle;
-	simulated.variation = real.variation;
-
-	//Conserva la energia	E = mv
-	if (real.speed == 0)
-		simulated.inverseMass = real.inverseMass;
-	else
-		simulated.inverseMass = real.inverseMass * pow(simulated.speed / real.speed, 2);
-
-	//Queremos que recorra la misma distancia	0 = p + vt + .5 * at^2
-	if (simulatedVel == 0)
-		simulated.gravity = real.gravity;
-	else if (real.gravity != 0) {
-		const double realFlightTime = sqrt(2 * real.initialHeight / abs(real.gravity));
-		const double distanceReached = real.speed * realFlightTime;
-		const double simulatedFlightTime = distanceReached / simulated.speed;
-
-		simulated.gravity = real.gravity * pow(realFlightTime, 2) / pow(simulatedFlightTime, 2);
-	}
-	else
-		simulated.gravity = 0;
-
-	return simulated;
+	particles.Add(p);
 }
