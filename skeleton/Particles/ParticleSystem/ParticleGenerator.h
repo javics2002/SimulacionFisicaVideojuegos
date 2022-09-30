@@ -1,20 +1,28 @@
 #pragma once
 
+#include "../Particle.h"
 #include "PxPhysicsAPI.h"
 #include <vector>
+
+class ParticleSystem;
 
 using namespace std;
 using namespace physx;
 
-class Particle;
-
-class ParticleGenerator //Heredar de particle
+class ParticleGenerator : public Particle
 {
+protected:
+	Particle* prefab;
+	ParticleSystem* system;
+
 public:
-	ParticleGenerator();
+	ParticleGenerator(Particle* p);
 	~ParticleGenerator();
 
-	virtual vector<Particle*> generateParticles() = 0;
+	virtual void Integrate(double t);
 
+	virtual vector<Particle*> GenerateParticles() = 0;
+
+	ParticleGenerator* SetSystem(ParticleSystem* s);
 };
 

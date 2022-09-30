@@ -1,28 +1,25 @@
 #pragma once
 
-#include "PxPhysicsAPI.h"
+#include "../Particle.h"
 #include "../ParticleManager.h"
+#include "PxPhysicsAPI.h"
 #include <vector>
 
 using namespace std;
 using namespace physx;
 
-class Particle;
 class ParticleGenerator;
 
-class ParticleSystem
+class ParticleSystem : public Particle
 {
-	double lifetime;
-
-	PxVec3 gravity;
-
 public: 
-	ParticleSystem();
+	ParticleSystem(ParticleGenerator* generator = nullptr, PxVec3 p = { 0, 0, 0 });
 	~ParticleSystem();
 
-	ParticleManager<Particle> particles;
-	ParticleManager<ParticleGenerator> particleGenerators;
+	void Integrate(double t) override;
+	void AddGenerator(ParticleGenerator* generator);
 
-	void Integrate(double t);
+	ParticleManager particles;
+	ParticleManager particleGenerators;
 };
 

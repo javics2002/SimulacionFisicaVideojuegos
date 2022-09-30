@@ -2,6 +2,8 @@
 #include "RenderUtils.hpp"
 #include <iostream>
 
+#include "Particles/Particle.h"
+#include "Particles/ParticleSystem/ParticleSystems.h"
 
 Scene::Scene()
 {
@@ -11,8 +13,6 @@ Scene::Scene()
 		<< "0: Particula con velocidad constante\n"
 		<< "1: Particula con aceleracion y damping\n"
 		<< "2: Proyectiles\n\n";
-
-	//generator = default_random_engine(rand());
 }
 
 Scene::~Scene()
@@ -55,6 +55,28 @@ void Scene::LoadScene(int newID)
 		//Diana
 		particles.Add((new Particle({ 42, 50, 42 }))->SetColor({ .8, .5, .4, 1.0 })
 			->SetShape(CreateShape(PxSphereGeometry(.6))));
+		break;
+	case 3:
+		cout << "Puedes cambiar las particulas.\n"
+			<< "Z: Fuente\n"
+			<< "X: Niebla\n"
+			<< "C: Polvo\n"
+			<< "V: Fuego\n"
+			<< "B: Lluvia\n"
+			<< "N: Chispas\n"
+			<< "M: Explosion\n";
+
+		particles.Add(new ParticleSystem());
+		break;
+	case 4:
+		cout << "Puedes lanzar fuegos artificiales.\n"
+			<< "Z: -\n"
+			<< "X: -\n"
+			<< "C: -\n"
+			<< "V: -\n"
+			<< "B: -\n"
+			<< "N: -\n"
+			<< "M: -\n";
 		break;
 	default:
 		cout << "Scene " << mID << " doesn't exist.\n";
@@ -104,6 +126,36 @@ void Scene::KeyPress(unsigned char key, const physx::PxTransform& camera)
 			break;
 		}
 		break;
+	case 3:
+		ParticleSystem * system = dynamic_cast<ParticleSystem*>(particles.Get(0));
+		system->particleGenerators.Clear();
+
+		switch (toupper(key)) {
+		case 'Z':
+			system->particleGenerators.Add(CreateGenerator(FOUNTAIN));
+			break;
+		case 'X':
+			system->particleGenerators.Add(CreateGenerator(MIST));
+			break;
+		case 'C':
+			system->particleGenerators.Add(CreateGenerator(DUST));
+			break;
+		case 'V':
+			system->particleGenerators.Add(CreateGenerator(FIRE));
+			break;
+		case 'B':
+			system->particleGenerators.Add(CreateGenerator(RAIN));
+			break;
+		case 'N':
+			system->particleGenerators.Add(CreateGenerator(SPARK));
+			break;
+		case 'M':
+			system->particleGenerators.Add(CreateGenerator(BLAST));
+			break;
+		default:
+			break;
+		}
+		break;
 	default:
 		break;
 	}
@@ -116,132 +168,23 @@ void Scene::ThrowProyectile(ProjectileType type, const physx::PxTransform& camer
 
 	//Crea el proyectil delante de la camara
 	Particle* p = new Particle(camera.p + 1.5 * front);
-	Projectile real, simulated;
-	real.initialHeight = camera.p.y;
-	real.angle = 0;
 
-	switch (type) {
-	case PISTOL:
-		p->SetShape(CreateShape(PxSphereGeometry(0.1)));
-		p->SetColor({ .7, .7, .7, 1 });
-
-		//Masa real: 0.18 kg	Velocidad real: 360 m/s
-		real.inverseMass = 1 / .18;
-		real.speed = 360;
-		real.gravity = g;
-		real.variation = .1;
-		p->SetDamp(.95);
-
-		//Velocidad deseada: 40 m/s
-		simulated.speed = 40;
-		break;
-	case ARTILLERY:
-		p->SetShape(CreateShape(PxSphereGeometry(.5)));
-		p->SetColor({ .2, .2, .2, 1 });
-
-		//Masa real: 50 kg	Velocidad real: 1800 m/s
-		real.inverseMass = 1 / 50.0;
-		real.speed = 1800;
-		real.gravity = g;
-		real.variation = .2;
-		p->SetDamp(.9);
-
-		//Velocidad deseada: 20 m/s
-		simulated.speed = 20;
-		break;
-	case FIREBALL:
-		p->SetShape(CreateShape(PxSphereGeometry(0.2)));
-		p->SetColor({ 1, .4, .1, 1 });
-
-		//Masa real: 2 kg	Velocidad real: 10 m/s
-		real.inverseMass = 1 / 2.0;
-		real.speed = 10;
-		real.gravity = 1;
-		real.variation = .4;
-
-		//Velocidad deseada: 10 m/s
-		simulated.speed = 10;
-		break;
-	case LASER:
-		p->SetShape(CreateShape(PxSphereGeometry(0.1)));
-		p->SetColor({ 1, .3, .3, 1 });
-
-		//Masa real: 0 kg	Velocidad real: c m/s
-		real.inverseMass = DBL_MAX;
-		real.speed = c;
-		real.gravity = 0;
-		real.variation = 0;
-
-		//Velocidad deseada: 50 m/s
-		simulated.speed = 50;
-		break;
-	case GOLF:
-		p->SetShape(CreateShape(PxSphereGeometry(0.13)));
-		p->SetColor({ .9, .9, .9, 1 });
-
-		//Masa real: 0.045 kg	Velocidad real: 30 m/s (A media distancia)
-		real.inverseMass = 1 / .045;
-		real.speed = 30;
-		real.gravity = g;
-		real.variation = 2;
-		real.angle = PxPi / 6;
-		p->SetDamp(0.8);
-
-		//Velocidad deseada: 20 m/s
-		simulated.speed = 20;
-		break;
-	case FRISBEE:
-		p->SetShape(CreateShape(PxBoxGeometry(.2, .01, .2)));
-		p->SetColor({ .7, .01, 0, 1 });
-
-		//Masa real: .175 kg	Velocidad real: 10 m/s
-		real.inverseMass = 1 / .175;
-		real.speed = 10;
-		real.gravity = g;
-		real.variation = 1;
-		real.angle = PxPi / 12;
-		p->SetDamp(0.7);
-
-		//Velocidad deseada: 50 m/s
-		simulated.speed = 5;
-		break;
-	case BALLOON:
-		p->SetShape(CreateShape(PxSphereGeometry(.3)));
-		p->SetColor({ 1, .3, .3, 1 });
-
-		//Masa real: 0.001 kg	Velocidad real: 0 m/s
-		real.inverseMass = 1 / .001;
-		real.speed = 0;
-		real.gravity = -.1 * g;
-		real.variation = 0.1;
-		p->SetDamp(.3);
-
-		//Velocidad deseada: 0 m/s
-		simulated.speed = 0;
-		break;
-	default:
-		return;
-	}
-		simulated = Simulate(simulated.speed, real);
+	Projectile projectile = CreateProjectile(type, camera, p);
 	
 	//Se lanza hacia el frente con una varianza
-	PxVec3 dir = PxVec3(PxCos(simulated.angle) * simulated.speed * front 
-		+ PxSin(simulated.angle) * simulated.speed * up);
+	PxVec3 dir = PxVec3(PxCos(projectile.angle) * projectile.speed * front
+		+ PxSin(projectile.angle) * projectile.speed * up);
 
-	if (simulated.variation != 0) {
-		normal_distribution<> normal(0, simulated.variation);
+	if (projectile.variation != 0) {
+		normal_distribution<> normal(0, projectile.variation);
 		dir = PxVec3(dir.x + normal(generator), dir.y + normal(generator), dir.z + normal(generator));
 	}
 	
 	p->SetVel(dir);
-	cout << "Direccion: " << dir.x << " " << dir.y << " " << dir.z << "\n";
 
-	p->SetAcc({ 0, float(simulated.gravity), 0 });
-	p->SetIMass(simulated.inverseMass);
+	p->SetAcc({ 0, float(projectile.gravity), 0 });
+	p->SetIMass(projectile.inverseMass);
 	p->SetLifetime(10);
-
-	cout << "Masa real: " << 1 / real.inverseMass << " kg	Velocidad real: " << real.speed << " m/s	Gravedad real: " << real.gravity << " m/s^2\n"
-		<< "Masa simulada: " << 1 / simulated.inverseMass << " kg	Velocidad simulada: " << simulated.speed << " m/s	Gravedad simulada: " << simulated.gravity << " m/s^2\n\n";
 
 	particles.Add(p);
 }

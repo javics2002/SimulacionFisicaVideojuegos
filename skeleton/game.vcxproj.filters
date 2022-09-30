@@ -11,7 +11,6 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="callbacks.cpp" />
     <ClCompile Include="Scene.cpp" />
-    <ClCompile Include="Particles\Entity.cpp" />
     <ClCompile Include="Particles\Particle.cpp" />
     <ClCompile Include="Particles\ParticleManager.cpp" />
     <ClCompile Include="Particles\ParticleSystem\GaussianParticleGenerator.cpp" />
@@ -30,7 +29,6 @@
     <ClInclude Include="RenderUtils.hpp" />
     <ClInclude Include="callbacks.hpp" />
     <ClInclude Include="Scene.h" />
-    <ClInclude Include="Particles\Entity.h" />
     <ClInclude Include="Particles\Particle.h" />
     <ClInclude Include="Particles\ParticleManager.h" />
     <ClInclude Include="Particles\Projectile.h" />
@@ -38,6 +36,7 @@
     <ClInclude Include="Particles\ParticleSystem\GaussianParticleGenerator.h" />
     <ClInclude Include="Particles\ParticleSystem\ParticleGenerator.h" />
     <ClInclude Include="Particles\ParticleSystem\ParticleSystem.h" />
+    <ClInclude Include="Particles\ParticleSystem\ParticleSystems.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Render">

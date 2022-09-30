@@ -21,12 +21,14 @@ class Particle
 
 	RenderItem* renderItem = nullptr;
 
+	double startingLife;
 	double lifetime;
 
 public:
 	Particle(PxVec3 p = { 0, 0, 0 });
+	Particle(Particle* p);
 	~Particle();
-	void Integrate(double t);
+	virtual void Integrate(double t);
 
 	Particle* SetVel(PxVec3 v);
 	Particle* SetAcc(PxVec3 a);
@@ -35,6 +37,8 @@ public:
 	Particle* SetColor(PxVec4 col);
 	Particle* SetShape(PxShape* shp);
 	Particle* SetLifetime(double life);
+
+	PxVec3 GetVel();
 
 	bool active;
 };

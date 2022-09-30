@@ -4,19 +4,20 @@
 
 using namespace std;
 
-template<class T, class iterator = vector<T*>::iterator&>
+class Particle;
+
 class ParticleManager
 {
-	vector<T*> mParticles;
+	vector<Particle*> mParticles;
 
 public:
 	ParticleManager();
 	~ParticleManager();
 
-	int Add(T* p);
-	T* Get(int id);
+	int Add(Particle* p);
+	Particle* Get(int id);
 	bool Remove(int id);
-	bool Remove(iterator it);
+	bool Remove(vector<Particle*>::iterator& it);
 	void Clear();
 
 	void Integrate(double t);

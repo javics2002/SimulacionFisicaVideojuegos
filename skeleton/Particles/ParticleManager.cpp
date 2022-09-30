@@ -1,18 +1,16 @@
 #include "ParticleManager.h"
+#include "Particle.h"
 
-template<class T, class iterator>
-ParticleManager<T, iterator>::ParticleManager()
+ParticleManager::ParticleManager()
 {
 }
 
-template<class T, class iterator>
-ParticleManager<T, iterator>::~ParticleManager()
+ParticleManager::~ParticleManager()
 {
 	Clear();
 }
 
-template<class T, class iterator>
-int ParticleManager<T, iterator>::Add(T* p)
+int ParticleManager::Add(Particle* p)
 {
 	if (p != nullptr) {
 		mParticles.push_back(p);
@@ -21,21 +19,19 @@ int ParticleManager<T, iterator>::Add(T* p)
 	else return -1;
 }
 
-template<class T, class iterator>
-T* ParticleManager<T, iterator>::Get(int id)
+Particle* ParticleManager::Get(int id)
 {
 	if (id >= 0 && id < mParticles.size())
 		return mParticles[id];
 	else return nullptr;
 }
 
-template<class T, class iterator>
-bool ParticleManager<T, iterator>::Remove(int id)
+bool ParticleManager::Remove(int id)
 {
 	if (id < 0 && id >= mParticles.size())
 		return false;
 
-	vector<T*>::iterator it = mParticles.begin();
+	vector<Particle*>::iterator it = mParticles.begin();
 	int i = 0;
 	while (i < id) {
 		it++;
@@ -47,17 +43,15 @@ bool ParticleManager<T, iterator>::Remove(int id)
 	return true;
 }
 
-template<class T, class iterator>
-bool ParticleManager<T, iterator>::Remove(iterator it)
+bool ParticleManager::Remove(vector<Particle*>::iterator& it)
 {
-	T* aux = *it;
+	Particle* aux = *it;
 	it = mParticles.erase(it);
 	delete aux;
 	return true;
 }
 
-template<class T, class iterator>
-void ParticleManager<T, iterator>::Clear()
+void ParticleManager::Clear()
 {
 	for (auto p : mParticles)
 		delete p;
@@ -65,13 +59,12 @@ void ParticleManager<T, iterator>::Clear()
 	mParticles.clear();
 }
 
-template<class T, class iterator>
-void ParticleManager<T, iterator>::Integrate(double t)
+void ParticleManager::Integrate(double t)
 {
 	for (auto p = mParticles.begin(); p != mParticles.end(); ) {
 		//Sacamos las particulas muertas de nuestro vector
 		if (!(*p)->active) {
-			RemoveParticle(p);
+			Remove(p);
 			continue;
 		}
 

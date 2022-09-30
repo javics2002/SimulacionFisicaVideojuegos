@@ -255,7 +255,6 @@
   <ItemGroup>
     <ClCompile Include="callbacks.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Particles\Entity.cpp" />
     <ClCompile Include="Particles\Particle.cpp" />
     <ClCompile Include="Particles\ParticleManager.cpp" />
     <ClCompile Include="Particles\ParticleSystem\GaussianParticleGenerator.cpp" />
@@ -270,12 +269,12 @@
   <ItemGroup>
     <ClInclude Include="callbacks.hpp" />
     <ClInclude Include="core.hpp" />
-    <ClInclude Include="Particles\Entity.h" />
     <ClInclude Include="Particles\Particle.h" />
     <ClInclude Include="Particles\ParticleManager.h" />
     <ClInclude Include="Particles\ParticleSystem\GaussianParticleGenerator.h" />
     <ClInclude Include="Particles\ParticleSystem\ParticleGenerator.h" />
     <ClInclude Include="Particles\ParticleSystem\ParticleSystem.h" />
+    <ClInclude Include="Particles\ParticleSystem\ParticleSystems.h" />
     <ClInclude Include="Particles\ParticleSystem\SimpleParticleGenerator.h" />
     <ClInclude Include="Particles\Projectile.h" />
     <ClInclude Include="RenderUtils.hpp" />

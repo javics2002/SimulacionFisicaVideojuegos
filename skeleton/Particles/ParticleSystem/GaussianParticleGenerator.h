@@ -6,11 +6,12 @@
 class GaussianParticleGenerator : public ParticleGenerator
 {
 protected:
-	PxVec3 pos, vel;
-	normal_distribution<> normal{ 0,1 };
+	random_device rand;
+	default_random_engine generator = default_random_engine(rand());
+	normal_distribution<> normal;
 
 public:
-	GaussianParticleGenerator(PxVec3 pos, PxVec3 vel);
-	virtual vector<Particle*> generateParticles() override;
+	GaussianParticleGenerator(Particle* p, double mean = 0, double deviation = 1);
+	vector<Particle*> GenerateParticles() override;
 };
 

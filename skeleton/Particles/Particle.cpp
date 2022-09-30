@@ -2,9 +2,20 @@
 
 #include "../RenderUtils.hpp"
 #include <climits>
+#include <iostream>
 
 Particle::Particle(PxVec3 p) : pose(PxTransform(p)), vel({ 0, 0, 0 }), acc({ 0, 0, 0 }),
-	damping(.998), inverseMass(1), color({ 1, 1, 1, 1 }), active(true), lifetime(DBL_MAX)
+	damping(.998), inverseMass(1), color({ 1, 1, 1, 1 }), active(true), 
+	startingLife(DBL_MAX), lifetime(startingLife)
+{
+	shape = CreateShape(PxSphereGeometry(1.0));
+
+	renderItem = new RenderItem(shape, &pose, color);
+}
+
+Particle::Particle(Particle* p) : pose(PxTransform(PxVec3(p->pose.p))), vel(p->vel), acc(p->acc),
+	damping(p->damping), inverseMass(p->damping), color(PxVec4(p->color)), active(true), 
+	startingLife(p->startingLife), lifetime(startingLife)
 {
 	shape = CreateShape(PxSphereGeometry(1.0));
 
@@ -74,6 +85,11 @@ Particle* Particle::SetShape(PxShape* shp)
 
 Particle* Particle::SetLifetime(double life)
 {
-	lifetime = life;
+	lifetime = startingLife = life;
 	return this;
+}
+
+PxVec3 Particle::GetVel()
+{
+	return vel;
 }
