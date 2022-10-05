@@ -18,6 +18,8 @@ public:
 
 	void Integrate(double t) override;
 	void AddGenerator(ParticleGenerator* generator);
+	void ClearGenerators();
+	void ReplaceGenerators(ParticleGenerator* generator);
 
 	ParticleManager particles;
 	ParticleManager particleGenerators;

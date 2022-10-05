@@ -6,22 +6,26 @@
 enum ParticleSystemType { FOUNTAIN, MIST, DUST, FIRE, RAIN, SPARK, BLAST };
 
 static ParticleGenerator* CreateGenerator(ParticleSystemType type) {
+	Particle* prefab = new Particle({0, 0, 0}, false);
+
 	switch (type) {
 	case FOUNTAIN:
-		return;
+		prefab->SetVel({ 0, 30, 0 })->SetDamp(.8)->SetAcc({ -.2, -10, 0 })
+			->SetColor({ .3, .8, .95, .9 })->SetShape(CreateShape(PxSphereGeometry(.1)));
+		return new GaussianParticleGenerator(prefab, 0, .5);
 	case MIST:
-		return;
+		//return;
 	case DUST:
-		return;
+		//return;
 	case FIRE:
-		return;
+		//return;
 	case RAIN:
-		return;
+		//return;
 	case SPARK:
-		return;
+		//return;
 	case BLAST:
-		return;
+		//return;
 	default:
-		return new SimpleParticleGenerator(new Particle());
+		return new SimpleParticleGenerator(prefab);
 	}
 }

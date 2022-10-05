@@ -66,7 +66,8 @@ void Scene::LoadScene(int newID)
 			<< "N: Chispas\n"
 			<< "M: Explosion\n";
 
-		particles.Add(new ParticleSystem());
+
+		particles.Add(new ParticleSystem(CreateGenerator(FOUNTAIN)));
 		break;
 	case 4:
 		cout << "Puedes lanzar fuegos artificiales.\n"
@@ -127,34 +128,36 @@ void Scene::KeyPress(unsigned char key, const physx::PxTransform& camera)
 		}
 		break;
 	case 3:
-		ParticleSystem * system = dynamic_cast<ParticleSystem*>(particles.Get(0));
+	{
+		ParticleSystem* system = static_cast<ParticleSystem*>(particles.Get(0));
 		system->particleGenerators.Clear();
 
 		switch (toupper(key)) {
 		case 'Z':
-			system->particleGenerators.Add(CreateGenerator(FOUNTAIN));
+			system->ReplaceGenerators(CreateGenerator(FOUNTAIN));
 			break;
 		case 'X':
-			system->particleGenerators.Add(CreateGenerator(MIST));
+			system->ReplaceGenerators(CreateGenerator(MIST));
 			break;
 		case 'C':
-			system->particleGenerators.Add(CreateGenerator(DUST));
+			system->ReplaceGenerators(CreateGenerator(DUST));
 			break;
 		case 'V':
-			system->particleGenerators.Add(CreateGenerator(FIRE));
+			system->ReplaceGenerators(CreateGenerator(FIRE));
 			break;
 		case 'B':
-			system->particleGenerators.Add(CreateGenerator(RAIN));
+			system->ReplaceGenerators(CreateGenerator(RAIN));
 			break;
 		case 'N':
-			system->particleGenerators.Add(CreateGenerator(SPARK));
+			system->ReplaceGenerators(CreateGenerator(SPARK));
 			break;
 		case 'M':
-			system->particleGenerators.Add(CreateGenerator(BLAST));
+			system->ReplaceGenerators(CreateGenerator(BLAST));
 			break;
 		default:
 			break;
 		}
+	}
 		break;
 	default:
 		break;

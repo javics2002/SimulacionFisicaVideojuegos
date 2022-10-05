@@ -1,7 +1,7 @@
 #include "ParticleGenerator.h"
 #include "ParticleSystem.h"
 
-ParticleGenerator::ParticleGenerator(Particle* p) : Particle(), prefab(p)
+ParticleGenerator::ParticleGenerator(Particle* p) : Particle({0, 0, 0}, false), prefab(p)
 {
 }
 

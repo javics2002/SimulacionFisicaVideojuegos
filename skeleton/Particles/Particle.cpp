@@ -4,28 +4,29 @@
 #include <climits>
 #include <iostream>
 
-Particle::Particle(PxVec3 p) : pose(PxTransform(p)), vel({ 0, 0, 0 }), acc({ 0, 0, 0 }),
+Particle::Particle(PxVec3 p, bool visible) : pose(PxTransform(p)), vel({ 0, 0, 0 }), acc({ 0, 0, 0 }),
 	damping(.998), inverseMass(1), color({ 1, 1, 1, 1 }), active(true), 
 	startingLife(DBL_MAX), lifetime(startingLife)
 {
 	shape = CreateShape(PxSphereGeometry(1.0));
-
-	renderItem = new RenderItem(shape, &pose, color);
+	
+	if(visible)
+		renderItem = new RenderItem(shape, &pose, color);
 }
 
 Particle::Particle(Particle* p) : pose(PxTransform(PxVec3(p->pose.p))), vel(p->vel), acc(p->acc),
 	damping(p->damping), inverseMass(p->damping), color(PxVec4(p->color)), active(true), 
-	startingLife(p->startingLife), lifetime(startingLife)
+	startingLife(p->startingLife), lifetime(startingLife), shape(p->shape)
 {
-	shape = CreateShape(PxSphereGeometry(1.0));
-
 	renderItem = new RenderItem(shape, &pose, color);
 }
 
 Particle::~Particle()
 {
 	//shape->release();
-	DeregisterRenderItem(renderItem);
+
+	if (renderItem != nullptr)
+		DeregisterRenderItem(renderItem);
 }
 
 void Particle::Integrate(double t)
@@ -72,14 +73,20 @@ Particle* Particle::SetIMass(double iMass)
 Particle* Particle::SetColor(PxVec4 col)
 {
 	color = col;
-	renderItem->color = color;
+
+	if (renderItem != nullptr) 
+		renderItem->color = color;
+
 	return this;
 }
 
 Particle* Particle::SetShape(PxShape* shp)
 {
 	shape = shp;
-	renderItem->shape = shape;
+
+	if (renderItem != nullptr)
+		renderItem->shape = shape;
+
 	return this;
 }
 

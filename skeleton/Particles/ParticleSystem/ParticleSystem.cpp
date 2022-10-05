@@ -1,14 +1,16 @@
 #include "ParticleSystem.h"
 #include "GaussianParticleGenerator.h"
 
-ParticleSystem::ParticleSystem(ParticleGenerator* generator, PxVec3 p) : Particle(p)
+ParticleSystem::ParticleSystem(ParticleGenerator* generator, PxVec3 p) : Particle(p, false)
 {
-	if (generator == nullptr)
-		AddGenerator(new GaussianParticleGenerator((new Particle(p))->SetVel({0, 30, 0})->SetAcc({ 0, -10, 0 })));
+	if (generator != nullptr)
+		AddGenerator(generator);
 }
 
 ParticleSystem::~ParticleSystem()
 {
+	ClearGenerators();
+	particles.Clear();
 }
 
 void ParticleSystem::Integrate(double t)
@@ -23,4 +25,15 @@ void ParticleSystem::AddGenerator(ParticleGenerator* generator)
 {
 	generator->SetSystem(this);
 	particleGenerators.Add(generator);
+}
+
+void ParticleSystem::ClearGenerators()
+{
+	particleGenerators.Clear();
+}
+
+void ParticleSystem::ReplaceGenerators(ParticleGenerator* generator)
+{
+	ClearGenerators();
+	AddGenerator(generator);
 }

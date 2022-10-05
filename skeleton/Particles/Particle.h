@@ -25,7 +25,7 @@ class Particle
 	double lifetime;
 
 public:
-	Particle(PxVec3 p = { 0, 0, 0 });
+	Particle(PxVec3 p = { 0, 0, 0 }, bool visible = true);
 	Particle(Particle* p);
 	~Particle();
 	virtual void Integrate(double t);
