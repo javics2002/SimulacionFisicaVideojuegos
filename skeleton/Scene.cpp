@@ -154,6 +154,9 @@ void Scene::KeyPress(unsigned char key, const physx::PxTransform& camera)
 		case 'M':
 			system->ReplaceGenerators(CreateGenerator(BLAST));
 			break;
+		case ',':
+			system->particles.Clear();
+			break;
 		default:
 			break;
 		}

@@ -46,6 +46,12 @@ void Particle::Integrate(double t)
 	lifetime -= t;
 }
 
+Particle* Particle::SetPos(PxVec3 p)
+{
+	pose.p = p;
+	return this;
+}
+
 Particle* Particle::SetVel(PxVec3 v)
 {
 	vel = v;

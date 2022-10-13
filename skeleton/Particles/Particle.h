@@ -30,6 +30,7 @@ public:
 	~Particle();
 	virtual void Integrate(double t);
 
+	Particle* SetPos(PxVec3 p);
 	Particle* SetVel(PxVec3 v);
 	Particle* SetAcc(PxVec3 a);
 	Particle* SetDamp(double damp);
