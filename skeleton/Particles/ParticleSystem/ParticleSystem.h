@@ -14,7 +14,7 @@ class ParticleSystem : public Particle
 {
 public: 
 	ParticleSystem(ParticleGenerator* generator = nullptr, PxVec3 p = { 0, 0, 0 });
-	~ParticleSystem();
+	~ParticleSystem() override;
 
 	void Integrate(double t) override;
 	void AddGenerator(ParticleGenerator* generator);

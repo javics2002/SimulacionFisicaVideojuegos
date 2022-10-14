@@ -18,6 +18,8 @@
     <ClCompile Include="Particles\ParticleSystem\ParticleSystem.cpp" />
     <ClCompile Include="Particles\ParticleSystem\SimpleParticleGenerator.cpp" />
     <ClCompile Include="Particles\ParticleSystem\BoxParticleGenerator.cpp" />
+    <ClCompile Include="Particles\ParticleSystem\FireworkGenerator.cpp" />
+    <ClCompile Include="Particles\Firework.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core.hpp" />
@@ -39,6 +41,8 @@
     <ClInclude Include="Particles\ParticleSystem\ParticleSystem.h" />
     <ClInclude Include="Particles\ParticleSystem\ParticleSystems.h" />
     <ClInclude Include="Particles\ParticleSystem\BoxParticleGenerator.h" />
+    <ClInclude Include="Particles\ParticleSystem\FireworkGenerator.h" />
+    <ClInclude Include="Particles\Firework.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Render">

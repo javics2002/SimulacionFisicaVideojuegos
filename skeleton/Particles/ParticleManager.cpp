@@ -1,5 +1,6 @@
 #include "ParticleManager.h"
 #include "Particle.h"
+#include "ParticleSystem/ParticleSystem.h"
 
 ParticleManager::ParticleManager()
 {
@@ -53,6 +54,14 @@ bool ParticleManager::Remove(vector<Particle*>::iterator& it)
 
 void ParticleManager::Clear()
 {
+	/*ParticleSystem* system = nullptr;
+	if (!mParticles.empty()) {
+		system = dynamic_cast<ParticleSystem*>(*mParticles.begin());
+		delete system;
+	}
+	*/
+
+	
 	for (auto p : mParticles)
 		delete p;
 

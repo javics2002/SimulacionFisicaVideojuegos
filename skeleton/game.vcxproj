@@ -253,6 +253,8 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Particles\Firework.cpp" />
+    <ClCompile Include="Particles\ParticleSystem\FireworkGenerator.cpp" />
     <ClCompile Include="Particles\ParticleSystem\BoxParticleGenerator.cpp" />
     <ClCompile Include="callbacks.cpp" />
     <ClCompile Include="main.cpp" />
@@ -268,6 +270,8 @@
     <ClCompile Include="Scene.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Particles\Firework.h" />
+    <ClInclude Include="Particles\ParticleSystem\FireworkGenerator.h" />
     <ClInclude Include="Particles\ParticleSystem\BoxParticleGenerator.h" />
     <ClInclude Include="callbacks.hpp" />
     <ClInclude Include="core.hpp" />

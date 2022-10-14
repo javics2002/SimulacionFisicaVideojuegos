@@ -2,17 +2,19 @@
 #include "RenderUtils.hpp"
 #include <iostream>
 
-#include "Particles/Particle.h"
+#include "Particles/Firework.h"
 #include "Particles/ParticleSystem/ParticleSystems.h"
 
 Scene::Scene()
 {
-	LoadScene(LAST_SCENE);
-
 	cout << "Pulsa los numeros para cambiar entre las escenas.\n"
 		<< "0: Particula con velocidad constante\n"
 		<< "1: Particula con aceleracion y damping\n"
-		<< "2: Proyectiles\n\n";
+		<< "2: Proyectiles\n"
+		<< "3: Sistema de particulas\n"
+		<< "4: Fuegos artificiales\n\n";
+
+	LoadScene(LAST_SCENE);
 }
 
 Scene::~Scene()
@@ -64,16 +66,17 @@ void Scene::LoadScene(int newID)
 			<< "V: Fuego\n"
 			<< "B: Lluvia\n"
 			<< "N: Chispas\n"
-			<< "M: Explosion\n";
+			<< "M: Explosion\n"
+			<< ",: Borrar particulas\n";
 
 
 		particles.Add(new ParticleSystem(CreateGenerator(FOUNTAIN)));
 		break;
 	case 4:
 		cout << "Puedes lanzar fuegos artificiales.\n"
-			<< "Z: -\n"
-			<< "X: -\n"
-			<< "C: -\n"
+			<< "Z: Brocado\n"
+			<< "X: Crisantemo\n"
+			<< "C: Cometa\n"
 			<< "V: -\n"
 			<< "B: -\n"
 			<< "N: -\n"
@@ -130,7 +133,6 @@ void Scene::KeyPress(unsigned char key, const physx::PxTransform& camera)
 	case 3:
 	{
 		ParticleSystem* system = static_cast<ParticleSystem*>(particles.Get(0));
-		system->particleGenerators.Clear();
 
 		switch (toupper(key)) {
 		case 'Z':
@@ -156,6 +158,40 @@ void Scene::KeyPress(unsigned char key, const physx::PxTransform& camera)
 			break;
 		case ',':
 			system->particles.Clear();
+			break;
+		default:
+			break;
+		}
+	}
+		break;
+	case 4:
+	{
+		ParticleSystem* system = static_cast<ParticleSystem*>(particles.Get(0));
+
+		switch (toupper(key)) {
+		case 'Z':
+			system->particles.Add(new Firework(BROCADE));
+			break;
+		case 'X':
+			system->particles.Add(new Firework(CHRYSANTHEMUM));
+			break;
+		case 'C':
+			system->particles.Add(new Firework(COMET));
+			break;
+		case 'V':
+			//system->ReplaceGenerators(CreateGenerator(FIRE));
+			break;
+		case 'B':
+			//system->ReplaceGenerators(CreateGenerator(RAIN));
+			break;
+		case 'N':
+			//system->ReplaceGenerators(CreateGenerator(SPARK));
+			break;
+		case 'M':
+			//system->ReplaceGenerators(CreateGenerator(BLAST));
+			break;
+		case ',':
+			//system->particles.Clear();
 			break;
 		default:
 			break;

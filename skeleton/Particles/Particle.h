@@ -3,6 +3,7 @@
 #include "PxPhysicsAPI.h"
 class RenderItem;
 
+using namespace std;
 using namespace physx;
 
 //Cuando la particula se aleje de este radio, morira
@@ -27,7 +28,7 @@ class Particle
 public:
 	Particle(PxVec3 p = { 0, 0, 0 }, bool visible = true);
 	Particle(Particle* p);
-	~Particle();
+	virtual ~Particle();
 	virtual void Integrate(double t);
 
 	Particle* SetPos(PxVec3 p);
