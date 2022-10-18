@@ -27,7 +27,7 @@ Particle* ParticleManager::Get(int id)
 	else return nullptr;
 }
 
-bool ParticleManager::Remove(int id)
+bool ParticleManager::Remove(int id) noexcept
 {
 	if (id < 0 && id >= mParticles.size())
 		return false;
@@ -44,7 +44,7 @@ bool ParticleManager::Remove(int id)
 	return true;
 }
 
-bool ParticleManager::Remove(vector<Particle*>::iterator& it)
+bool ParticleManager::Remove(vector<Particle*>::iterator& it) noexcept
 {
 	Particle* aux = *it;
 	it = mParticles.erase(it);
@@ -60,12 +60,17 @@ void ParticleManager::Clear()
 		delete system;
 	}
 	*/
-
 	
 	for (auto p : mParticles)
 		delete p;
 
 	mParticles.clear();
+}
+
+void ParticleManager::AddSafe(Particle* p) noexcept
+{
+	if(p != nullptr)
+		particleQueue.push(p);
 }
 
 void ParticleManager::Integrate(double t)
@@ -79,5 +84,10 @@ void ParticleManager::Integrate(double t)
 
 		(*p)->Integrate(t);
 		p++;
+	}
+
+	while (particleQueue.size() > 0) {
+		mParticles.push_back(particleQueue.front());
+		particleQueue.pop();
 	}
 }

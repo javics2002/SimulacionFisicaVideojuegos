@@ -9,7 +9,7 @@
 using namespace std;
 using namespace physx;
 
-constexpr int LAST_SCENE = 3;
+constexpr int LAST_SCENE = 4;
 
 class Scene
 {

@@ -9,6 +9,7 @@ using namespace std;
 using namespace physx;
 
 class ParticleGenerator;
+enum FireworkType;
 
 class ParticleSystem : public Particle
 {
@@ -20,6 +21,7 @@ public:
 	void AddGenerator(ParticleGenerator* generator);
 	void ClearGenerators();
 	void ReplaceGenerators(ParticleGenerator* generator);
+	void ShootFirework(FireworkType type);
 
 	ParticleManager particles;
 	ParticleManager particleGenerators;

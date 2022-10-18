@@ -81,6 +81,8 @@ void Scene::LoadScene(int newID)
 			<< "B: -\n"
 			<< "N: -\n"
 			<< "M: -\n";
+
+		particles.Add(new ParticleSystem());
 		break;
 	default:
 		cout << "Scene " << mID << " doesn't exist.\n";
@@ -170,13 +172,13 @@ void Scene::KeyPress(unsigned char key, const physx::PxTransform& camera)
 
 		switch (toupper(key)) {
 		case 'Z':
-			system->particles.Add(new Firework(BROCADE));
+			system->ShootFirework(BROCADE);
 			break;
 		case 'X':
-			system->particles.Add(new Firework(CHRYSANTHEMUM));
+			system->ShootFirework(CHRYSANTHEMUM);
 			break;
 		case 'C':
-			system->particles.Add(new Firework(COMET));
+			system->ShootFirework(COMET);
 			break;
 		case 'V':
 			//system->ReplaceGenerators(CreateGenerator(FIRE));

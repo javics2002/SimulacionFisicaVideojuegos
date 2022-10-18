@@ -1,5 +1,6 @@
 #include "ParticleSystem.h"
-#include "GaussianParticleGenerator.h"
+#include "ParticleGenerator.h"
+#include "../Firework.h"
 
 ParticleSystem::ParticleSystem(ParticleGenerator* generator, PxVec3 p) : Particle(p, false)
 {
@@ -37,4 +38,9 @@ void ParticleSystem::ReplaceGenerators(ParticleGenerator* generator)
 {
 	ClearGenerators();
 	AddGenerator(generator);
+}
+
+void ParticleSystem::ShootFirework(FireworkType type)
+{
+	particles.Add(new Firework(this, type));
 }
