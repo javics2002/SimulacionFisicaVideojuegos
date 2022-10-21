@@ -65,6 +65,12 @@ void ParticleManager::Clear()
 		delete p;
 
 	mParticles.clear();
+
+	while (particleQueue.size() > 0) {
+		Particle *p = particleQueue.front();
+		particleQueue.pop();
+		delete p;
+	}
 }
 
 void ParticleManager::AddSafe(Particle* p) noexcept

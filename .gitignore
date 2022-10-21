@@ -38,6 +38,3 @@ common/**
 .vs/game/FileContentIndex**
 skeleton/debug/**
 /skeleton/.vs/game/**
-
-# Zip files
-*.zip

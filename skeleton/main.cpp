@@ -112,6 +112,8 @@ void cleanupPhysics(bool interactive)
 {
 	PX_UNUSED(interactive);
 
+	mScene->ClearScene();
+
 	// Rigid Body ++++++++++++++++++++++++++++++++++++++++++
 	gScene->release();
 	gDispatcher->release();
@@ -122,8 +124,6 @@ void cleanupPhysics(bool interactive)
 	transport->release();
 	
 	gFoundation->release();
-
-	mScene->ClearScene();
 }
 
 // Function called when a key is pressed

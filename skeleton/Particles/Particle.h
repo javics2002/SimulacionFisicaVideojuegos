@@ -11,6 +11,7 @@ constexpr double squaredRadius = 1000000;
 
 class Particle
 {
+protected:
 	PxTransform pose;
 	PxVec3 vel, acc;
 	double damping;
@@ -18,6 +19,7 @@ class Particle
 	double inverseMass;
 
 	PxVec4 color;
+	PxVec4 endColor = { 0, 0, 0, 0 };
 	PxShape* shape = nullptr;
 
 	RenderItem* renderItem = nullptr;

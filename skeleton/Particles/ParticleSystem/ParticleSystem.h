@@ -23,6 +23,7 @@ public:
 	void ReplaceGenerators(ParticleGenerator* generator);
 	void ShootFirework(FireworkType type);
 
+
 	ParticleManager particles;
 	ParticleManager particleGenerators;
 };

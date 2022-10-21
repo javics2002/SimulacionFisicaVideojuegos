@@ -67,7 +67,8 @@ void Scene::LoadScene(int newID)
 			<< "B: Lluvia\n"
 			<< "N: Chispas\n"
 			<< "M: Explosion\n"
-			<< ",: Borrar particulas\n";
+			<< ",: Nieve\n"
+			<< ".: Borrar particulas\n";
 
 
 		particles.Add(new ParticleSystem(CreateGenerator(FOUNTAIN)));
@@ -77,8 +78,8 @@ void Scene::LoadScene(int newID)
 			<< "Z: Brocado\n"
 			<< "X: Crisantemo\n"
 			<< "C: Cometa\n"
-			<< "V: -\n"
-			<< "B: -\n"
+			<< "V: Delay\n"
+			<< "B: El gordo\n"
 			<< "N: -\n"
 			<< "M: -\n";
 
@@ -159,6 +160,9 @@ void Scene::KeyPress(unsigned char key, const physx::PxTransform& camera)
 			system->ReplaceGenerators(CreateGenerator(BLAST));
 			break;
 		case ',':
+			system->ReplaceGenerators(CreateGenerator(SNOW));
+			break;
+		case '.':
 			system->particles.Clear();
 			break;
 		default:
@@ -181,10 +185,10 @@ void Scene::KeyPress(unsigned char key, const physx::PxTransform& camera)
 			system->ShootFirework(COMET);
 			break;
 		case 'V':
-			//system->ReplaceGenerators(CreateGenerator(FIRE));
+			system->ShootFirework(DELAY_CRACKLE);
 			break;
 		case 'B':
-			//system->ReplaceGenerators(CreateGenerator(RAIN));
+			system->ShootFirework(GORDO);
 			break;
 		case 'N':
 			//system->ReplaceGenerators(CreateGenerator(SPARK));

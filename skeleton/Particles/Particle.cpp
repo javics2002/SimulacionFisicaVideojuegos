@@ -3,6 +3,7 @@
 #include "../RenderUtils.hpp"
 #include <climits>
 #include <iostream>
+#include <cmath>
 
 Particle::Particle(PxVec3 p, bool visible) : pose(PxTransform(p)), vel({ 0, 0, 0 }), acc({ 0, 0, 0 }),
 	damping(.998), inverseMass(1), color({ 1, 1, 1, 1 }), active(true), 
@@ -29,6 +30,15 @@ Particle::~Particle()
 		DeregisterRenderItem(renderItem);
 }
 
+//float lerp(float a, float b, float f)
+//{
+//	return a + f * (b - a);
+//}
+//
+//PxVec4 lerp(PxVec4 a, PxVec4 b, float f) {
+//	return {lerp}
+//}
+
 void Particle::Integrate(double t)
 {
 	if (inverseMass <= PX_EPS_F64)
@@ -44,6 +54,11 @@ void Particle::Integrate(double t)
 	}
 
 	lifetime -= t;
+
+	
+
+	//if (endColor.w != 0)
+	//	SetColor(lerp());
 }
 
 Particle* Particle::SetPos(PxVec3 p)

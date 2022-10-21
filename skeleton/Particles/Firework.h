@@ -6,7 +6,7 @@
 
 class ParticleSystem;
 
-enum FireworkType { BROCADE, CHRYSANTHEMUM, COMET };
+enum FireworkType { BROCADE, CHRYSANTHEMUM, COMET, DELAY_CRACKLE, GORDO, };
 enum FireworkColor { RED, ORANGE, YELLOW, LIME, GREEN, CYAN, BLUE, VIOLET, MAGENTA, GOLD, WHITE, LAST };
 static vector<PxVec4> fireworkColor = { {1, 0, 0, 1}, {1, .5, 0, 1}, {1, 1, 0, 1}, {.7, 1, .3, 1}, 
 	{0, 1, 0, 1}, {0, 1, 1, 1}, {0, 0, 1, 1}, {.6, .2, .8, 1}, {1, 0, 1, 1}, {.6, .5, 0, 1}, {1, 1, 1, 1} };

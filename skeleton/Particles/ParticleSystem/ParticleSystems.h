@@ -4,7 +4,7 @@
 #include "GaussianParticleGenerator.h"
 #include "BoxParticleGenerator.h"
 
-enum ParticleSystemType { FOUNTAIN, MIST, DUST, FIRE, RAIN, SPARK, BLAST };
+enum ParticleSystemType { FOUNTAIN, MIST, DUST, FIRE, RAIN, SPARK, BLAST, SNOW };
 
 static ParticleGenerator* CreateGenerator(ParticleSystemType type) {
 	Particle* prefab = new Particle({ 0, 0, 0 }, false);
@@ -29,6 +29,9 @@ static ParticleGenerator* CreateGenerator(ParticleSystemType type) {
 		//return;
 	case BLAST:
 		//return;
+	case SNOW:
+		prefab->SetAcc({ .2, -2, .5 })->SetShape(CreateShape(PxSphereGeometry(.05)));
+		return new BoxParticleGenerator(prefab, 10000, { 0, 0, 0 }, { 100, 100, 100 }, { .1,.1,.1 });
 	default:
 		return new SimpleParticleGenerator(prefab);
 	}
