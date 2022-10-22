@@ -24,6 +24,8 @@ Firework::Firework(Firework* f) : Particle(f), system(f->system), type(f->type)
 
 	if (type == GORDO)
 		SetLifetime(0.2f * lifetimeDistribution(generator));
+	else if(type ==FOUNTAIN_FIREWORK)
+		SetLifetime(3 * lifetimeDistribution(generator));
 	else
 		SetLifetime(lifetimeDistribution(generator));
 	SetColor(fireworkColor[color]);
@@ -112,6 +114,18 @@ void Firework::CreateFirework(FireworkType type)
 		SetVel(PxVec3(velocityDistribution(generator), 55 + velocityDistribution(generator), velocityDistribution(generator)));
 		SetAcc({ 0, -10, 0 });
 		SetDamp(.7);
+		break;
+	case FOUNTAIN_FIREWORK:
+		generations = 1;
+		divitions = 50;
+		lifetimeDistribution = normal_distribution<>(2, .3);
+		velocityDistribution = normal_distribution<>(0, .1);
+		blastForce = 10.0f;
+		blastMultiplier = 1.0f;
+
+		SetVel(PxVec3(velocityDistribution(generator), 30 + velocityDistribution(generator), velocityDistribution(generator)));
+		SetAcc({ 0, -10, 0 });
+		SetDamp(.98);
 		break;
 	}
 

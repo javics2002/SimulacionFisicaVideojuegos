@@ -80,8 +80,7 @@ void Scene::LoadScene(int newID)
 			<< "C: Cometa\n"
 			<< "V: Delay\n"
 			<< "B: El gordo\n"
-			<< "N: -\n"
-			<< "M: -\n";
+			<< "N: Fuente\n";
 
 		particles.Add(new ParticleSystem());
 		break;
@@ -136,7 +135,7 @@ void Scene::KeyPress(unsigned char key, const physx::PxTransform& camera)
 	case 3:
 	{
 		ParticleSystem* system = static_cast<ParticleSystem*>(particles.Get(0));
-
+		system->particles.Clear();
 		switch (toupper(key)) {
 		case 'Z':
 			system->ReplaceGenerators(CreateGenerator(FOUNTAIN));
@@ -191,13 +190,7 @@ void Scene::KeyPress(unsigned char key, const physx::PxTransform& camera)
 			system->ShootFirework(GORDO);
 			break;
 		case 'N':
-			//system->ReplaceGenerators(CreateGenerator(SPARK));
-			break;
-		case 'M':
-			//system->ReplaceGenerators(CreateGenerator(BLAST));
-			break;
-		case ',':
-			//system->particles.Clear();
+			system->ShootFirework(FOUNTAIN_FIREWORK);
 			break;
 		default:
 			break;

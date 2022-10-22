@@ -12,7 +12,6 @@ ParticleSystem::~ParticleSystem()
 {
 	ClearGenerators();
 	particles.Clear();
-	//Particle::~Particle();
 }
 
 void ParticleSystem::Integrate(double t)

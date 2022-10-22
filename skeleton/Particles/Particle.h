@@ -19,7 +19,7 @@ protected:
 	double inverseMass;
 
 	PxVec4 color;
-	PxVec4 endColor = { 0, 0, 0, 0 };
+	PxVec4 endColor;
 	PxShape* shape = nullptr;
 
 	RenderItem* renderItem = nullptr;
@@ -39,6 +39,7 @@ public:
 	Particle* SetDamp(double damp);
 	Particle* SetIMass(double iMass);
 	Particle* SetColor(PxVec4 col);
+	Particle* SetEndColor(PxVec4 col);
 	Particle* SetShape(PxShape* shp);
 	Particle* SetLifetime(double life);
 

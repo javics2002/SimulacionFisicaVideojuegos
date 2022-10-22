@@ -17,21 +17,32 @@ static ParticleGenerator* CreateGenerator(ParticleSystemType type) {
 	case MIST:
 		prefab->SetVel({.2, 0, .15})->SetColor({ .9, .9, .9, .1 })
 			->SetShape(CreateShape(PxSphereGeometry(.01)));
-		return new BoxParticleGenerator(prefab, 10000, { 40, 45, 40 }, { 1, 1, 1 }, { .1, .1, .1 });
+		return new BoxParticleGenerator(prefab, 10000, { 48, 49, 48 }, { 1, 1, 1 }, { .1, .1, .1 });
 	case DUST:
 		prefab->SetShape(CreateShape(PxSphereGeometry(.05)));
 		return new BoxParticleGenerator(prefab, 10000, { 0, 0, 0 }, { 100, 100, 100 }, { .1,.1,.1 });
 	case FIRE:
-		//return;
+		prefab->SetVel({ 0, 0, 0 })->SetDamp(.8)->SetAcc({ -.2, 1, .1 })
+			->SetColor({ 1, .7, 0, 1 })->SetEndColor({ .6, 0, 0, 1 })
+			->SetShape(CreateShape(PxSphereGeometry(.2)))->SetLifetime(5);
+		return new GaussianParticleGenerator(prefab, 0, 1);
 	case RAIN:
-		//return;
+		prefab->SetVel({ 0, -10, .5 })->SetAcc({ .2, -10, .5 })->SetDamp(.9)->SetShape(CreateShape(PxSphereGeometry(.02)))
+			->SetColor({.4f, .5f, .9f, 1});
+		return new BoxParticleGenerator(prefab, 10000, { 0, 100, 0 }, { 50, 100, 50 }, { .1,.1,.1 });
 	case SPARK:
-		//return;
+		prefab->SetVel({ 0, 10, 0 })->SetAcc({ 0, -10, 0 })
+			->SetColor({ 1, 1, 1, 1 })->SetEndColor({ 1, 1, 0, 1 })
+			->SetShape(CreateShape(PxSphereGeometry(.2)))->SetLifetime(1);
+		return new GaussianParticleGenerator(prefab, 5, 4);
 	case BLAST:
-		//return;
+		prefab->SetVel({ 0, 10, 0 })->SetAcc({ 0, -10, 0 })
+			->SetColor({ 1, 1, .9, 1 })->SetEndColor({ .5, .3, 0, 1 })
+			->SetShape(CreateShape(PxSphereGeometry(1)))->SetLifetime(3);
+		return new BoxParticleGenerator(prefab, 5000, { 0, 10, 0 }, { .5, .5, .5 }, { 20, 20, 20 });
 	case SNOW:
-		prefab->SetAcc({ .2, -2, .5 })->SetShape(CreateShape(PxSphereGeometry(.05)));
-		return new BoxParticleGenerator(prefab, 10000, { 0, 0, 0 }, { 100, 100, 100 }, { .1,.1,.1 });
+		prefab->SetAcc({ .2, -2, .5 })->SetDamp(.3)->SetShape(CreateShape(PxSphereGeometry(.05)));
+		return new BoxParticleGenerator(prefab, 10000, { 0, 100, 0 }, { 100, 100, 100 }, { .1,.1,.1 });
 	default:
 		return new SimpleParticleGenerator(prefab);
 	}

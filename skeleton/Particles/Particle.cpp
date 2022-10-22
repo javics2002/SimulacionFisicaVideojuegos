@@ -6,8 +6,8 @@
 #include <cmath>
 
 Particle::Particle(PxVec3 p, bool visible) : pose(PxTransform(p)), vel({ 0, 0, 0 }), acc({ 0, 0, 0 }),
-	damping(.998), inverseMass(1), color({ 1, 1, 1, 1 }), active(true), 
-	startingLife(DBL_MAX), lifetime(startingLife)
+	damping(.998), inverseMass(1), color({ 1, 1, 1, 1 }),
+	endColor({ 0, 0, 0, 0 }), active(true), startingLife(DBL_MAX), lifetime(startingLife)
 {
 	shape = CreateShape(PxSphereGeometry(1.0));
 	
@@ -16,7 +16,8 @@ Particle::Particle(PxVec3 p, bool visible) : pose(PxTransform(p)), vel({ 0, 0, 0
 }
 
 Particle::Particle(Particle* p) : pose(PxTransform(PxVec3(p->pose.p))), vel(p->vel), acc(p->acc),
-	damping(p->damping), inverseMass(p->damping), color(PxVec4(p->color)), active(true), 
+	damping(p->damping), inverseMass(p->damping), color(PxVec4(p->color)),
+	endColor(PxVec4(p->endColor)), active(true),
 	startingLife(p->startingLife), lifetime(startingLife), shape(p->shape)
 {
 	renderItem = new RenderItem(shape, &pose, color);
@@ -30,14 +31,14 @@ Particle::~Particle()
 		DeregisterRenderItem(renderItem);
 }
 
-//float lerp(float a, float b, float f)
-//{
-//	return a + f * (b - a);
-//}
-//
-//PxVec4 lerp(PxVec4 a, PxVec4 b, float f) {
-//	return {lerp}
-//}
+float lerp(float a, float b, float f)
+{
+	return a + f * (b - a);
+}
+
+PxVec4 lerp(PxVec4 a, PxVec4 b, float f) {
+	return { lerp(a.x, b.x, f), lerp(a.y, b.y, f), lerp(a.z, b.z, f), lerp(a.w, b.w, f) };
+}
 
 void Particle::Integrate(double t)
 {
@@ -55,10 +56,9 @@ void Particle::Integrate(double t)
 
 	lifetime -= t;
 
-	
-
-	//if (endColor.w != 0)
-	//	SetColor(lerp());
+	if (endColor.w != 0)
+		if (renderItem != nullptr)
+			renderItem->color = lerp(color, endColor, (startingLife - lifetime) / startingLife);
 }
 
 Particle* Particle::SetPos(PxVec3 p)
@@ -97,6 +97,13 @@ Particle* Particle::SetColor(PxVec4 col)
 
 	if (renderItem != nullptr) 
 		renderItem->color = color;
+
+	return this;
+}
+
+Particle* Particle::SetEndColor(PxVec4 col)
+{
+	endColor = col;
 
 	return this;
 }
