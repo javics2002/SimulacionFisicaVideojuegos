@@ -5,14 +5,16 @@
 #include <iostream>
 #include <cmath>
 
-Particle::Particle(PxVec3 p, bool visible) : pose(PxTransform(p)), vel({ 0, 0, 0 }), acc({ 0, 0, 0 }),
-	damping(.998), inverseMass(1), color({ 1, 1, 1, 1 }),
-	endColor({ 0, 0, 0, 0 }), active(true), startingLife(DBL_MAX), lifetime(startingLife)
+Particle::Particle(PxVec3 p, bool visible, bool forces) : pose(PxTransform(p)), vel({ 0, 0, 0 }), acc({ 0, 0, 0 }),
+damping(.998), inverseMass(1), color({ 1, 1, 1, 1 }), endColor({ 0, 0, 0, 0 }), active(true),
+startingLife(DBL_MAX), lifetime(startingLife), checkForces(forces)
 {
 	shape = CreateShape(PxSphereGeometry(1.0));
 	
 	if(visible)
 		renderItem = new RenderItem(shape, &pose, color);
+
+	force = PxVec3(0);
 }
 
 Particle::Particle(Particle* p) : pose(PxTransform(PxVec3(p->pose.p))), vel(p->vel), acc(p->acc),
@@ -21,6 +23,8 @@ Particle::Particle(Particle* p) : pose(PxTransform(PxVec3(p->pose.p))), vel(p->v
 	startingLife(p->startingLife), lifetime(startingLife), shape(p->shape)
 {
 	renderItem = new RenderItem(shape, &pose, color);
+
+	force = PxVec3(0);
 }
 
 Particle::~Particle()
@@ -41,24 +45,45 @@ PxVec4 lerp(PxVec4 a, PxVec4 b, float f) {
 }
 
 void Particle::Integrate(double t)
-{
-	if (inverseMass <= PX_EPS_F64)
-		return;
-	
-	pose.p += vel * t;
-	vel += acc * t;
-	vel *= pow(damping, t);
+{	
+	if (checkForces) {
+		acc = force * inverseMass;
+		ClearForce();
+	}
 
+	switch (integrationMethod) {
+	default:
+	case EULER:
+		pose.p += vel * t;
+		vel += acc * t;
+		break;
+	case RUNGE_KUTTA:
+	{
+		constexpr int order = 4;
+		static int steps = 0;
+		if (steps++ >= order) {
+			int previous[order];
+			break;
+		}
+	}
+	case SEMI_IMPLICIT_EULER: 
+		vel += acc * t;
+		pose.p += vel * t;
+		break;
+	}
+	vel *= pow(damping, t);
+	
 	if (pose.p.y < 0 || pose.p.magnitudeSquared() > squaredRadius || lifetime < 0) {
+		//Se sale del area util
 		active = false;
 		return;
 	}
 
 	lifetime -= t;
 
-	if (endColor.w != 0)
-		if (renderItem != nullptr)
-			renderItem->color = lerp(color, endColor, (startingLife - lifetime) / startingLife);
+	if (endColor.w != 0 && renderItem != nullptr)
+		//Color interpolation
+		renderItem->color = lerp(color, endColor, (startingLife - lifetime) / startingLife);
 }
 
 Particle* Particle::SetPos(PxVec3 p)
@@ -122,6 +147,22 @@ Particle* Particle::SetLifetime(double life)
 {
 	lifetime = startingLife = life;
 	return this;
+}
+
+Particle* Particle::SetIntegrationMethod(IntegrationMethod method)
+{
+	integrationMethod = method;
+	return this;
+}
+
+void Particle::AddForce(PxVec3 newForce)
+{
+	force += newForce;
+}
+
+void Particle::ClearForce()
+{
+	force = PxVec3(0);
 }
 
 PxVec3 Particle::GetVel()

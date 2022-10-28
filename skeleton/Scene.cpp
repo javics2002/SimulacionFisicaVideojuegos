@@ -4,6 +4,7 @@
 
 #include "Particles/Firework.h"
 #include "Particles/ParticleSystem/ParticleSystems.h"
+#include "Force/ForceRegistry.h"
 
 Scene::Scene()
 {
