@@ -3,13 +3,14 @@
 #include "Particles/Projectile.h"
 #include "Particles/ParticleManager.h"
 #include "PxPhysicsAPI.h"
+#include "Force/ForceRegistry.h"
 
 #include <random>
 
 using namespace std;
 using namespace physx;
 
-constexpr int LAST_SCENE = 4;
+constexpr int LAST_SCENE = 5;
 
 class Scene
 {
@@ -17,6 +18,9 @@ class Scene
 
 	random_device rand;
 	default_random_engine generator = default_random_engine(rand());
+
+	ForceRegistry fr;
+	vector<ForceGenerator*> fg;
 
 public:
 	Scene();

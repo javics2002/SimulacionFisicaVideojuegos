@@ -1,6 +1,8 @@
 #pragma once
+#include "PxPhysicsAPI.h"
 
 using namespace std;
+using namespace physx;
 
 class Particle;
 

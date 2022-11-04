@@ -162,10 +162,15 @@ void Particle::AddForce(PxVec3 newForce)
 
 void Particle::ClearForce()
 {
-	force = PxVec3(0);
+	force *= 0;
 }
 
 PxVec3 Particle::GetVel()
 {
 	return vel;
+}
+
+double Particle::GetInvMass()
+{
+	return inverseMass;
 }

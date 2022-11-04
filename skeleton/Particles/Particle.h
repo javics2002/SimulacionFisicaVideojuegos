@@ -55,6 +55,7 @@ public:
 	void ClearForce();
 
 	PxVec3 GetVel();
+	double GetInvMass();
 
 	bool active;
 };

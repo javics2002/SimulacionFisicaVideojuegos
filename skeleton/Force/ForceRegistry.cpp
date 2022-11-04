@@ -15,4 +15,18 @@ void ForceRegistry::AddRegistry(ForceGenerator* fg, Particle* p)
 
 void ForceRegistry::DeleteParticle(Particle* p)
 {
+	for (auto it = begin(); it != end();)
+		if (it->second == p)
+			it = erase(it);
+		else
+			it++;
+}
+
+void ForceRegistry::DeleteForce(ForceGenerator* fg)
+{
+	for (auto it = begin(); it != end();)
+		if (it->first == fg)
+			it = erase(it);
+		else
+			it++;
 }
