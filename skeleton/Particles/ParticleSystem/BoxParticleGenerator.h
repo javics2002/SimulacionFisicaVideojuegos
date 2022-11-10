@@ -23,7 +23,8 @@ protected:
 	uniform_real_distribution<float> uniformZ;
 
 public:
-	BoxParticleGenerator(Particle* p, int num, PxVec3 ori, PxVec3 dim, PxVec3 velVar);
+	BoxParticleGenerator(Particle* p, int num, PxVec3 ori, PxVec3 dim, PxVec3 velVar, 
+		ForceRegistry* forceRegistry = nullptr);
 	vector<Particle*> GenerateParticles() override;
 };
 

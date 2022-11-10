@@ -19,8 +19,8 @@ startingLife(DBL_MAX), lifetime(startingLife), checkForces(forces)
 
 Particle::Particle(Particle* p) : pose(PxTransform(PxVec3(p->pose.p))), vel(p->vel), acc(p->acc),
 	damping(p->damping), inverseMass(p->damping), color(PxVec4(p->color)),
-	endColor(PxVec4(p->endColor)), active(true),
-	startingLife(p->startingLife), lifetime(startingLife), shape(p->shape)
+	endColor(PxVec4(p->endColor)), active(true), startingLife(p->startingLife), 
+	lifetime(startingLife), shape(p->shape), checkForces(p->checkForces)
 {
 	renderItem = new RenderItem(shape, &pose, color);
 
@@ -136,7 +136,7 @@ Particle* Particle::SetEndColor(PxVec4 col)
 Particle* Particle::SetShape(PxShape* shp)
 {
 	shape = shp;
-
+	
 	if (renderItem != nullptr)
 		renderItem->shape = shape;
 
@@ -152,6 +152,18 @@ Particle* Particle::SetLifetime(double life)
 Particle* Particle::SetIntegrationMethod(IntegrationMethod method)
 {
 	integrationMethod = method;
+	return this;
+}
+
+Particle* Particle::SetWindFriction1(double wf1)
+{
+	windfriction1 = wf1;
+	return this;
+}
+
+Particle* Particle::SetWindFriction2(double wf2)
+{
+	windfriction2 = wf2;
 	return this;
 }
 
@@ -173,4 +185,14 @@ PxVec3 Particle::GetVel()
 double Particle::GetInvMass()
 {
 	return inverseMass;
+}
+
+double Particle::GetWindFriction1()
+{
+	return windfriction1;
+}
+
+double Particle::GetWindFriction2()
+{
+	return windfriction2;
 }

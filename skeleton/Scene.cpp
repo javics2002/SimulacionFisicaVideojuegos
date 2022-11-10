@@ -102,7 +102,28 @@ void Scene::LoadScene(int newID)
 		break;
 	}
 	case 6:
-		particles.Add(new ParticleSystem(CreateGenerator(DUST)));
+	{
+		//No noto diferencia entre distintas resistencias al viento
+		//Como accedo a los datos que necesito en la tarea opcional?
+		//El area que da al viento y la forma y el radio son solo shape para la particula
+		Wind* wind = new Wind({ 1, 0, -3 });
+		ParticleSystem* system = new ParticleSystem((new BoxParticleGenerator((new Particle({ 0, 0, 0 },
+			false, true))->SetShape(CreateShape(PxSphereGeometry(.5)))
+			->SetWindFriction1(10)->SetWindFriction2(0),
+			4000, { 0, 0, 0 }, { 100, 100, 100 }, { .1,.1,.1 }, &fr))
+			->AddForceGenerator(wind));
+		system->AddGenerator((new BoxParticleGenerator((new Particle({ 0, 0, 0 },
+			false, true))->SetShape(CreateShape(PxSphereGeometry(.5)))->SetColor({1, .8, .3, 1})
+			->SetWindFriction1(0)->SetWindFriction2(10),
+			4000, { 0, 0, 0 }, { 100, 100, 100 }, { .1,.1,.1 }, &fr))
+			->AddForceGenerator(wind));
+		system->AddGenerator((new BoxParticleGenerator((new Particle({ 0, 0, 0 },
+			false, true))->SetShape(CreateShape(PxSphereGeometry(.5)))->SetColor({ .2, 1, .3, 1 })
+			->SetWindFriction1(10)->SetWindFriction2(10),
+			4000, { 0, 0, 0 }, { 100, 100, 100 }, { .1,.1,.1 }, &fr))
+			->AddForceGenerator(wind));
+		particles.Add(system);
+	}
 		break;
 	default:
 		cout << "Scene " << mID << " doesn't exist.\n";

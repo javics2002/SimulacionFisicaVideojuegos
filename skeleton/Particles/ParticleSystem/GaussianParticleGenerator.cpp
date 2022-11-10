@@ -1,7 +1,7 @@
 #include "GaussianParticleGenerator.h"
 
-GaussianParticleGenerator::GaussianParticleGenerator(Particle* p, double mean, double deviation) 
-	: ParticleGenerator(p)
+GaussianParticleGenerator::GaussianParticleGenerator(Particle* p, double mean, double deviation,
+	ForceRegistry* forceRegistry) : ParticleGenerator(p, forceRegistry)
 {
 	normal = normal_distribution<>(mean, deviation);
 }

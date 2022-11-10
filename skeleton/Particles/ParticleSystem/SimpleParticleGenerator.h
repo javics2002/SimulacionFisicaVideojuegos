@@ -5,7 +5,7 @@
 class SimpleParticleGenerator : public ParticleGenerator
 {
 public:
-	SimpleParticleGenerator(Particle* p);
+	SimpleParticleGenerator(Particle* p, ForceRegistry* forceRegistry = nullptr);
 	vector<Particle*> GenerateParticles() override;
 };
 

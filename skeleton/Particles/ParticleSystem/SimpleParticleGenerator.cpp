@@ -1,6 +1,7 @@
 #include "SimpleParticleGenerator.h"
 
-SimpleParticleGenerator::SimpleParticleGenerator(Particle* p) : ParticleGenerator(p)
+SimpleParticleGenerator::SimpleParticleGenerator(Particle* p, ForceRegistry* forceRegistry) 
+	: ParticleGenerator(p, forceRegistry)
 {
 }
 

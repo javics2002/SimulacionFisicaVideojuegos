@@ -11,7 +11,8 @@ protected:
 	normal_distribution<> normal;
 
 public:
-	GaussianParticleGenerator(Particle* p, double mean = 0, double deviation = 1);
+	GaussianParticleGenerator(Particle* p, double mean = 0, double deviation = 1, 
+		ForceRegistry* forceRegistry = nullptr);
 	vector<Particle*> GenerateParticles() override;
 };
 

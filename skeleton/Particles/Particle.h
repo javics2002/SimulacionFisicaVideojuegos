@@ -34,6 +34,9 @@ protected:
 	IntegrationMethod integrationMethod = EULER;
 	bool checkForces = false;
 
+	double windfriction1 = 1;
+	double windfriction2 = 0;
+
 public:
 	Particle(PxVec3 p = { 0, 0, 0 }, bool visible = true, bool forces = false);
 	Particle(Particle* p);
@@ -50,12 +53,16 @@ public:
 	Particle* SetShape(PxShape* shp);
 	Particle* SetLifetime(double life);
 	Particle* SetIntegrationMethod(IntegrationMethod method);
+	Particle* SetWindFriction1(double wf1);
+	Particle* SetWindFriction2(double wf2);
 
 	void AddForce(PxVec3 newForce);
 	void ClearForce();
 
 	PxVec3 GetVel();
 	double GetInvMass();
+	double GetWindFriction1();
+	double GetWindFriction2();
 
 	bool active;
 };

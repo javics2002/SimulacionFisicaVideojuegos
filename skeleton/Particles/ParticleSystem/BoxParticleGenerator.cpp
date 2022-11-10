@@ -1,8 +1,9 @@
 #include "BoxParticleGenerator.h"
 
 BoxParticleGenerator::BoxParticleGenerator(Particle* p, int num, 
-	PxVec3 ori, PxVec3 dim, PxVec3 velVar) : ParticleGenerator(p), 
-	particleNum(num), origin(ori), dimensions(dim), velocityVariation(velVar)
+	PxVec3 ori, PxVec3 dim, PxVec3 velVar, ForceRegistry* forceRegistry) 
+	: ParticleGenerator(p, forceRegistry), particleNum(num), origin(ori), 
+	dimensions(dim), velocityVariation(velVar)
 {
 	normalX = normal_distribution<float>(p->GetVel().x, velocityVariation.x);
 	normalY = normal_distribution<float>(p->GetVel().y, velocityVariation.y);
