@@ -177,6 +177,11 @@ void Particle::ClearForce()
 	force *= 0;
 }
 
+PxVec3 Particle::GetPos()
+{
+	return pose.p;
+}
+
 PxVec3 Particle::GetVel()
 {
 	return vel;
@@ -195,4 +200,9 @@ double Particle::GetWindFriction1()
 double Particle::GetWindFriction2()
 {
 	return windfriction2;
+}
+
+bool Particle::GetCheckForces()
+{
+	return checkForces;
 }

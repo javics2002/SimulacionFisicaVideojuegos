@@ -10,7 +10,7 @@ using namespace physx;
 enum IntegrationMethod { EULER, SEMI_IMPLICIT_EULER, RUNGE_KUTTA };
 
 //Cuando la particula se aleje de este radio, morira
-constexpr double squaredRadius = 1000000;
+constexpr double squaredRadius = 10000000;
 
 class Particle
 {
@@ -59,10 +59,12 @@ public:
 	void AddForce(PxVec3 newForce);
 	void ClearForce();
 
+	PxVec3 GetPos();
 	PxVec3 GetVel();
 	double GetInvMass();
 	double GetWindFriction1();
 	double GetWindFriction2();
+	bool GetCheckForces();
 
 	bool active;
 };

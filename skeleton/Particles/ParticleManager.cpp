@@ -1,8 +1,9 @@
 #include "ParticleManager.h"
 #include "Particle.h"
 #include "ParticleSystem/ParticleSystem.h"
+#include "../Force/ForceRegistry.h"
 
-ParticleManager::ParticleManager()
+ParticleManager::ParticleManager(ForceRegistry* forceRegistry) : fr(forceRegistry)
 {
 }
 
@@ -27,7 +28,7 @@ Particle* ParticleManager::Get(int id)
 	else return nullptr;
 }
 
-bool ParticleManager::Remove(int id) noexcept
+bool ParticleManager::Remove(int id)
 {
 	if (id < 0 && id >= mParticles.size())
 		return false;
@@ -39,14 +40,18 @@ bool ParticleManager::Remove(int id) noexcept
 		i++;
 	}
 
+	if ((*it)->GetCheckForces())
+		fr->DeleteParticle(*it);
 	mParticles.erase(it);
 	delete* it;
 	return true;
 }
 
-bool ParticleManager::Remove(vector<Particle*>::iterator& it) noexcept
+bool ParticleManager::Remove(vector<Particle*>::iterator& it)
 {
 	Particle* aux = *it;
+	if((*it)->GetCheckForces())
+		fr->DeleteParticle(*it);
 	it = mParticles.erase(it);
 	delete aux;
 	return true;

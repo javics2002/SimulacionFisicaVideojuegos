@@ -9,6 +9,7 @@ class BoxParticleGenerator : public ParticleGenerator
 	PxVec3 origin;
 	PxVec3 dimensions;
 	PxVec3 velocityVariation;
+	double invMassVariation;
 
 	bool firstFrame = true;
 
@@ -21,10 +22,11 @@ protected:
 	uniform_real_distribution<float> uniformX;
 	uniform_real_distribution<float> uniformY;
 	uniform_real_distribution<float> uniformZ;
+	lognormal_distribution<> lognormalMass;
 
 public:
 	BoxParticleGenerator(Particle* p, int num, PxVec3 ori, PxVec3 dim, PxVec3 velVar, 
-		ForceRegistry* forceRegistry = nullptr);
+		double invMassVar = DBL_EPSILON, ForceRegistry* forceRegistry = nullptr);
 	vector<Particle*> GenerateParticles() override;
 };
 

@@ -2,7 +2,8 @@
 #include "ParticleGenerator.h"
 #include "../Firework.h"
 
-ParticleSystem::ParticleSystem(ParticleGenerator* generator, PxVec3 p) : Particle(p, false)
+ParticleSystem::ParticleSystem(ForceRegistry* fr, ParticleGenerator* generator, PxVec3 p) 
+	: Particle(p, false), particles(ParticleManager(fr)), particleGenerators(ParticleManager(fr))
 {
 	if (generator != nullptr)
 		AddGenerator(generator);

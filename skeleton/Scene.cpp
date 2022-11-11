@@ -5,7 +5,7 @@
 #include "Particles/Firework.h"
 #include "Particles/ParticleSystem/ParticleSystems.h"
 
-Scene::Scene()
+Scene::Scene() : particles(ParticleManager(&fr))
 {
 	cout << "Pulsa los numeros para cambiar entre las escenas.\n"
 		<< "0: Particula con velocidad constante\n"
@@ -51,7 +51,7 @@ void Scene::LoadScene(int newID)
 			->SetShape(CreateShape(PxSphereGeometry(.6))));
 		break;
 	case 3:
-		particles.Add(new ParticleSystem(CreateGenerator(FOUNTAIN)));
+		particles.Add(new ParticleSystem(&fr, CreateGenerator(FOUNTAIN)));
 		break;
 	case 4:
 		particles.Add(new ParticleSystem());
@@ -99,29 +99,54 @@ void Scene::LoadScene(int newID)
 		fr.AddRegistry(fg[1], p4);
 		fr.AddRegistry(fg[1], p5);
 		fr.AddRegistry(fg[1], p6);
-		break;
 	}
+		break;
 	case 6:
 	{
 		//No noto diferencia entre distintas resistencias al viento
 		//Como accedo a los datos que necesito en la tarea opcional?
 		//El area que da al viento y la forma y el radio son solo shape para la particula
 		Wind* wind = new Wind({ 1, 0, -3 });
-		ParticleSystem* system = new ParticleSystem((new BoxParticleGenerator((new Particle({ 0, 0, 0 },
+		ParticleSystem* system = new ParticleSystem(&fr, 
+			(new BoxParticleGenerator((new Particle({ 0, 0, 0 },
 			false, true))->SetShape(CreateShape(PxSphereGeometry(.5)))
 			->SetWindFriction1(10)->SetWindFriction2(0),
-			4000, { 0, 0, 0 }, { 100, 100, 100 }, { .1,.1,.1 }, &fr))
+			2000, { 0, 0, 0 }, { 100, 100, 100 }, { .1,.1,.1 }, 1, &fr))
 			->AddForceGenerator(wind));
 		system->AddGenerator((new BoxParticleGenerator((new Particle({ 0, 0, 0 },
 			false, true))->SetShape(CreateShape(PxSphereGeometry(.5)))->SetColor({1, .8, .3, 1})
 			->SetWindFriction1(0)->SetWindFriction2(10),
-			4000, { 0, 0, 0 }, { 100, 100, 100 }, { .1,.1,.1 }, &fr))
+			2000, { 0, 0, 0 }, { 100, 100, 100 }, { .1,.1,.1 }, 1, &fr))
 			->AddForceGenerator(wind));
 		system->AddGenerator((new BoxParticleGenerator((new Particle({ 0, 0, 0 },
 			false, true))->SetShape(CreateShape(PxSphereGeometry(.5)))->SetColor({ .2, 1, .3, 1 })
 			->SetWindFriction1(10)->SetWindFriction2(10),
-			4000, { 0, 0, 0 }, { 100, 100, 100 }, { .1,.1,.1 }, &fr))
+			2000, { 0, 0, 0 }, { 100, 100, 100 }, { .1,.1,.1 }, 1, &fr))
 			->AddForceGenerator(wind));
+		particles.Add(system);
+	}
+		break;
+	case 7:
+	{
+		//Si pongo muchas particulas peta
+		Whirlwind* whirlwind = new Whirlwind({ -50, 50, -50 }, 100, 1);
+		ParticleSystem* system = new ParticleSystem(&fr, 
+			(new BoxParticleGenerator((new Particle({ 0, 0, 0 },
+			false, true))->SetWindFriction1(10)->SetWindFriction2(0),
+			2000, { -50, 25, -50 }, { 100, 40, 100 }, { .1,.1,.1 }, 1, &fr))
+			->AddForceGenerator(whirlwind), { -50, 0, -50 });
+		particles.Add(system);
+	}
+		break;
+	case 8:
+	{
+		//Como ahora toco el render shape para ver distintos tamaños, peta al cambiar de escena
+		Explosion* explosion = new Explosion({ -50, 50, -50 }, 100, 1000, 5000);
+		ParticleSystem* system = new ParticleSystem(&fr,
+			(new BoxParticleGenerator((new Particle({ -50, 0, -50 },
+				false, true))->SetWindFriction1(10)->SetWindFriction2(0),
+				2000, { -50, 25, -50 }, { 100, 40, 100 }, { .1,.1,.1 }, 1, &fr))
+			->AddForceGenerator(explosion), { -20, 0, -20 });
 		particles.Add(system);
 	}
 		break;
