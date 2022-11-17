@@ -17,6 +17,19 @@
 # define OBSTRUCT(...) __VA_ARGS__ DEFER(EMPTY)()
 # define EXPAND(...) __VA_ARGS__
 
+//Memory leaks
+#define _CRTDBG_MAP_ALLOC
+#include <stdlib.h>
+#include <crtdbg.h>
+
+#ifdef _DEBUG
+#define DBG_NEW new ( _NORMAL_BLOCK , __FILE__ , __LINE__ )
+// Replace _NORMAL_BLOCK with _CLIENT_BLOCK if you want the
+// allocations to be of _CLIENT_BLOCK type
+#else
+#define DBG_NEW new
+#endif
+
 using namespace physx;
 
 PxDefaultAllocator		gAllocator;
@@ -84,7 +97,7 @@ void initPhysics(bool interactive)
 	sceneDesc.simulationEventCallback = &gContactReportCallback;
 	gScene = gPhysics->createScene(sceneDesc);
 
-	mScene = new Scene();
+	mScene = DBG_NEW Scene();
 }
 
 
@@ -93,7 +106,6 @@ void initPhysics(bool interactive)
 // t: time passed since last call in milliseconds
 void stepPhysics(bool interactive, double t)
 {
-
 	PX_UNUSED(interactive);
 
 	gScene->simulate(t);
@@ -113,6 +125,7 @@ void cleanupPhysics(bool interactive)
 	PX_UNUSED(interactive);
 
 	mScene->ClearScene();
+	delete mScene;
 
 	// Rigid Body ++++++++++++++++++++++++++++++++++++++++++
 	gScene->release();
@@ -124,6 +137,9 @@ void cleanupPhysics(bool interactive)
 	transport->release();
 	
 	gFoundation->release();
+
+	OutputDebugString("-----------_CrtDumpMemoryLeaks ---------\n");
+	_CrtDumpMemoryLeaks();
 }
 
 // Function called when a key is pressed

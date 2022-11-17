@@ -5,6 +5,14 @@
 #include <iostream>
 #include <cmath>
 
+#ifdef _DEBUG
+#define DBG_NEW new ( _NORMAL_BLOCK , __FILE__ , __LINE__ )
+// Replace _NORMAL_BLOCK with _CLIENT_BLOCK if you want the
+// allocations to be of _CLIENT_BLOCK type
+#else
+#define DBG_NEW new
+#endif
+
 Particle::Particle(PxVec3 p, bool visible, bool forces) : pose(PxTransform(p)), vel({ 0, 0, 0 }), acc({ 0, 0, 0 }),
 damping(.998), inverseMass(1), color({ 1, 1, 1, 1 }), endColor({ 0, 0, 0, 0 }), active(true),
 startingLife(DBL_MAX), lifetime(startingLife), checkForces(forces)
@@ -12,7 +20,7 @@ startingLife(DBL_MAX), lifetime(startingLife), checkForces(forces)
 	shape = CreateShape(PxSphereGeometry(1.0));
 	
 	if(visible)
-		renderItem = new RenderItem(shape, &pose, color);
+		renderItem = DBG_NEW RenderItem(shape, &pose, color);
 
 	force = PxVec3(0);
 }
@@ -20,9 +28,10 @@ startingLife(DBL_MAX), lifetime(startingLife), checkForces(forces)
 Particle::Particle(Particle* p) : pose(PxTransform(PxVec3(p->pose.p))), vel(p->vel), acc(p->acc),
 	damping(p->damping), inverseMass(p->damping), color(PxVec4(p->color)),
 	endColor(PxVec4(p->endColor)), active(true), startingLife(p->startingLife), 
-	lifetime(startingLife), shape(p->shape), checkForces(p->checkForces)
+	lifetime(startingLife), shape(p->shape), checkForces(p->checkForces),
+	windfriction1(p->windfriction1), windfriction2(p->windfriction2)
 {
-	renderItem = new RenderItem(shape, &pose, color);
+	renderItem = DBG_NEW RenderItem(shape, &pose, color);
 
 	force = PxVec3(0);
 }
@@ -31,8 +40,10 @@ Particle::~Particle()
 {
 	//shape->release();
 
-	if (renderItem != nullptr)
+	if (renderItem != nullptr) {
 		DeregisterRenderItem(renderItem);
+		delete renderItem;
+	}
 }
 
 float lerp(float a, float b, float f)

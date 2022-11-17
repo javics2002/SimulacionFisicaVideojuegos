@@ -1,6 +1,14 @@
 #include "BoxParticleGenerator.h"
 #include "../../RenderUtils.hpp"
 
+#ifdef _DEBUG
+#define DBG_NEW new ( _NORMAL_BLOCK , __FILE__ , __LINE__ )
+// Replace _NORMAL_BLOCK with _CLIENT_BLOCK if you want the
+// allocations to be of _CLIENT_BLOCK type
+#else
+#define DBG_NEW new
+#endif
+
 BoxParticleGenerator::BoxParticleGenerator(Particle* p, int num, 
 	PxVec3 ori, PxVec3 dim, PxVec3 velVar, double invMassVar, ForceRegistry* forceRegistry)
 	: ParticleGenerator(p, forceRegistry), particleNum(num), origin(ori), 
@@ -26,7 +34,7 @@ vector<Particle*> BoxParticleGenerator::GenerateParticles()
 
 	if (firstFrame) {
 		for (int i = 0; i < particleNum; i++) {
-			Particle* newParticle = new Particle(prefab);
+			Particle* newParticle = DBG_NEW Particle(prefab);
 			newParticle->SetPos(PxVec3(uniformX(generator), uniformY(generator), uniformZ(generator)));
 			newParticle->SetVel(PxVec3(normalX(generator), normalY(generator), normalZ(generator)));
 			newParticle->SetIMass(lognormalMass(generator));

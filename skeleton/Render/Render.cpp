@@ -30,6 +30,14 @@
 #include "Render.h"
 #include <assert.h>
 
+#ifdef _DEBUG
+#define DBG_NEW new ( _NORMAL_BLOCK , __FILE__ , __LINE__ )
+// Replace _NORMAL_BLOCK with _CLIENT_BLOCK if you want the
+// allocations to be of _CLIENT_BLOCK type
+#else
+#define DBG_NEW new
+#endif
+
 using namespace physx;
 
 static float gCylinderData[]={
@@ -242,7 +250,7 @@ void reshapeCallback(int width, int height)
 
 void setupDefaultWindow(const char *name)
 {
-	char* namestr = new char[strlen(name)+1];
+	char* namestr = DBG_NEW char[strlen(name)+1];
 	strcpy(namestr, name);
 	int argc = 1;
 	char* argv[1] = { namestr };

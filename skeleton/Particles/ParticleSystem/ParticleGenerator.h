@@ -3,6 +3,8 @@
 #include "../Particle.h"
 #include "PxPhysicsAPI.h"
 #include <vector>
+#include <memory>
+#include <memory.h>
 
 class ParticleSystem;
 class ForceRegistry;
@@ -18,7 +20,7 @@ protected:
 	ParticleSystem* system;
 
 	ForceRegistry* fr;
-	vector<ForceGenerator*> fg;
+	vector<shared_ptr<ForceGenerator>> fg;
 
 public:
 	ParticleGenerator(Particle* p, ForceRegistry* forceRegistry = nullptr);
@@ -29,6 +31,6 @@ public:
 	virtual vector<Particle*> GenerateParticles() = 0;
 
 	ParticleGenerator* SetSystem(ParticleSystem* s);
-	ParticleGenerator* AddForceGenerator(ForceGenerator* forceGenerator);
+	ParticleGenerator* AddForceGenerator(shared_ptr<ForceGenerator> forceGenerator);
 };
 

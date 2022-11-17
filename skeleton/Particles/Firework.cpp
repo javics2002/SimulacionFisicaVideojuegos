@@ -2,6 +2,14 @@
 #include "ParticleSystem/ParticleSystem.h"
 #include "../RenderUtils.hpp"
 
+#ifdef _DEBUG
+#define DBG_NEW new ( _NORMAL_BLOCK , __FILE__ , __LINE__ )
+// Replace _NORMAL_BLOCK with _CLIENT_BLOCK if you want the
+// allocations to be of _CLIENT_BLOCK type
+#else
+#define DBG_NEW new
+#endif
+
 Firework::Firework(ParticleSystem* sys, FireworkType t) : Particle(), system(sys), type(t)
 {
 	colorDistribution = uniform_int_distribution<>(0, LAST - 1);
@@ -36,7 +44,7 @@ Firework::~Firework() noexcept
 {
 	if (shape != nullptr && generations > 0) {
 		for (int i = 0; i < divitions; i++) {
-			Firework* f = new Firework(this);
+			Firework* f = DBG_NEW Firework(this);
 			f->SetVel(PxVec3(GetVel().x + velocityDistribution(generator) * blastForce,
 				GetVel().y + velocityDistribution(generator) * blastForce,
 				GetVel().z + velocityDistribution(generator) * blastForce));

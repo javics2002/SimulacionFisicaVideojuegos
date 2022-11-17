@@ -5,6 +5,14 @@
 #include "Particles/Firework.h"
 #include "Particles/ParticleSystem/ParticleSystems.h"
 
+#ifdef _DEBUG
+#define DBG_NEW new ( _NORMAL_BLOCK , __FILE__ , __LINE__ )
+// Replace _NORMAL_BLOCK with _CLIENT_BLOCK if you want the
+// allocations to be of _CLIENT_BLOCK type
+#else
+#define DBG_NEW new
+#endif
+
 Scene::Scene() : particles(ParticleManager(&fr))
 {
 	cout << "Pulsa los numeros para cambiar entre las escenas.\n"
@@ -12,7 +20,11 @@ Scene::Scene() : particles(ParticleManager(&fr))
 		<< "1: Particula con aceleracion y damping\n"
 		<< "2: Proyectiles\n"
 		<< "3: Sistema de particulas\n"
-		<< "4: Fuegos artificiales\n\n";
+		<< "4: Fuegos artificiales\n"
+		<< "5: Fuerza gravitatoria\n"
+		<< "6: Viento\n"
+		<< "7: Torbellino\n"
+		<< "8: Explosion\n\n";
 
 	LoadScene(LAST_SCENE);
 }
@@ -24,78 +36,78 @@ Scene::~Scene()
 
 void Scene::LoadScene(int newID)
 {
-	particles.Clear();
+	ClearScene();
 
 	mID = newID;
 
 	switch (mID) {
 	case 0:
-		particles.Add((new Particle())->SetVel({ 0, 10, 0 })->SetColor({.98, .96, .3, 1.0}));
+		particles.Add((DBG_NEW Particle())->SetVel({ 0, 10, 0 })->SetColor({ .98, .96, .3, 1.0 }));
 		break;
 	case 1:
-		particles.Add((new Particle())->SetAcc({0, 2, 0})->SetDamp(.9)->SetColor({.31, .81, .96, 1.0}));
+		particles.Add((DBG_NEW Particle())->SetAcc({ 0, 2, 0 })->SetDamp(.9)->SetColor({ .31, .81, .96, 1.0 }));
 		break;
 	case 2:
 		//Suelo
-		particles.Add((new Particle({0, 48.5, 0}))->SetColor({.93, .81, .61, 1.0})
+		particles.Add((DBG_NEW Particle({ 0, 48.5, 0 }))->SetColor({ .93, .81, .61, 1.0 })
 			->SetShape(CreateShape(PxBoxGeometry(1000, .5, 1000))));
-		
+
 		//Vallas
-		particles.Add((new Particle({50, 48.5, 40}))->SetColor({.2, .6, .9, 1.0})
+		particles.Add((DBG_NEW Particle({ 50, 48.5, 40 }))->SetColor({ .2, .6, .9, 1.0 })
 			->SetShape(CreateShape(PxBoxGeometry(10, 1, .5))));
-		particles.Add((new Particle({40, 48.5, 50}))->SetColor({.2, .6, .9, 1.0})
+		particles.Add((DBG_NEW Particle({ 40, 48.5, 50 }))->SetColor({ .2, .6, .9, 1.0 })
 			->SetShape(CreateShape(PxBoxGeometry(.5, 1, 10))));
 
 		//Diana
-		particles.Add((new Particle({ 42, 50, 42 }))->SetColor({ .8, .5, .4, 1.0 })
+		particles.Add((DBG_NEW Particle({ 42, 50, 42 }))->SetColor({ .8, .5, .4, 1.0 })
 			->SetShape(CreateShape(PxSphereGeometry(.6))));
 		break;
 	case 3:
-		particles.Add(new ParticleSystem(&fr, CreateGenerator(FOUNTAIN)));
+		particles.Add(DBG_NEW ParticleSystem(&fr, CreateGenerator(FOUNTAIN)));
 		break;
 	case 4:
-		particles.Add(new ParticleSystem());
+		particles.Add(DBG_NEW ParticleSystem());
 		break;
 	case 5:
 	{
 		//Particulas con aceleracion constante
-		particles.Add((new Particle({ -10, 50, -10 }))->SetAcc({ 0, -9.8, 0 })->SetDamp(.9)->SetIMass(10)
+		particles.Add((DBG_NEW Particle({ -10, 50, -10 }))->SetAcc({ 0, -9.8, 0 })->SetDamp(.9)->SetIMass(10)
 			->SetColor({ 1, 0, 1, 1.0 })->SetShape(CreateShape(PxSphereGeometry(.5))));
-		particles.Add((new Particle({ 0, 50, -10 }))->SetAcc({ 0, -9.8, 0 })->SetDamp(.9)->SetIMass(1)
+		particles.Add((DBG_NEW Particle({ 0, 50, -10 }))->SetAcc({ 0, -9.8, 0 })->SetDamp(.9)->SetIMass(1)
 			->SetColor({ 1, 1, 0, 1.0 })->SetShape(CreateShape(PxSphereGeometry(1))));
-		particles.Add((new Particle({ 10, 50, -10 }))->SetAcc({ 0, -9.8, 0 })->SetDamp(.9)->SetIMass(.1)
+		particles.Add((DBG_NEW Particle({ 10, 50, -10 }))->SetAcc({ 0, -9.8, 0 })->SetDamp(.9)->SetIMass(.1)
 			->SetColor({ 0, 1, 1, 1.0 })->SetShape(CreateShape(PxSphereGeometry(2))));
 
 		//Particulas con gravedad como ForceGenerator
-		Particle* p1,* p2,* p3;
-		p1 = (new Particle({ -10, 50, 0 }, true, true))->SetDamp(.9)->SetIMass(10)
+		Particle* p1, * p2, * p3;
+		p1 = (DBG_NEW Particle({ -10, 50, 0 }, true, true))->SetDamp(.9)->SetIMass(10)
 			->SetColor({ 1, 0, 0, 1.0 })->SetShape(CreateShape(PxSphereGeometry(.5)));
-		p2 = (new Particle({ 0, 50, 0 }, true, true))->SetDamp(.9)->SetIMass(1)
+		p2 = (DBG_NEW Particle({ 0, 50, 0 }, true, true))->SetDamp(.9)->SetIMass(1)
 			->SetColor({ 0, 1, 0, 1.0 })->SetShape(CreateShape(PxSphereGeometry(1)));
-		p3 = (new Particle({ 10, 50, 0 }, true, true))->SetDamp(.9)->SetIMass(.1)
+		p3 = (DBG_NEW Particle({ 10, 50, 0 }, true, true))->SetDamp(.9)->SetIMass(.1)
 			->SetColor({ 0, 0, 1, 1.0 })->SetShape(CreateShape(PxSphereGeometry(2)));
 		particles.Add(p1);
 		particles.Add(p2);
 		particles.Add(p3);
 
-		fg.push_back(new Gravity());
+		fg.push_back(DBG_NEW Gravity());
 		fr.AddRegistry(fg[0], p1);
 		fr.AddRegistry(fg[0], p2);
 		fr.AddRegistry(fg[0], p3);
 
 		//Gravedad lunar
 		Particle* p4,* p5,* p6;
-		p4 = (new Particle({ -10, 50, 10 }, true, true))->SetIMass(10)
+		p4 = (DBG_NEW Particle({ -10, 50, 10 }, true, true))->SetIMass(10)
 			->SetColor({ 1, .5, .5, 1.0 })->SetShape(CreateShape(PxSphereGeometry(.5)));
-		p5 = (new Particle({ 0, 50, 10 }, true, true))->SetIMass(1)
+		p5 = (DBG_NEW Particle({ 0, 50, 10 }, true, true))->SetIMass(1)
 			->SetColor({ .5, 1, .5, 1.0 })->SetShape(CreateShape(PxSphereGeometry(1)));
-		p6 = (new Particle({ 10, 50, 10 }, true, true))->SetIMass(.1)
+		p6 = (DBG_NEW Particle({ 10, 50, 10 }, true, true))->SetIMass(.1)
 			->SetColor({ .5, .5, 1, 1.0 })->SetShape(CreateShape(PxSphereGeometry(2)));
 		particles.Add(p4);
 		particles.Add(p5);
 		particles.Add(p6);
 
-		fg.push_back(new Gravity({0, -1.62, 0}));
+		fg.push_back(DBG_NEW Gravity({0, -1.62, 0}));
 		fr.AddRegistry(fg[1], p4);
 		fr.AddRegistry(fg[1], p5);
 		fr.AddRegistry(fg[1], p6);
@@ -103,49 +115,48 @@ void Scene::LoadScene(int newID)
 		break;
 	case 6:
 	{
-		//No noto diferencia entre distintas resistencias al viento
 		//Como accedo a los datos que necesito en la tarea opcional?
 		//El area que da al viento y la forma y el radio son solo shape para la particula
-		Wind* wind = new Wind({ 1, 0, -3 });
-		ParticleSystem* system = new ParticleSystem(&fr, 
-			(new BoxParticleGenerator((new Particle({ 0, 0, 0 },
-			false, true))->SetShape(CreateShape(PxSphereGeometry(.5)))
-			->SetWindFriction1(10)->SetWindFriction2(0),
-			2000, { 0, 0, 0 }, { 100, 100, 100 }, { .1,.1,.1 }, 1, &fr))
+		shared_ptr<Wind> wind = std::make_shared<Wind>(PxVec3(1, 0, -3));
+		ParticleSystem* system = DBG_NEW ParticleSystem(&fr,
+			(DBG_NEW BoxParticleGenerator((DBG_NEW Particle({ 0, 0, 0 },
+				false, true))->SetShape(CreateShape(PxSphereGeometry(.5)))
+				->SetWindFriction1(1)->SetWindFriction2(0)->SetDamp(.6),
+				1000, { 0, 50, 0 }, { 50, 50, 50 }, { .1,.1,.1 }, 1, &fr))
 			->AddForceGenerator(wind));
-		system->AddGenerator((new BoxParticleGenerator((new Particle({ 0, 0, 0 },
-			false, true))->SetShape(CreateShape(PxSphereGeometry(.5)))->SetColor({1, .8, .3, 1})
-			->SetWindFriction1(0)->SetWindFriction2(10),
-			2000, { 0, 0, 0 }, { 100, 100, 100 }, { .1,.1,.1 }, 1, &fr))
+		system->AddGenerator((DBG_NEW BoxParticleGenerator((DBG_NEW Particle({ 0, 0, 0 },
+			false, true))->SetShape(CreateShape(PxSphereGeometry(.5)))->SetColor({ 1, .8, .3, 1 })
+			->SetWindFriction1(0)->SetWindFriction2(.01)->SetDamp(.6),
+			1000, { 0, 50, 0 }, { 50, 50, 50 }, { .1,.1,.1 }, 1, &fr))
 			->AddForceGenerator(wind));
-		system->AddGenerator((new BoxParticleGenerator((new Particle({ 0, 0, 0 },
+		system->AddGenerator((DBG_NEW BoxParticleGenerator((DBG_NEW Particle({ 0, 0, 0 },
 			false, true))->SetShape(CreateShape(PxSphereGeometry(.5)))->SetColor({ .2, 1, .3, 1 })
-			->SetWindFriction1(10)->SetWindFriction2(10),
-			2000, { 0, 0, 0 }, { 100, 100, 100 }, { .1,.1,.1 }, 1, &fr))
+			->SetWindFriction1(1)->SetWindFriction2(.01)->SetDamp(.6),
+			1000, { 0, 50, 0 }, { 50, 50, 50 }, { .1,.1,.1 }, 1, &fr))
 			->AddForceGenerator(wind));
 		particles.Add(system);
 	}
 		break;
 	case 7:
 	{
-		//Si pongo muchas particulas peta
-		Whirlwind* whirlwind = new Whirlwind({ -50, 50, -50 }, 100, 1);
-		ParticleSystem* system = new ParticleSystem(&fr, 
-			(new BoxParticleGenerator((new Particle({ 0, 0, 0 },
-			false, true))->SetWindFriction1(10)->SetWindFriction2(0),
-			2000, { -50, 25, -50 }, { 100, 40, 100 }, { .1,.1,.1 }, 1, &fr))
+		shared_ptr<Whirlwind> whirlwind 
+			= std::make_shared<Whirlwind>(PxVec3(0, 30, 0), 100, 1);
+		ParticleSystem* system = DBG_NEW ParticleSystem(&fr,
+			(DBG_NEW BoxParticleGenerator((DBG_NEW Particle({ 0, 0, 0 },
+				false, true))->SetWindFriction1(.5)->SetWindFriction2(0)->SetDamp(.6),
+				3000, { 0, 30, 0 }, { 50, 40, 50 }, PxVec3(DBL_EPSILON), 1, &fr))
 			->AddForceGenerator(whirlwind), { -50, 0, -50 });
 		particles.Add(system);
 	}
-		break;
+	break;
 	case 8:
 	{
-		//Como ahora toco el render shape para ver distintos tamaños, peta al cambiar de escena
-		Explosion* explosion = new Explosion({ -50, 50, -50 }, 100, 1000, 5000);
-		ParticleSystem* system = new ParticleSystem(&fr,
-			(new BoxParticleGenerator((new Particle({ -50, 0, -50 },
+		shared_ptr<Explosion> explosion 
+			= std::make_shared<Explosion>(PxVec3(0, 30, 0), 100, 1000, 5000);
+		ParticleSystem* system = DBG_NEW ParticleSystem(&fr,
+			(DBG_NEW BoxParticleGenerator((DBG_NEW Particle({ -50, 0, -50 },
 				false, true))->SetWindFriction1(10)->SetWindFriction2(0),
-				2000, { -50, 25, -50 }, { 100, 40, 100 }, { .1,.1,.1 }, 1, &fr))
+				3000, { 10, 30, 10 }, { 50, 40, 50 }, { .1,.1,.1 }, 1, &fr))
 			->AddForceGenerator(explosion), { -20, 0, -20 });
 		particles.Add(system);
 	}
@@ -316,9 +327,9 @@ void Scene::ThrowProyectile(ProjectileType type, const physx::PxTransform& camer
 	const PxVec3 up = -camera.q.getBasisVector0().getNormalized();
 
 	//Crea el proyectil delante de la camara
-	Particle* p = new Particle(camera.p + 1.5 * front);
+	Particle* p = DBG_NEW Particle(camera.p + 1.5 * front);
 
-	Projectile projectile = CreateProjectile(type, camera, p);
+	const Projectile projectile = CreateProjectile(type, camera, p);
 	
 	//Se lanza hacia el frente con una varianza
 	PxVec3 dir = PxVec3(PxCos(projectile.angle) * projectile.speed * front
