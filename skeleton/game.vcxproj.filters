@@ -25,6 +25,7 @@
     <ClCompile Include="Force\Wind.cpp" />
     <ClCompile Include="Force\Whirlwind.cpp" />
     <ClCompile Include="Force\Explosion.cpp" />
+    <ClCompile Include="Force\Spring.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core.hpp" />
@@ -54,6 +55,7 @@
     <ClInclude Include="Force\Wind.h" />
     <ClInclude Include="Force\Whirlwind.h" />
     <ClInclude Include="Force\Explosion.h" />
+    <ClInclude Include="Force\Spring.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Render">

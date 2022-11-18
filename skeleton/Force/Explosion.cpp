@@ -18,7 +18,7 @@ void Explosion::UpdateForce(Particle* p, double dt)
 
 	if (p != nullptr && p->GetInvMass() > DBL_EPSILON) {
 		double distance = Distance(p, center);
-		if(distance < radius)
+		if((p->GetPos() - center).magnitudeSquared() < radius * radius)
 			p->AddForce(force / pow(distance, 2) * (p->GetPos() - center) * exp(-time / duration));
 	}
 }

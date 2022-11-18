@@ -20,13 +20,9 @@ void Whirlwind::UpdateForce(Particle* p, double dt)
 PxVec3 Whirlwind::Velocity(PxVec3 pos)
 {
 	PxVec3 v = pos - center;
-	v = 1*(pos - center).magnitude() * v.getNormalized().cross(PxVec3(0, 1, 0))
-		+ 5*(pos - center).magnitude() * -(pos - center).getNormalized();
+	v = 1 * v.cross(PxVec3(0, 1, 0)) + 5 * -v;
 	v.y = 0;
 	return v;
-	return PxVec3(pos.getNormalized().z - center.getNormalized().z,
-		0,//0 - (pos.y - center.y), 
-		pos.getNormalized().x - center.getNormalized().x);
 }
 
 PxVec3 Whirlwind::Pow(PxVec3 v, double e)

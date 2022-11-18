@@ -273,6 +273,7 @@
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Force\Whirlwind.cpp" />
     <ClCompile Include="Force\Wind.cpp" />
+    <ClCompile Include="Force\Spring.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Force\Drag.h" />
@@ -298,6 +299,7 @@
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Force\Whirlwind.h" />
     <ClInclude Include="Force\Wind.h" />
+    <ClInclude Include="Force\Spring.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

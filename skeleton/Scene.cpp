@@ -15,7 +15,7 @@
 
 Scene::Scene() : particles(ParticleManager(&fr))
 {
-	cout << "Pulsa los numeros para cambiar entre las escenas.\n"
+	cout << "Pulsa las teclas para cambiar entre las escenas.\n"
 		<< "0: Particula con velocidad constante\n"
 		<< "1: Particula con aceleracion y damping\n"
 		<< "2: Proyectiles\n"
@@ -24,7 +24,10 @@ Scene::Scene() : particles(ParticleManager(&fr))
 		<< "5: Fuerza gravitatoria\n"
 		<< "6: Viento\n"
 		<< "7: Torbellino\n"
-		<< "8: Explosion\n\n";
+		<< "8: Explosion\n"
+		<< "9: Particula unida a una posicion estatica con un muelle\n"
+		<< "': Particulas unidas mediante muelles\n"
+		<< "Q: Flotacion\n\n";
 
 	LoadScene(LAST_SCENE);
 }
@@ -161,6 +164,16 @@ void Scene::LoadScene(int newID)
 		particles.Add(system);
 	}
 		break;
+	case 9:
+		particles.Add((DBG_NEW Particle({ 48, 49.5, 48 }))->SetColor({ .93, .81, .61, 1.0 })
+			->SetShape(CreateShape(PxBoxGeometry(.1, 1, 1))));
+		particles.Add((DBG_NEW Particle({ 49, 49.5, 48 }))->SetColor({ 1, .1, .4, 1.0 })
+			->SetShape(CreateShape(PxSphereGeometry(.1))));
+		break;
+	case 10:
+		break;
+	case 11:
+		break;
 	default:
 		cout << "Scene " << mID << " doesn't exist.\n";
 		return;
@@ -224,6 +237,8 @@ void Scene::ClearScene()
 void Scene::KeyPress(unsigned char key, const physx::PxTransform& camera)
 {
 	switch (mID) {
+	case 1:
+
 	case 2:
 		switch (toupper(key)) {
 		case 'Z':
