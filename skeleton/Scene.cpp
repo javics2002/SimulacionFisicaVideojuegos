@@ -231,7 +231,7 @@ void Scene::LoadScene(int newID)
 			<< "V: Disminuir distancia del muelle\n"
 			<< "N: Cambiar a Euler\n"
 			<< "M: Cambiar a Euler implicito\n"
-			<< ",: Cambiar a Runge-Kutta\n";
+			<< ".: Resetear particula\n";
 		break;
 	default:
 		break;
@@ -399,10 +399,6 @@ void Scene::KeyPress(unsigned char key, const physx::PxTransform& camera)
 		case 'M':
 			ball->SetIntegrationMethod(SEMI_IMPLICIT_EULER);
 			cout << "Metodo de integraccion seleccionado: Euler implicito\n";
-			break;
-		case ',':
-			ball->SetIntegrationMethod(RUNGE_KUTTA);
-			cout << "Metodo de integraccion seleccionado: Runge-Kutta\n";
 			break;
 		case '.':
 			particles.Remove(ballID);

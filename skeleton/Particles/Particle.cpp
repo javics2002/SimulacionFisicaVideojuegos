@@ -65,28 +65,15 @@ void Particle::Integrate(double t)
 	switch (integrationMethod) {
 	default:
 	case EULER:
-	{
-		Integration euler = EulerIntegrate(t);
-		pose.p += euler.position;
-		vel += euler.velocity;
-	}
+		pose.p += vel * t;
+		vel += acc * t;
 		break;
 	case SEMI_IMPLICIT_EULER: 
-	{
-		Integration semiImplicitEuler = SemiImplicitEulerIntegrate(t);
-		pose.p += semiImplicitEuler.position;
-		vel += semiImplicitEuler.velocity;
-	}
+		vel += acc * t;
+		pose.p += vel * t;
 		break;
-	case RUNGE_KUTTA:
-	{
-		Integration semiImplicitEuler = RungeKuttaIntegrate(t);
-		pose.p += semiImplicitEuler.position;
-		vel += semiImplicitEuler.velocity;
-	}
 	}
 	vel *= pow(damping, t);
-	cout << "Vel = " << vel.magnitude() << "\n";
 	
 	if (pose.p.y < 0 || pose.p.magnitudeSquared() > squaredRadius || lifetime < 0) {
 		//Se sale del area util
@@ -99,40 +86,6 @@ void Particle::Integrate(double t)
 	if (endColor.w != 0 && renderItem != nullptr)
 		//Color interpolation
 		renderItem->color = lerp(color, endColor, (startingLife - lifetime) / startingLife);
-}
-
-Integration Particle::EulerIntegrate(double t) {
-	Integration i;
-	i.position = vel * t;
-	i.velocity = acc * t;
-	return i;
-}
-
-Integration Particle::SemiImplicitEulerIntegrate(double t) {
-	Integration i;
-	i.velocity = acc * t;
-	i.position = vel + i.velocity * t;
-	return i;
-}
-
-Integration Particle::RungeKuttaIntegrate(double t) {
-	rungekutta[0] = SemiImplicitEulerIntegrate(0);
-	rungekutta[1] = SemiImplicitEulerIntegrate(t / 2);
-	rungekutta[1].position + t * rungekutta[0].position * .5;
-	rungekutta[1].velocity + t * rungekutta[0].velocity * .5;
-	rungekutta[2] = SemiImplicitEulerIntegrate(t / 2);
-	rungekutta[2].position + t * rungekutta[1].position * .5;
-	rungekutta[2].velocity + t * rungekutta[1].velocity * .5;
-	rungekutta[3] = SemiImplicitEulerIntegrate(t);
-	rungekutta[3].position + t * rungekutta[2].position;
-	rungekutta[3].velocity + t * rungekutta[2].velocity;
-
-	Integration i;
-	i.position = (rungekutta[0].position + 2 * rungekutta[1].position + 2 * rungekutta[2].position 
-		+ rungekutta[3].position) * t / 6;
-	i.velocity = (rungekutta[0].velocity + 2 * rungekutta[1].velocity + 2 * rungekutta[2].velocity
-		+ rungekutta[3].velocity) * t / 6;
-	return i;
 }
 
 Particle* Particle::SetPos(PxVec3 p)

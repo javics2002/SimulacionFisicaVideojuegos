@@ -10,7 +10,7 @@ protected:
 
 public:
 	Spring(Particle* other, double k, double restLength);
-	~Spring();
+	virtual ~Spring() override;
 	void UpdateForce(Particle* p, double dt) override;
 
 	double AddK(double increment);
