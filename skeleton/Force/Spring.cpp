@@ -15,26 +15,22 @@ void Spring::UpdateForce(Particle* p, double dt)
 	p->AddForce(force * (force.magnitude() - restLength) * k);
 }
 
-bool Spring::AddK(double increment)
+double Spring::AddK(double increment)
 {
 	k += increment;
 
-	if (k < DBL_EPSILON) {
-		k = DBL_EPSILON;
-		return false;
-	}
+	if (k < 1)
+		k = 1;
 
-	return true;
+	return k;
 }
 
-bool Spring::AddRestLength(double increment)
+double Spring::AddRestLength(double increment)
 {
 	restLength += increment;
 
-	if (restLength < DBL_EPSILON) {
+	if (restLength < DBL_EPSILON)
 		restLength = DBL_EPSILON;
-		return false;
-	}
 
-	return true;
+	return restLength;
 }

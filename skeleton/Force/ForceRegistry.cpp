@@ -8,9 +8,9 @@ void ForceRegistry::Integrate(double dt)
 		it->first->UpdateForce(it->second, dt);
 }
 
-void ForceRegistry::AddRegistry(ForceGenerator* fg, Particle* p)
+mapFR::iterator ForceRegistry::AddRegistry(ForceGenerator* fg, Particle* p)
 {
-	insert({ fg, p });
+	return insert({ fg, p });
 }
 
 void ForceRegistry::DeleteParticle(Particle* p)

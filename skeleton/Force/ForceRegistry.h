@@ -12,12 +12,13 @@
 using namespace std;
 
 class Particle;
+typedef unordered_multimap<ForceGenerator*, Particle*> mapFR;
 
-class ForceRegistry : public unordered_multimap<ForceGenerator*, Particle*>
+class ForceRegistry : public mapFR
 {
 public:
 	void Integrate(double dt);
-	void AddRegistry(ForceGenerator* fg, Particle* p);
+	mapFR::iterator AddRegistry(ForceGenerator* fg, Particle* p);
 	void DeleteParticle(Particle* p);
 	void DeleteForce(ForceGenerator* fg);
 };

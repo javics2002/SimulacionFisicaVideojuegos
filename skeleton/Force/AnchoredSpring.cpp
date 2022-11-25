@@ -11,7 +11,8 @@
 #endif
 
 AnchoredSpring::AnchoredSpring(const PxVec3& anchorPos, double k, double restLength)
-	: Spring((DBG_NEW Particle(anchorPos))->SetIMass(1e6)->SetShape(CreateShape(PxBoxGeometry(.1, .1, .1))), k, restLength)
+	: Spring((DBG_NEW Particle(anchorPos))->SetIMass(1e6)->SetColor({0.67, 0.36, 0.12, 1})
+		->SetShape(CreateShape(PxBoxGeometry(.2, .2, .2))), k, restLength)
 {
 }
 

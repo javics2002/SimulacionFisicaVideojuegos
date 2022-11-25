@@ -13,7 +13,7 @@ public:
 	~Spring();
 	void UpdateForce(Particle* p, double dt) override;
 
-	bool AddK(double increment);
-	bool AddRestLength(double increment);
+	double AddK(double increment);
+	double AddRestLength(double increment);
 };
 

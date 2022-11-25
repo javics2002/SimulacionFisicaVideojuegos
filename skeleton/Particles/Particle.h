@@ -12,6 +12,13 @@ enum IntegrationMethod { EULER, SEMI_IMPLICIT_EULER, RUNGE_KUTTA };
 //Cuando la particula se aleje de este radio, morira
 constexpr double squaredRadius = 10000000;
 
+constexpr int rungekuttaOrder = 4;
+
+struct Integration {
+	PxVec3 position;
+	PxVec3 velocity;
+};
+
 class Particle
 {
 protected:
@@ -36,6 +43,12 @@ protected:
 
 	double windfriction1 = 1;
 	double windfriction2 = 0;
+
+	Integration rungekutta[rungekuttaOrder];
+
+	Integration EulerIntegrate(double t);
+	Integration SemiImplicitEulerIntegrate(double t);
+	Integration RungeKuttaIntegrate(double t);
 
 public:
 	Particle(PxVec3 p = { 0, 0, 0 }, bool visible = true, bool forces = false);

@@ -166,16 +166,14 @@ void Scene::LoadScene(int newID)
 		break;
 	case 9:
 	{
-		Particle* ball = (DBG_NEW Particle({ 49, 49.5, 48 }, true, true))->SetColor({ 1, .1, .4, 1.0 })
-			->SetShape(CreateShape(PxSphereGeometry(.1)));
+		Particle* ball = (DBG_NEW Particle({ 40, 48, 40 }, true, true))->SetColor({ 1, .1, .4, 1.0 })
+			->SetShape(CreateShape(PxSphereGeometry(.2)))->SetIntegrationMethod(SEMI_IMPLICIT_EULER)
+			->SetDamp(.7);
 		particles.Add(ball);
-		Particle* wall = (DBG_NEW Particle({ 48, 49.5, 48 }))->SetColor({ .93, .81, .61, 1.0 })
-			->SetShape(CreateShape(PxBoxGeometry(.1, 1, 1)));
-		particles.Add(wall);
 
 		fg.push_back(DBG_NEW Gravity());
 		fr.AddRegistry(fg[0], ball);
-		fg.push_back(DBG_NEW AnchoredSpring(wall->GetPos(), 10, 1));
+		fg.push_back(DBG_NEW AnchoredSpring({ 40, 50, 40 }, 10, 2));
 		fr.AddRegistry(fg[1], ball);
 	}
 		break;
@@ -224,11 +222,13 @@ void Scene::LoadScene(int newID)
 		break;
 	case 9:
 		cout << "Puedes interactuar con el muelle.\n"
-			<< "Z: Aumentar k\n"
-			<< "X: Disminuir k\n"
-			<< "C: Aumentar distancia del muelle\n"
+			<< "Z: Tirar bolita\n"
+			<< "X: Empujar bolita\n"
+			<< "C: Tocar bolita\n"
+			<< "F: Aumentar k\n"
+			<< "V: Disminuir k\n"
+			<< "G: Aumentar distancia del muelle\n"
 			<< "V: Disminuir distancia del muelle\n"
-			<< "B: Tocar bolita\n"
 			<< "N: Cambiar a Euler\n"
 			<< "M: Cambiar a Euler implicito\n"
 			<< ",: Cambiar a Runge-Kutta\n";
@@ -350,35 +350,72 @@ void Scene::KeyPress(unsigned char key, const physx::PxTransform& camera)
 		break;
 	case 9:
 	{
-		Particle* ball = static_cast<Particle*>(particles.Get(0));
+		const int ballID = 0;
+		Particle* ball = particles.Get(ballID);
+		auto it = fr.find(fg[1]);
+		while (ball == nullptr || it == fr.end()) {
+			ball = (DBG_NEW Particle({ 40, 48, 40 }, true, true))->SetColor({ 1, .1, .4, 1.0 })
+				->SetShape(CreateShape(PxSphereGeometry(.2)))->SetIntegrationMethod(SEMI_IMPLICIT_EULER)
+				->SetDamp(.7);
+			particles.Add(ball);
+
+			fg.push_back(DBG_NEW Gravity());
+			fr.AddRegistry(fg[0], ball);
+			fg.push_back(DBG_NEW AnchoredSpring({ 40, 50, 40 }, 10, 1));
+			it = fr.AddRegistry(fg[1], ball);
+			cout << "La pelota se ha ido demasiado lejos. Se ha creado otra igual que la anterior.\n";
+		}
+		AnchoredSpring* spring = static_cast<AnchoredSpring*>(it->first);
+
 		switch (toupper(key)) {
-		case 'Z':
-			static_cast<AnchoredSpring*>(fr.find(fg[1])->first)->AddK(10);
+		case 'Z': {
+			Impulse i = Impulse(ball, { 0, -1000, 0 });
+		}
 			break;
-		case 'X':
-			if(!static_cast<AnchoredSpring*>(fr.find(fg[1])->first)->AddK(-10))
-				cout << "caca\n";
+		case 'X': {
+			Impulse i = Impulse(ball, { 0, 1000, 0 });
+		}
+				break;
+		case 'C': {
+			Impulse i = Impulse(ball, { 1000, 0, 0 });
+		}
 			break;
-		case 'C':
-			static_cast<AnchoredSpring*>(fr.find(fg[1])->first)->AddRestLength(.25);
+		case 'F':
+			cout << "k = " << spring->AddK(10) << "\n";
 			break;
 		case 'V':
-			if(!static_cast<AnchoredSpring*>(fr.find(fg[1])->first)->AddRestLength(-.25))
-				cout << "caca\n";
+			cout << "k = " << spring->AddK(-10) << "\n";
 			break;
-		case 'B': {
-			cout << " boing\n";
-			Impulse i = Impulse(ball, {0, -10000, 0});
-		}
+		case 'G':
+			cout << "Longitud de reposo = " << spring->AddRestLength(.25) << "\n";
+			break;
+		case 'B':
+			cout << "Longitud de reposo = " << spring->AddRestLength(-.25) << "\n";
 			break;
 		case 'N':
 			ball->SetIntegrationMethod(EULER);
+			cout << "Metodo de integraccion seleccionado: Euler\n";
 			break;
 		case 'M':
 			ball->SetIntegrationMethod(SEMI_IMPLICIT_EULER);
+			cout << "Metodo de integraccion seleccionado: Euler implicito\n";
 			break;
 		case ',':
 			ball->SetIntegrationMethod(RUNGE_KUTTA);
+			cout << "Metodo de integraccion seleccionado: Runge-Kutta\n";
+			break;
+		case '.':
+			particles.Remove(ballID);
+			ball = (DBG_NEW Particle({ 40, 48, 40 }, true, true))->SetColor({ 1, .1, .4, 1.0 })
+				->SetShape(CreateShape(PxSphereGeometry(.2)))->SetIntegrationMethod(SEMI_IMPLICIT_EULER)
+				->SetDamp(.7);
+			particles.Add(ball);
+
+			fg.push_back(DBG_NEW Gravity());
+			fr.AddRegistry(fg[0], ball);
+			fg.push_back(DBG_NEW AnchoredSpring({ 40, 50, 40 }, 10, 1));
+			it = fr.AddRegistry(fg[1], ball);
+			cout << "Se ha reseteado la bolita.\n";
 			break;
 		default:
 			break;

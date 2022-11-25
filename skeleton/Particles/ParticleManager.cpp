@@ -42,18 +42,19 @@ bool ParticleManager::Remove(int id)
 
 	if ((*it)->GetCheckForces())
 		fr->DeleteParticle(*it);
+	Particle* p = *it;
 	mParticles.erase(it);
-	delete* it;
+	delete p;
 	return true;
 }
 
 bool ParticleManager::Remove(vector<Particle*>::iterator& it)
 {
-	Particle* aux = *it;
+	Particle* p = *it;
 	if((*it)->GetCheckForces())
 		fr->DeleteParticle(*it);
 	it = mParticles.erase(it);
-	delete aux;
+	delete p;
 	return true;
 }
 
