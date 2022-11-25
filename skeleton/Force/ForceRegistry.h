@@ -4,6 +4,8 @@
 #include "Wind.h"
 #include "Whirlwind.h"
 #include "Explosion.h"
+#include "AnchoredSpring.h"
+#include "Impulse.h"
 #include <unordered_map>
 #include <climits>
 

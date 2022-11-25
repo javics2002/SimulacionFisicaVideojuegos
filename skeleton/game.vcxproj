@@ -253,10 +253,12 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Force\AnchoredSpring.cpp" />
     <ClCompile Include="Force\Drag.cpp" />
     <ClCompile Include="Force\Explosion.cpp" />
     <ClCompile Include="Force\Gravity.cpp" />
     <ClCompile Include="Force\ForceRegistry.cpp" />
+    <ClCompile Include="Force\Impulse.cpp" />
     <ClCompile Include="Particles\Firework.cpp" />
     <ClCompile Include="Particles\ParticleSystem\BoxParticleGenerator.cpp" />
     <ClCompile Include="callbacks.cpp" />
@@ -276,11 +278,13 @@
     <ClCompile Include="Force\Spring.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Force\AnchoredSpring.h" />
     <ClInclude Include="Force\Drag.h" />
     <ClInclude Include="Force\Explosion.h" />
     <ClInclude Include="Force\Gravity.h" />
     <ClInclude Include="Force\ForceGenerator.h" />
     <ClInclude Include="Force\ForceRegistry.h" />
+    <ClInclude Include="Force\Impulse.h" />
     <ClInclude Include="Particles\Firework.h" />
     <ClInclude Include="Particles\ParticleSystem\BoxParticleGenerator.h" />
     <ClInclude Include="callbacks.hpp" />

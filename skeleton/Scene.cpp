@@ -165,10 +165,19 @@ void Scene::LoadScene(int newID)
 	}
 		break;
 	case 9:
-		particles.Add((DBG_NEW Particle({ 48, 49.5, 48 }))->SetColor({ .93, .81, .61, 1.0 })
-			->SetShape(CreateShape(PxBoxGeometry(.1, 1, 1))));
-		particles.Add((DBG_NEW Particle({ 49, 49.5, 48 }))->SetColor({ 1, .1, .4, 1.0 })
-			->SetShape(CreateShape(PxSphereGeometry(.1))));
+	{
+		Particle* ball = (DBG_NEW Particle({ 49, 49.5, 48 }, true, true))->SetColor({ 1, .1, .4, 1.0 })
+			->SetShape(CreateShape(PxSphereGeometry(.1)));
+		particles.Add(ball);
+		Particle* wall = (DBG_NEW Particle({ 48, 49.5, 48 }))->SetColor({ .93, .81, .61, 1.0 })
+			->SetShape(CreateShape(PxBoxGeometry(.1, 1, 1)));
+		particles.Add(wall);
+
+		fg.push_back(DBG_NEW Gravity());
+		fr.AddRegistry(fg[0], ball);
+		fg.push_back(DBG_NEW AnchoredSpring(wall->GetPos(), 10, 1));
+		fr.AddRegistry(fg[1], ball);
+	}
 		break;
 	case 10:
 		break;
@@ -213,6 +222,17 @@ void Scene::LoadScene(int newID)
 			<< "B: El gordo\n"
 			<< "N: Fuente\n";
 		break;
+	case 9:
+		cout << "Puedes interactuar con el muelle.\n"
+			<< "Z: Aumentar k\n"
+			<< "X: Disminuir k\n"
+			<< "C: Aumentar distancia del muelle\n"
+			<< "V: Disminuir distancia del muelle\n"
+			<< "B: Tocar bolita\n"
+			<< "N: Cambiar a Euler\n"
+			<< "M: Cambiar a Euler implicito\n"
+			<< ",: Cambiar a Runge-Kutta\n";
+		break;
 	default:
 		break;
 	}
@@ -237,8 +257,6 @@ void Scene::ClearScene()
 void Scene::KeyPress(unsigned char key, const physx::PxTransform& camera)
 {
 	switch (mID) {
-	case 1:
-
 	case 2:
 		switch (toupper(key)) {
 		case 'Z':
@@ -306,7 +324,6 @@ void Scene::KeyPress(unsigned char key, const physx::PxTransform& camera)
 	case 4:
 	{
 		ParticleSystem* system = static_cast<ParticleSystem*>(particles.Get(0));
-
 		switch (toupper(key)) {
 		case 'Z':
 			system->ShootFirework(BROCADE);
@@ -325,6 +342,43 @@ void Scene::KeyPress(unsigned char key, const physx::PxTransform& camera)
 			break;
 		case 'N':
 			system->ShootFirework(FOUNTAIN_FIREWORK);
+			break;
+		default:
+			break;
+		}
+	}
+		break;
+	case 9:
+	{
+		Particle* ball = static_cast<Particle*>(particles.Get(0));
+		switch (toupper(key)) {
+		case 'Z':
+			static_cast<AnchoredSpring*>(fr.find(fg[1])->first)->AddK(10);
+			break;
+		case 'X':
+			if(!static_cast<AnchoredSpring*>(fr.find(fg[1])->first)->AddK(-10))
+				cout << "caca\n";
+			break;
+		case 'C':
+			static_cast<AnchoredSpring*>(fr.find(fg[1])->first)->AddRestLength(.25);
+			break;
+		case 'V':
+			if(!static_cast<AnchoredSpring*>(fr.find(fg[1])->first)->AddRestLength(-.25))
+				cout << "caca\n";
+			break;
+		case 'B': {
+			cout << " boing\n";
+			Impulse i = Impulse(ball, {0, -10000, 0});
+		}
+			break;
+		case 'N':
+			ball->SetIntegrationMethod(EULER);
+			break;
+		case 'M':
+			ball->SetIntegrationMethod(SEMI_IMPLICIT_EULER);
+			break;
+		case ',':
+			ball->SetIntegrationMethod(RUNGE_KUTTA);
 			break;
 		default:
 			break;

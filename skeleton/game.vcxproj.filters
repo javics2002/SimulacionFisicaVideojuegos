@@ -26,6 +26,8 @@
     <ClCompile Include="Force\Whirlwind.cpp" />
     <ClCompile Include="Force\Explosion.cpp" />
     <ClCompile Include="Force\Spring.cpp" />
+    <ClCompile Include="Force\AnchoredSpring.cpp" />
+    <ClCompile Include="Force\Impulse.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core.hpp" />
@@ -56,6 +58,8 @@
     <ClInclude Include="Force\Whirlwind.h" />
     <ClInclude Include="Force\Explosion.h" />
     <ClInclude Include="Force\Spring.h" />
+    <ClInclude Include="Force\AnchoredSpring.h" />
+    <ClInclude Include="Force\Impulse.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Render">
