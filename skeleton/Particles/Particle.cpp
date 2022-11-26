@@ -29,7 +29,8 @@ Particle::Particle(Particle* p) : pose(PxTransform(PxVec3(p->pose.p))), vel(p->v
 	damping(p->damping), inverseMass(p->damping), color(PxVec4(p->color)),
 	endColor(PxVec4(p->endColor)), active(true), startingLife(p->startingLife), 
 	lifetime(startingLife), shape(p->shape), checkForces(p->checkForces),
-	windfriction1(p->windfriction1), windfriction2(p->windfriction2)
+	windfriction1(p->windfriction1), windfriction2(p->windfriction2),
+	integrationMethod(p->integrationMethod)
 {
 	renderItem = DBG_NEW RenderItem(shape, &pose, color);
 
@@ -65,12 +66,12 @@ void Particle::Integrate(double t)
 	switch (integrationMethod) {
 	default:
 	case EULER:
-		pose.p += vel * t;
+		Translate(vel * t);
 		vel += acc * t;
 		break;
 	case SEMI_IMPLICIT_EULER: 
 		vel += acc * t;
-		pose.p += vel * t;
+		Translate(vel * t);
 		break;
 	}
 	vel *= pow(damping, t);
@@ -86,6 +87,11 @@ void Particle::Integrate(double t)
 	if (endColor.w != 0 && renderItem != nullptr)
 		//Color interpolation
 		renderItem->color = lerp(color, endColor, (startingLife - lifetime) / startingLife);
+}
+
+Particle* Particle::Translate(PxVec3 deltaPos) {
+	pose.p += deltaPos;
+	return this;
 }
 
 Particle* Particle::SetPos(PxVec3 p)

@@ -4,6 +4,7 @@
 Whirlwind::Whirlwind(PxVec3 center, double radius, double force) : center(center),
 	radius(radius), force(force)
 {
+	type = WHIRLWIND;
 }
 
 Whirlwind::~Whirlwind()

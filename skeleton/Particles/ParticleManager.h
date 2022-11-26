@@ -24,7 +24,8 @@ public:
 	bool Remove(int id);
 	bool Remove(vector<Particle*>::iterator& it);
 	void Clear();
-
+	bool Empty();
+	int Size();
 	void AddSafe(Particle* p) noexcept;
 
 	void Integrate(double t);

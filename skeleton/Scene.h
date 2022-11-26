@@ -10,7 +10,7 @@
 using namespace std;
 using namespace physx;
 
-constexpr int LAST_SCENE = 9;
+constexpr int LAST_SCENE = 11;
 
 class Scene
 {
@@ -21,6 +21,10 @@ class Scene
 
 	ForceRegistry fr;
 	vector<ForceGenerator*> fg;
+
+	//Scene 11
+	double AddToAllSprings(double value, bool k);
+	void ShowSpringsValue(double value, bool k);
 
 public:
 	Scene();

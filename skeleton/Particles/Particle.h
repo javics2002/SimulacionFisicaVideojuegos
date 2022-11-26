@@ -43,6 +43,8 @@ public:
 	virtual ~Particle();
 	virtual void Integrate(double t);
 
+	Particle* Translate(PxVec3 deltaPos);
+
 	Particle* SetPos(PxVec3 p);
 	Particle* SetVel(PxVec3 v);
 	Particle* SetAcc(PxVec3 a);

@@ -28,6 +28,7 @@
     <ClCompile Include="Force\Spring.cpp" />
     <ClCompile Include="Force\AnchoredSpring.cpp" />
     <ClCompile Include="Force\Impulse.cpp" />
+    <ClCompile Include="Force\RubberBand.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core.hpp" />
@@ -60,6 +61,7 @@
     <ClInclude Include="Force\Spring.h" />
     <ClInclude Include="Force\AnchoredSpring.h" />
     <ClInclude Include="Force\Impulse.h" />
+    <ClInclude Include="Force\RubberBand.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Render">

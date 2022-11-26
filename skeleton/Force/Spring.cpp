@@ -3,6 +3,7 @@
 
 Spring::Spring(Particle* other, double k, double restLength) : other(other), k(k), restLength(restLength)
 {
+	type = SPRING;
 }
 
 Spring::~Spring()

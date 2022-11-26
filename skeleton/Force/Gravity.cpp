@@ -3,6 +3,7 @@
 
 Gravity::Gravity(PxVec3 gravity) : g(gravity)
 {
+	type = GRAVITY;
 }
 
 Gravity::~Gravity()

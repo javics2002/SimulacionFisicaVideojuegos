@@ -5,6 +5,7 @@
 #include "Particles/Firework.h"
 #include "Particles/ParticleSystem/ParticleSystems.h"
 
+//DBG_NEW dice donde hay memory leaks
 #ifdef _DEBUG
 #define DBG_NEW new ( _NORMAL_BLOCK , __FILE__ , __LINE__ )
 // Replace _NORMAL_BLOCK with _CLIENT_BLOCK if you want the
@@ -12,6 +13,36 @@
 #else
 #define DBG_NEW new
 #endif
+
+double Scene::AddToAllSprings(double value, bool k)
+{
+	/*Con este metodo he aprendido que dynamic_cast solo funciona 
+	para coger una clase padre de una clase mas concreta. Pero si 
+	intentas usarlo para comprobar que una clase general es de un 
+	tipo concreto, da error de lectura. Juraria que lo habia usado 
+	asi antes, y estaba convencidisimo de que podia usarlo para 
+	saber si un forceGenerator era un muelle*/
+
+	double totalVal = -1;
+	for (auto forceParticle : fr) {
+		if (forceParticle.first->type == SPRING) {
+			Spring* spring = static_cast<Spring*>(forceParticle.first);
+			totalVal = k ? spring->AddK(value) : spring->AddRestLength(value);
+		}
+	}
+
+	return totalVal;
+}
+
+void Scene::ShowSpringsValue(double value, bool k)
+{
+	if (value == -1) {
+		cout << "Hemos perdido alguna bolita. Reseteando el sistema.\n"; //XD
+		LoadScene(mID);
+	}
+	else
+		cout << (k ? "k = " : "Longitud de reposo = ") << value << "\n";
+}
 
 Scene::Scene() : particles(ParticleManager(&fr))
 {
@@ -26,8 +57,9 @@ Scene::Scene() : particles(ParticleManager(&fr))
 		<< "7: Torbellino\n"
 		<< "8: Explosion\n"
 		<< "9: Particula unida a una posicion estatica con un muelle\n"
-		<< "': Particulas unidas mediante muelles\n"
-		<< "Q: Flotacion\n\n";
+		<< "': Goma elastica\n"
+		<< "R: Particulas unidas mediante muelles\n"
+		<< "T: Flotacion\n\n";
 
 	LoadScene(LAST_SCENE);
 }
@@ -178,8 +210,54 @@ void Scene::LoadScene(int newID)
 	}
 		break;
 	case 10:
+	{
+		const double distance = 2;
+		Particle* ball = (DBG_NEW Particle({ 40, 47, 40 }, true, true))->SetColor({ 1, 1, .3, 1 })
+			->SetShape(CreateShape(PxSphereGeometry(.2)))->SetIntegrationMethod(SEMI_IMPLICIT_EULER)
+			->SetDamp(.7);
+		particles.Add(ball);
+		Particle* ball2 = (DBG_NEW Particle(ball))->SetColor({ 1, .1, .4, 1.0 });
+		ball2->Translate({ 0, 0, distance });
+		particles.Add(ball2);
+
+		fg.push_back(DBG_NEW RubberBand(ball2, 10, distance));
+		fr.AddRegistry(fg[0], ball);
+		fg.push_back(DBG_NEW RubberBand(ball, 10, distance));
+		fr.AddRegistry(fg[1], ball2);
+	}
 		break;
 	case 11:
+	{
+		const int numBolas = 5;
+		const double distance = .7;
+
+		Particle* lastBall = (DBG_NEW Particle({ 40, 52, 40 }, true, true))->SetColor({ 1, .1, .4, 1.0 })
+			->SetShape(CreateShape(PxSphereGeometry(.2)))->SetIntegrationMethod(SEMI_IMPLICIT_EULER)
+			->SetDamp(.7);
+		particles.Add(lastBall);
+
+		fg.push_back(DBG_NEW Gravity());
+		fr.AddRegistry(fg[0], lastBall);
+		fg.push_back(DBG_NEW AnchoredSpring(lastBall->GetPos() + PxVec3(0, distance, 0), 10, distance));
+		fr.AddRegistry(fg[1], lastBall);
+
+		
+		for (int i = 1; i < numBolas; i++) {
+			Particle* newBall = DBG_NEW Particle(lastBall);
+			newBall->Translate({ 0, -distance, 0 });
+			particles.Add(newBall);
+
+			fr.AddRegistry(fg[0], newBall);
+			fg.push_back(DBG_NEW Spring(lastBall, 10, distance));
+			fr.AddRegistry(fg[2 * i], newBall);
+			fg.push_back(DBG_NEW Spring(newBall, 10, distance));
+			fr.AddRegistry(fg[2 * i + 1], lastBall);
+
+			lastBall = newBall;
+		}
+	}
+		break;
+	case 12:
 		break;
 	default:
 		cout << "Scene " << mID << " doesn't exist.\n";
@@ -228,10 +306,41 @@ void Scene::LoadScene(int newID)
 			<< "F: Aumentar k\n"
 			<< "V: Disminuir k\n"
 			<< "G: Aumentar distancia del muelle\n"
-			<< "V: Disminuir distancia del muelle\n"
+			<< "B: Disminuir distancia del muelle\n"
 			<< "N: Cambiar a Euler\n"
 			<< "M: Cambiar a Euler implicito\n"
+			<< ",: Crear tornado\n"
 			<< ".: Resetear particula\n";
+		break;
+	case 10:
+		cout << "Puedes interactuar con la bola amarilla.\n"
+			<< "Z: Cambiar a Euler\n"
+			<< "X: Cambiar a Euler implicito\n"
+			<< "F: Aumentar k\n"
+			<< "V: Disminuir k\n"
+			<< "G: Aumentar distancia del muelle\n"
+			<< "B: Disminuir distancia del muelle\n"
+			<< "J: Empujarla al frente\n"
+			<< "M: Empujarla atras\n"
+			<< ",: Empujarla a la derecha\n"
+			<< "N: Empujarla a la izquierda\n"
+			<< "K: Empujarla arriba\n"
+			<< "H: Empujarla abajo\n"
+			<< ".: Resetear goma\n";
+		break;
+	case 11:
+		cout << "Puedes interactuar con el muelle.\n"
+			<< "Z: Tirar bolita\n"
+			<< "X: Empujar bolita\n"
+			<< "C: Tocar bolita\n"
+			<< "F: Aumentar k\n"
+			<< "V: Disminuir k\n"
+			<< "G: Aumentar distancia del muelle\n"
+			<< "B: Disminuir distancia del muelle\n"
+			<< "N: Cambiar a Euler\n"
+			<< "M: Cambiar a Euler implicito\n"
+			<< ",: Crear tornado\n"
+			<< ".: Resetear slinky\n";
 		break;
 	default:
 		break;
@@ -365,32 +474,29 @@ void Scene::KeyPress(unsigned char key, const physx::PxTransform& camera)
 			it = fr.AddRegistry(fg[1], ball);
 			cout << "La pelota se ha ido demasiado lejos. Se ha creado otra igual que la anterior.\n";
 		}
-		AnchoredSpring* spring = static_cast<AnchoredSpring*>(it->first);
+		Spring* spring = static_cast<Spring*>(it->first);
 
 		switch (toupper(key)) {
-		case 'Z': {
-			Impulse i = Impulse(ball, { 0, -1000, 0 });
-		}
+		case 'Z': 
+			Impulse(ball, { 0, -1000, 0 });
 			break;
-		case 'X': {
-			Impulse i = Impulse(ball, { 0, 1000, 0 });
-		}
-				break;
-		case 'C': {
-			Impulse i = Impulse(ball, { 1000, 0, 0 });
-		}
+		case 'X': 
+			Impulse(ball, { 0, 1000, 0 });
+			break;
+		case 'C':
+			Impulse(ball, { 1000, 0, 0 });
 			break;
 		case 'F':
-			cout << "k = " << spring->AddK(10) << "\n";
+			ShowSpringsValue(AddToAllSprings(10, true), true);
 			break;
 		case 'V':
-			cout << "k = " << spring->AddK(-10) << "\n";
+			ShowSpringsValue(AddToAllSprings(-10, true), true);
 			break;
 		case 'G':
-			cout << "Longitud de reposo = " << spring->AddRestLength(.25) << "\n";
+			ShowSpringsValue(AddToAllSprings(.25, false), false);
 			break;
 		case 'B':
-			cout << "Longitud de reposo = " << spring->AddRestLength(-.25) << "\n";
+			ShowSpringsValue(AddToAllSprings(-.25, false), false);
 			break;
 		case 'N':
 			ball->SetIntegrationMethod(EULER);
@@ -400,23 +506,134 @@ void Scene::KeyPress(unsigned char key, const physx::PxTransform& camera)
 			ball->SetIntegrationMethod(SEMI_IMPLICIT_EULER);
 			cout << "Metodo de integraccion seleccionado: Euler implicito\n";
 			break;
+		case ',':
+			fr.AddRegistry(DBG_NEW Whirlwind(PxVec3(0, 30, 0), 100, 1), ball);
+			break;
 		case '.':
-			particles.Remove(ballID);
-			ball = (DBG_NEW Particle({ 40, 48, 40 }, true, true))->SetColor({ 1, .1, .4, 1.0 })
-				->SetShape(CreateShape(PxSphereGeometry(.2)))->SetIntegrationMethod(SEMI_IMPLICIT_EULER)
-				->SetDamp(.7);
-			particles.Add(ball);
-
-			fg.push_back(DBG_NEW Gravity());
-			fr.AddRegistry(fg[0], ball);
-			fg.push_back(DBG_NEW AnchoredSpring({ 40, 50, 40 }, 10, 1));
-			it = fr.AddRegistry(fg[1], ball);
-			cout << "Se ha reseteado la bolita.\n";
+			LoadScene(mID);
 			break;
 		default:
 			break;
 		}
 	}
+		break;
+	case 10:
+	{
+		vector<Particle*> balls;
+		balls.push_back(particles.Get(0));
+		balls.push_back(particles.Get(1));
+		auto it = fr.find(fg[0]);
+		auto it2 = fr.find(fg[1]);
+
+		if (balls[0] == nullptr || balls[1] == nullptr || it == fr.end() || it2 == fr.end()) {
+			cout << "Alguna bolita se ha ido muy lejos. Se va a recargar la escena\n";
+			LoadScene(mID);
+			break;
+		}
+
+		vector<Spring*> springs;
+		springs.push_back(static_cast<Spring*>(it->first));
+		springs.push_back(static_cast<Spring*>(it2->first));
+
+		const double impulse = 100;
+
+		switch (toupper(key)) {
+		case 'Z':
+			for(auto ball : balls)
+				ball->SetIntegrationMethod(EULER);
+			cout << "Metodo de integraccion seleccionado: Euler\n";
+			break;
+		case 'X':
+			for (auto ball : balls)
+				ball->SetIntegrationMethod(SEMI_IMPLICIT_EULER);
+			cout << "Metodo de integraccion seleccionado: Euler implicito\n";
+			break;
+		case 'F':
+			ShowSpringsValue(AddToAllSprings(10, true), true);
+			break;
+		case 'V':
+			ShowSpringsValue(AddToAllSprings(-10, true), true);
+			break;
+		case 'G':
+			ShowSpringsValue(AddToAllSprings(.25, false), false);
+			break;
+		case 'B':
+			ShowSpringsValue(AddToAllSprings(-.25, false), false);
+			break;
+		case 'J':
+			Impulse(balls[0], { 0, 0, -impulse });
+			break;
+		case 'M':
+			Impulse(balls[0], { 0, 0, impulse });
+			break;
+		case ',':
+			Impulse(balls[0], { impulse, 0, 0});
+			break;
+		case 'N':
+			Impulse(balls[0], { -impulse, 0, 0 });
+			break;
+		case 'K':
+			Impulse(balls[0], { 0, impulse, 0 });
+			break;
+		case 'H':
+			Impulse(balls[0], { 0, -impulse, 0 });
+			break;
+		case '.':
+			LoadScene(mID);
+			break;
+		default:
+			break;
+		}
+	}
+		break;
+	case 11:
+		switch (toupper(key)) {
+		case 'Z':
+			if(!particles.Empty())
+				Impulse(particles.Get(particles.Size() - 1), { 0, -1000, 0 });
+			break;
+		case 'X':
+			if (!particles.Empty())
+				Impulse(particles.Get(particles.Size() - 1), { 0, 1000, 0 });
+			break;
+		case 'C': 
+			if (!particles.Empty())
+				Impulse(particles.Get(particles.Size() - 1), { 1000, 0, 0 });
+			break;
+		case 'F':
+			ShowSpringsValue(AddToAllSprings(10, true), true);
+			break;
+		case 'V':
+			ShowSpringsValue(AddToAllSprings(-10, true), true);
+			break;
+		case 'G':
+			ShowSpringsValue(AddToAllSprings(.25, false), false);
+			break;
+		case 'B':
+			ShowSpringsValue(AddToAllSprings(-.25, false), false);
+			break;
+		case 'N':
+			for (int i = 0; i < particles.Size(); i++)
+				particles.Get(i)->SetIntegrationMethod(EULER);
+			cout << "Metodo de integraccion seleccionado: Euler\n";
+			break;
+		case 'M':
+			for (int i = 0; i < particles.Size(); i++)
+				particles.Get(i)->SetIntegrationMethod(SEMI_IMPLICIT_EULER);
+			cout << "Metodo de integraccion seleccionado: Euler implicito\n";
+			break;
+		case ',': {
+			Whirlwind* whirlwind = DBG_NEW Whirlwind(PxVec3(0, 30, 0), 100, 1);
+			for (int i = 0; i < particles.Size(); i++)
+				fr.AddRegistry(whirlwind, particles.Get(i));
+		}
+			break;
+		case '.':
+			LoadScene(mID);
+			break;
+		default:
+			break;
+		}
 		break;
 	default:
 		break;

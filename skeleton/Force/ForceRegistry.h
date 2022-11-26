@@ -6,6 +6,7 @@
 #include "Explosion.h"
 #include "AnchoredSpring.h"
 #include "Impulse.h"
+#include "RubberBand.h"
 #include <unordered_map>
 #include <climits>
 

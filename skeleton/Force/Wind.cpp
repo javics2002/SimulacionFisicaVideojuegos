@@ -4,6 +4,7 @@
 
 Wind::Wind(PxVec3 windVel) : windVelocity(windVel)
 {
+	type = WIND;
 }
 
 Wind::~Wind()

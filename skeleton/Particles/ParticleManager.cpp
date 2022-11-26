@@ -79,6 +79,16 @@ void ParticleManager::Clear()
 	}
 }
 
+bool ParticleManager::Empty()
+{
+	return mParticles.empty();
+}
+
+int ParticleManager::Size()
+{
+	return mParticles.size();
+}
+
 void ParticleManager::AddSafe(Particle* p) noexcept
 {
 	if(p != nullptr)

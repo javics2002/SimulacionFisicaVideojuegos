@@ -11,7 +11,7 @@ protected:
 public:
 	Spring(Particle* other, double k, double restLength);
 	virtual ~Spring() override;
-	void UpdateForce(Particle* p, double dt) override;
+	virtual void UpdateForce(Particle* p, double dt) override;
 
 	double AddK(double increment);
 	double AddRestLength(double increment);

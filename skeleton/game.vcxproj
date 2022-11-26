@@ -272,6 +272,7 @@
     <ClCompile Include="RenderUtils.cpp" />
     <ClCompile Include="Render\Camera.cpp" />
     <ClCompile Include="Render\Render.cpp" />
+    <ClCompile Include="Force\RubberBand.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Force\Whirlwind.cpp" />
     <ClCompile Include="Force\Wind.cpp" />
@@ -300,6 +301,7 @@
     <ClInclude Include="RenderUtils.hpp" />
     <ClInclude Include="Render\Camera.h" />
     <ClInclude Include="Render\Render.h" />
+    <ClInclude Include="Force\RubberBand.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Force\Whirlwind.h" />
     <ClInclude Include="Force\Wind.h" />
