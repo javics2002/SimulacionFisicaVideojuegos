@@ -7,6 +7,7 @@
 #include "AnchoredSpring.h"
 #include "Impulse.h"
 #include "RubberBand.h"
+#include "Buoyancy.h"
 #include <unordered_map>
 #include <climits>
 

@@ -253,6 +253,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Force\Buoyancy.cpp" />
     <ClCompile Include="Force\AnchoredSpring.cpp" />
     <ClCompile Include="Force\Drag.cpp" />
     <ClCompile Include="Force\Explosion.cpp" />
@@ -279,6 +280,7 @@
     <ClCompile Include="Force\Spring.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Force\Buoyancy.h" />
     <ClInclude Include="Force\AnchoredSpring.h" />
     <ClInclude Include="Force\Drag.h" />
     <ClInclude Include="Force\Explosion.h" />

@@ -241,7 +241,6 @@ void Scene::LoadScene(int newID)
 		fg.push_back(DBG_NEW AnchoredSpring(lastBall->GetPos() + PxVec3(0, distance, 0), 10, distance));
 		fr.AddRegistry(fg[1], lastBall);
 
-		
 		for (int i = 1; i < numBolas; i++) {
 			Particle* newBall = DBG_NEW Particle(lastBall);
 			newBall->Translate({ 0, -distance, 0 });
@@ -258,6 +257,16 @@ void Scene::LoadScene(int newID)
 	}
 		break;
 	case 12:
+	{
+		Particle* p = (DBG_NEW Particle({40, 50, 40}, true, true))
+			->SetShape(CreateShape(PxBoxGeometry(.1, .1, .1)))->SetDamp(.7);
+
+		fg.push_back(DBG_NEW Gravity());
+		fg.push_back(DBG_NEW Buoyancy({40, 45, 40}, .1, .1, 1));
+		fr.AddRegistry(fg[0], p);
+		fr.AddRegistry(fg[1], p);
+		particles.Add(p);
+	}
 		break;
 	default:
 		cout << "Scene " << mID << " doesn't exist.\n";
@@ -341,6 +350,8 @@ void Scene::LoadScene(int newID)
 			<< "M: Cambiar a Euler implicito\n"
 			<< ",: Crear tornado\n"
 			<< ".: Resetear slinky\n";
+		break;
+	case 12:
 		break;
 	default:
 		break;
@@ -461,20 +472,11 @@ void Scene::KeyPress(unsigned char key, const physx::PxTransform& camera)
 	{
 		const int ballID = 0;
 		Particle* ball = particles.Get(ballID);
-		auto it = fr.find(fg[1]);
-		while (ball == nullptr || it == fr.end()) {
-			ball = (DBG_NEW Particle({ 40, 48, 40 }, true, true))->SetColor({ 1, .1, .4, 1.0 })
-				->SetShape(CreateShape(PxSphereGeometry(.2)))->SetIntegrationMethod(SEMI_IMPLICIT_EULER)
-				->SetDamp(.7);
-			particles.Add(ball);
-
-			fg.push_back(DBG_NEW Gravity());
-			fr.AddRegistry(fg[0], ball);
-			fg.push_back(DBG_NEW AnchoredSpring({ 40, 50, 40 }, 10, 1));
-			it = fr.AddRegistry(fg[1], ball);
-			cout << "La pelota se ha ido demasiado lejos. Se ha creado otra igual que la anterior.\n";
+		while (ball == nullptr) {
+			cout << "La bolita se ha ido muy lejos. Se va a recargar la escena\n";
+			LoadScene(mID);
+			break;
 		}
-		Spring* spring = static_cast<Spring*>(it->first);
 
 		switch (toupper(key)) {
 		case 'Z': 
@@ -522,18 +524,12 @@ void Scene::KeyPress(unsigned char key, const physx::PxTransform& camera)
 		vector<Particle*> balls;
 		balls.push_back(particles.Get(0));
 		balls.push_back(particles.Get(1));
-		auto it = fr.find(fg[0]);
-		auto it2 = fr.find(fg[1]);
 
-		if (balls[0] == nullptr || balls[1] == nullptr || it == fr.end() || it2 == fr.end()) {
+		if (balls[0] == nullptr || balls[1] == nullptr) {
 			cout << "Alguna bolita se ha ido muy lejos. Se va a recargar la escena\n";
 			LoadScene(mID);
 			break;
 		}
-
-		vector<Spring*> springs;
-		springs.push_back(static_cast<Spring*>(it->first));
-		springs.push_back(static_cast<Spring*>(it2->first));
 
 		const double impulse = 100;
 
