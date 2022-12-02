@@ -14,7 +14,7 @@ void Drag::UpdateForce(Particle* p, double dt)
 {
 	if (p != nullptr && p->GetInvMass() > DBL_EPSILON) {
 		float dragCoef = p->GetVel().magnitude();
-		dragCoef = k1 * dragCoef + k1 * dragCoef * dragCoef;
+		dragCoef = k1 * dragCoef + k2 * dragCoef * dragCoef;
 		p->AddForce(-p->GetVel().getNormalized() * dragCoef);
 	}
 }
@@ -32,5 +32,5 @@ inline float Drag::GetK1()
 
 inline float Drag::GetK2()
 {
-	return k1;
+	return k2;
 }

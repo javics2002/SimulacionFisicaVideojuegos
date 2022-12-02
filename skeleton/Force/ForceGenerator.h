@@ -6,7 +6,7 @@ using namespace physx;
 
 class Particle;
 
-enum ForceGeneratorType { GRAVITY, DRAG, WIND, WHIRLWIND, EXPLOSION, SPRING, IMPULSE};
+enum ForceGeneratorType { GRAVITY, DRAG, WIND, WHIRLWIND, EXPLOSION, SPRING, IMPULSE, BUOYANCY};
 
 class ForceGenerator
 {

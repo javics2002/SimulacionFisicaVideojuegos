@@ -50,6 +50,7 @@ public:
 	Particle* SetAcc(PxVec3 a);
 	Particle* SetDamp(double damp);
 	Particle* SetIMass(double iMass);
+	double AddMass(double increment);
 	Particle* SetColor(PxVec4 col);
 	Particle* SetEndColor(PxVec4 col);
 	Particle* SetShape(PxShape* shp);
@@ -64,6 +65,7 @@ public:
 	PxVec3 GetPos();
 	PxVec3 GetVel();
 	double GetInvMass();
+	double GetMass();
 	double GetWindFriction1();
 	double GetWindFriction2();
 	bool GetCheckForces();

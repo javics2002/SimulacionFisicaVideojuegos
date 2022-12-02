@@ -124,6 +124,15 @@ Particle* Particle::SetIMass(double iMass)
 	return this;
 }
 
+double Particle::AddMass(double increment)
+{
+	double mass = GetMass() + increment;
+	if (mass < .1)
+		mass = .1;
+	inverseMass = 1 / mass;
+	return mass;
+}
+
 Particle* Particle::SetColor(PxVec4 col)
 {
 	color = col;
@@ -198,6 +207,11 @@ PxVec3 Particle::GetVel()
 double Particle::GetInvMass()
 {
 	return inverseMass;
+}
+
+double Particle::GetMass()
+{
+	return 1 / inverseMass;
 }
 
 double Particle::GetWindFriction1()

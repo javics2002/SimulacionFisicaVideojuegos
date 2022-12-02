@@ -9,7 +9,7 @@ Carpetas bin y common https://ucomplutense-my.sharepoint.com/:u:/g/personal/dava
 
 ## Controles
 
-Pulsa los numeros para cambiar entre las escenas.
+Pulsa las para cambiar entre las escenas.
 0: Particula con velocidad constante
 1: Particula con aceleracion y damping
 2: Proyectiles
@@ -19,6 +19,10 @@ Pulsa los numeros para cambiar entre las escenas.
 6: Viento
 7: Torbellino
 8: Explosion
+9: Particula unida a una posicion estatica con un muelle
+': Goma elastica
+R: Particulas unidas mediante muelle
+T: Flotacion
 
 Algunas escenas permiten interacción:
 2. Puedes disparar proyectiles:
@@ -48,3 +52,53 @@ C: Cometa
 V: Delay
 B: El gordo
 N: Fuente
+
+9. Puedes interactuar con el muelle.
+Z: Tirar bolita
+X: Empujar bolita
+C: Tocar bolita
+F: Aumentar k
+V: Disminuir k
+G: Aumentar distancia del muelle
+B: Disminuir distancia del muelle
+N: Cambiar a Euler
+M: Cambiar a Euler implicito
+,: Crear tornado
+.: Resetear particula
+
+'. Puedes interactuar con la bola amarilla.
+Z: Cambiar a Euler
+X: Cambiar a Euler implicito
+F: Aumentar k
+V: Disminuir k
+G: Aumentar distancia del muelle
+B: Disminuir distancia del muelle
+J: Empujarla al frente
+M: Empujarla atras
+,: Empujarla a la derecha
+N: Empujarla a la izquierda
+K: Empujarla arriba
+H: Empujarla abajo
+.: Resetear goma
+
+R. Puedes interactuar con el muelle.
+"Z: Tirar bolita
+"X: Empujar bolita
+"C: Tocar bolita
+"F: Aumentar k
+"V: Disminuir k
+"G: Aumentar distancia del muelle
+"B: Disminuir distancia del muelle
+"N: Cambiar a Euler
+"M: Cambiar a Euler implicito
+",: Crear tornado
+".: Resetear slinky
+
+T. Puedes cambiar los valores del sistema.
+F: Aumentar densidad del liquido
+V: Disminuir densidad del liquido
+G: Aumentar masa del cubo
+B: Disminuir masa del cubo
+H: Aumentar volumen del cubo
+N: Disminuir volumen del cubo
+.: Resetear cubo

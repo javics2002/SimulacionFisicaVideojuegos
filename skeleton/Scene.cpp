@@ -258,11 +258,13 @@ void Scene::LoadScene(int newID)
 		break;
 	case 12:
 	{
-		Particle* p = (DBG_NEW Particle({40, 50, 40}, true, true))
-			->SetShape(CreateShape(PxBoxGeometry(.1, .1, .1)))->SetDamp(.7);
+		float l = .1;
+		Particle* p = (DBG_NEW Particle({ 40, 50, 40 }, true, true))
+			->SetShape(CreateShape(PxBoxGeometry(l, l, l)))->SetDamp(.7)
+			->SetIMass(4);
 
 		fg.push_back(DBG_NEW Gravity());
-		fg.push_back(DBG_NEW Buoyancy({40, 45, 40}, .1, .1, 1));
+		fg.push_back(DBG_NEW Buoyancy({40, 45, 40}, l, 1000, pow(l, 3)));
 		fr.AddRegistry(fg[0], p);
 		fr.AddRegistry(fg[1], p);
 		particles.Add(p);
@@ -352,6 +354,14 @@ void Scene::LoadScene(int newID)
 			<< ".: Resetear slinky\n";
 		break;
 	case 12:
+		cout << "Puedes cambiar los valores del sistema.\n"
+			<< "F: Aumentar densidad del liquido\n"
+			<< "V: Disminuir densidad del liquido\n"
+			<< "G: Aumentar masa del cubo\n"
+			<< "B: Disminuir masa del cubo\n"
+			<< "H: Aumentar volumen del cubo\n"
+			<< "N: Disminuir volumen del cubo\n"
+			<< ".: Resetear cubo\n";
 		break;
 	default:
 		break;
@@ -472,7 +482,7 @@ void Scene::KeyPress(unsigned char key, const physx::PxTransform& camera)
 	{
 		const int ballID = 0;
 		Particle* ball = particles.Get(ballID);
-		while (ball == nullptr) {
+		if (ball == nullptr) {
 			cout << "La bolita se ha ido muy lejos. Se va a recargar la escena\n";
 			LoadScene(mID);
 			break;
@@ -630,6 +640,51 @@ void Scene::KeyPress(unsigned char key, const physx::PxTransform& camera)
 		default:
 			break;
 		}
+		break;
+	case 12:
+	{
+		Particle* cubo = particles.Get(0);
+		if (cubo == nullptr) {
+			cout << "El se ha ido muy lejos. Se va a recargar la escena\n";
+			LoadScene(mID);
+			break;
+		}
+
+		static float l = .1;
+
+		switch (toupper(key)) {
+		case 'F':
+			cout << "Densidad del liquido = " << static_cast<Buoyancy*>(fg[1])->AddDensity(10) << "\n";
+			break;
+		case 'V':
+			cout << "Densidad del liquido = " << static_cast<Buoyancy*>(fg[1])->AddDensity(-10) << "\n";
+			break;
+		case 'G':
+			cout << "Masa del cubo = " << cubo->AddMass(.25) << "\n";
+			break;
+		case 'B':
+			cout << "Masa del cubo = " << cubo->AddMass(-.25) << "\n";
+			break;
+		case 'H': 
+			l += .1;
+			static_cast<Buoyancy*>(fg[1])->SetHeight(l)->SetVolume(pow(l, 3));
+			cubo->SetShape(CreateShape(PxBoxGeometry(l, l, l)));
+			cout << "Volumen del cubo = " << pow(l, 3) << "m^3\n";
+			break;
+		case 'N':
+			l -= .1;
+			if (l < .1)
+				l = .1;
+			static_cast<Buoyancy*>(fg[1])->SetHeight(l)->SetVolume(pow(l, 3));
+			cout << "Volumen del cubo = " << pow(l, 3) << "m^3\n";
+			break;
+		case '.':
+			cubo->SetPos({ 40, 50, 40 })->SetVel(PxVec3(0))->ClearForce();
+			break;
+		default:
+			break;
+		}
+	}
 		break;
 	default:
 		break;

@@ -1,6 +1,8 @@
 #pragma once
 #include "ForceGenerator.h"
 
+class Drag;
+
 class Buoyancy : public ForceGenerator
 {
 	float height;
@@ -15,5 +17,12 @@ public:
 	~Buoyancy() override;
 
 	void UpdateForce(Particle* p, double dt) override;
+
+	float AddDensity(float increment);
+	Buoyancy* SetHeight(float newHeight);
+	Buoyancy* SetVolume(float newVolume);
+
+	Drag* liquidDrag;
+	Drag* gasDrag;
 };
 
