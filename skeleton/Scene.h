@@ -2,13 +2,26 @@
 
 #include "Particles/Projectile.h"
 #include "Particles/ParticleManager.h"
-#include "PxPhysicsAPI.h"
 #include "Force/ForceRegistry.h"
+#include "callbacks.hpp"
 
 #include <random>
-
 using namespace std;
 using namespace physx;
+
+//Physx
+extern PxScene* gScene;
+extern PxSceneDesc* sceneDesc;
+extern PxPhysics* gPhysics;
+extern PxFoundation* gFoundation;
+extern PxPvd* gPvd;
+extern PxDefaultCpuDispatcher* gDispatcher;
+
+extern PxDefaultAllocator gAllocator;
+extern PxDefaultErrorCallback gErrorCallback;
+extern ContactReportCallback gContactReportCallback;
+
+extern unordered_map<PhysicMaterial, physx::PxMaterial*> gMaterials;
 
 constexpr int LAST_SCENE = 13;
 
@@ -26,6 +39,9 @@ class Scene
 	double AddToAllSprings(double value, bool k);
 	void ShowSpringsValue(double value, bool k);
 
+	unordered_map<PhysicMaterial, PxVec4> colors;
+	vector<RenderItem*> renderItems;
+
 public:
 	Scene();
 	~Scene();
@@ -38,5 +54,9 @@ public:
 
 	void KeyPress(unsigned char key, const PxTransform& camera);
 	void ThrowProyectile(ProjectileType type, const PxTransform& camera);
+
+	//Physx
+	PxRigidStatic* Scene::AddPxStatic(PxVec3 pos, PxShape* shape, PxVec4 color, PhysicMaterial material);
+	PxRigidDynamic* Scene::AddPxDynamic(PxVec3 pos, PxShape* shape, PxVec4 color, PhysicMaterial material);
 };
 

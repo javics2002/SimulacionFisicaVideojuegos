@@ -1,5 +1,4 @@
 #include "Scene.h"
-#include "RenderUtils.hpp"
 #include <iostream>
 
 #include "Particles/Firework.h"
@@ -44,8 +43,54 @@ void Scene::ShowSpringsValue(double value, bool k)
 		cout << (k ? "k = " : "Longitud de reposo = ") << value << "\n";
 }
 
+PxRigidStatic* Scene::AddPxStatic(PxVec3 pos, PxShape* shape, PxVec4 color,
+	PhysicMaterial material = DEFAULT) {
+	shape->setMaterials(&gMaterials[material], 1);
+	PxRigidStatic* particle = gPhysics->createRigidStatic(PxTransform(pos));
+	particle->attachShape(*shape);
+	renderItems.push_back(new RenderItem(shape, particle, color));
+	gScene->addActor(*particle);
+	return particle;
+}
+
+PxRigidDynamic* Scene::AddPxDynamic(PxVec3 pos, PxShape* shape, PxVec4 color,
+	PhysicMaterial material = DEFAULT) {
+	shape->setMaterials(&gMaterials[material], 1);
+	PxRigidDynamic* particle = gPhysics->createRigidDynamic(PxTransform(pos));
+	particle->attachShape(*shape);
+	renderItems.push_back(new RenderItem(shape, particle, color));
+	gScene->addActor(*particle);
+	return particle;
+}
+
 Scene::Scene() : particles(ParticleManager(&fr))
 {
+	gFoundation = PxCreateFoundation(PX_FOUNDATION_VERSION, gAllocator, gErrorCallback);
+
+	gPvd = PxCreatePvd(*gFoundation);
+	PxPvdTransport* transport = PxDefaultPvdSocketTransportCreate(PVD_HOST, 5425, 10);
+	gPvd->connect(*transport, PxPvdInstrumentationFlag::eALL);
+
+	gPhysics = PxCreatePhysics(PX_PHYSICS_VERSION, *gFoundation, PxTolerancesScale(), true, gPvd);
+
+	gMaterials[DEFAULT] = gPhysics->createMaterial(0.5f, 0.5f, 0.6f);
+	colors[DEFAULT] = { 1, 1, 1, 1 };
+	gMaterials[RUBBER] = gPhysics->createMaterial(0.6f, 0.4f, 0.99f);
+	colors[RUBBER] = { 1, 0, 0, 1 };
+	gMaterials[METAL] = gPhysics->createMaterial(0.8f, 0.8f, 0.2f);
+	colors[METAL] = { 0, 1, 0, 1 };
+	gMaterials[SOAP] = gPhysics->createMaterial(0.05f, 0.02f, 0.5f);
+	colors[SOAP] = { 0, 0, 1, 1 };
+
+	// For Solid Rigids +++++++++++++++++++++++++++++++++++++
+	sceneDesc = new PxSceneDesc(gPhysics->getTolerancesScale());
+	sceneDesc->gravity = PxVec3(0.0f, -9.8f, 0.0f);
+	gDispatcher = PxDefaultCpuDispatcherCreate(2);
+	sceneDesc->cpuDispatcher = gDispatcher;
+	sceneDesc->filterShader = contactReportFilterShader;
+	sceneDesc->simulationEventCallback = &gContactReportCallback;
+	sceneDesc->gravity = { 0, -9.8, 0 };
+
 	cout << "Pulsa las teclas para cambiar entre las escenas.\n"
 		<< "0: Particula con velocidad constante\n"
 		<< "1: Particula con aceleracion y damping\n"
@@ -68,6 +113,19 @@ Scene::Scene() : particles(ParticleManager(&fr))
 Scene::~Scene()
 {
 	ClearScene();
+
+	// Rigid Body ++++++++++++++++++++++++++++++++++++++++++
+	gScene->release();
+	gDispatcher->release();
+	// -----------------------------------------------------
+	gPhysics->release();
+	PxPvdTransport* transport = gPvd->getTransport();
+	gPvd->release();
+	transport->release();
+
+	gFoundation->release();
+
+	delete sceneDesc;
 }
 
 void Scene::LoadScene(int newID)
@@ -271,7 +329,9 @@ void Scene::LoadScene(int newID)
 		particles.Add(p);
 	}
 		break;
-	case -1:
+	case 13:
+		AddPxStatic({ 0, 30, 0 }, CreateShape(PxBoxGeometry(100, 1, 100)), { .42, .23, .16, 1 }, SOAP);
+		AddPxStatic({ -1, 40, -1 }, CreateShape(PxBoxGeometry(.5, 11, .5)), { .3, .3, .3, 1 });
 		break;
 	default:
 		cout << "Scene " << mID << " doesn't exist.\n";
@@ -375,6 +435,39 @@ void Scene::Update(double t)
 {
 	fr.Integrate(t);
 	particles.Integrate(t);
+
+	gScene->simulate(t);
+	gScene->fetchResults(true);
+
+	switch (mID) {
+	case 13:
+	{
+		const double spawnTime = .2;
+		const int maxParticles = 500;
+
+		static double lastSpawn = 0;
+		static int particles = 0;
+		if (lastSpawn > spawnTime && particles < maxParticles) {
+			const PxVec3 size(.5, .2, .3);
+			PhysicMaterial material = PhysicMaterial(rand() % LAST_PXMATERIAL);
+			float tensorMultiplier = (rand() % 100) * .1;
+
+			PxRigidDynamic* particle = AddPxDynamic({ 0, 50, 0 },
+				CreateShape(PxBoxGeometry(size)), colors[material] * tensorMultiplier * .1, material);
+
+			particle->setMassSpaceInertiaTensor(
+				PxVec3(size.y * size.z, size.x * size.z, size.x * size.y) * tensorMultiplier);
+			particle->setLinearVelocity({ 10, 2, 0 });
+			particles++;
+			lastSpawn = 0;
+		}
+		else
+			lastSpawn += t;
+	}
+	break;
+	default:
+		break;
+	}
 }
 
 void Scene::ClearScene()
@@ -385,6 +478,18 @@ void Scene::ClearScene()
 	fg.clear();
 
 	particles.Clear();
+
+	if (gScene != NULL) {
+		gScene->release();
+
+		for (auto item : renderItems) {
+			DeregisterRenderItem(item);
+			delete item;
+		}
+
+		renderItems.clear();
+	}
+	gScene = gPhysics->createScene(*sceneDesc);
 }
 
 void Scene::KeyPress(unsigned char key, const physx::PxTransform& camera)
