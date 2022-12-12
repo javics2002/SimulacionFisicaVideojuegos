@@ -20,7 +20,6 @@ extern void stepPhysics(bool interactive, double t);
 extern void cleanupPhysics(bool interactive);
 extern void keyPress(unsigned char key, const PxTransform& camera);
 extern PxPhysics* gPhysics;
-extern PxMaterial* gMaterial;
 
 std::vector<const RenderItem*> gRenderItems;
 
@@ -184,8 +183,8 @@ Camera* GetCamera()
 	return sCamera;
 }
 
-PxShape* CreateShape(const PxGeometry& geo)
+PxShape* CreateShape(const PxGeometry& geo, PxMaterial* material)
 {
-	PxShape* shape = gPhysics->createShape(geo, *gMaterial);
+	PxShape* shape = gPhysics->createShape(geo, *material);
 	return shape;
 }

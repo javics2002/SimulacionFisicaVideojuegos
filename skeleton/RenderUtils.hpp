@@ -3,10 +3,14 @@
 
 #include "PxPhysicsAPI.h"
 #include "core.hpp"
+#include <unordered_map>
 
 class RenderItem;
 void RegisterRenderItem(const RenderItem* _item);
 void DeregisterRenderItem(const RenderItem* _item);
+
+enum PhysicMaterial { DEFAULT, RUBBER, METAL, SOAP, LAST_PXMATERIAL };
+extern std::unordered_map<PhysicMaterial, physx::PxMaterial*> gMaterials;
 
 class RenderItem
 {
@@ -62,6 +66,6 @@ public:
 double GetLastTime();
 Camera* GetCamera();
 
-physx::PxShape* CreateShape(const physx::PxGeometry& geo);
+physx::PxShape* CreateShape(const physx::PxGeometry& geo, physx::PxMaterial* material = gMaterials[DEFAULT]);
 
 #endif

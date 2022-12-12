@@ -59,7 +59,8 @@ Scene::Scene() : particles(ParticleManager(&fr))
 		<< "9: Particula unida a una posicion estatica con un muelle\n"
 		<< "': Goma elastica\n"
 		<< "R: Particulas unidas mediante muelles\n"
-		<< "T: Flotacion\n\n";
+		<< "T: Flotacion\n"
+		<< "R: Solidos rigidos con gravedad\n\n";
 
 	LoadScene(LAST_SCENE);
 }
@@ -269,6 +270,8 @@ void Scene::LoadScene(int newID)
 		fr.AddRegistry(fg[1], p);
 		particles.Add(p);
 	}
+		break;
+	case -1:
 		break;
 	default:
 		cout << "Scene " << mID << " doesn't exist.\n";
