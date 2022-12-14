@@ -18,15 +18,8 @@ void Explosion::UpdateForce(Particle* p, double dt)
 	radius = maxRadius * time / duration;
 
 	if (p != nullptr && p->GetInvMass() > DBL_EPSILON) {
-		double distance = Distance(p, center);
-		if((p->GetPos() - center).magnitudeSquared() < radius * radius)
-			p->AddForce(force / pow(distance, 2) * (p->GetPos() - center) * exp(-time / duration));
+		const double distanceSquared = (p->GetPos() - center).magnitudeSquared();
+		if(distanceSquared < pow(radius, 2))
+			p->AddForce(force / distanceSquared * (p->GetPos() - center) * exp(-time / duration));
 	}
-}
-
-double Explosion::Distance(Particle* p, PxVec3 point)
-{
-	return sqrt(pow(p->GetPos().x - point.x, 2) 
-		+ pow(p->GetPos().y - point.y, 2) 
-		+ pow(p->GetPos().z - point.z, 2));
 }

@@ -9,13 +9,13 @@ using namespace std;
 using namespace physx;
 
 class ParticleGenerator;
-class ForceRegistry;
 enum FireworkType;
 
 class ParticleSystem : public Particle
 {
 public: 
-	ParticleSystem(ForceRegistry* fr = nullptr, ParticleGenerator* generator = nullptr, PxVec3 p = { 0, 0, 0 });
+	ParticleSystem(ForceRegistry* fr = nullptr, ParticleGenerator* generator = nullptr, 
+		PxVec3 p = { 0, 0, 0 });
 	~ParticleSystem() override;
 
 	void Integrate(double t) override;
@@ -23,7 +23,6 @@ public:
 	void ClearGenerators();
 	void ReplaceGenerators(ParticleGenerator* generator);
 	void ShootFirework(FireworkType type);
-
 
 	ParticleManager particles;
 	ParticleManager particleGenerators;

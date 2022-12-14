@@ -2,10 +2,10 @@
 
 #include "PxPhysicsAPI.h"
 
-class RenderItem;
-
 using namespace std;
 using namespace physx;
+
+class RenderItem;
 
 enum IntegrationMethod { EULER, SEMI_IMPLICIT_EULER };
 

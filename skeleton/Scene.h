@@ -3,6 +3,7 @@
 #include "Particles/Projectile.h"
 #include "Particles/ParticleManager.h"
 #include "Force/ForceRegistry.h"
+#include "Force/ForceRegistryRigid.h"
 #include "callbacks.hpp"
 
 #include <random>
@@ -33,6 +34,7 @@ class Scene
 	default_random_engine generator = default_random_engine(rand());
 
 	ForceRegistry fr;
+	ForceRegistryRigid frr;
 	vector<ForceGenerator*> fg;
 
 	//Scene 11
@@ -57,6 +59,6 @@ public:
 
 	//Physx
 	PxRigidStatic* Scene::AddPxStatic(PxVec3 pos, PxShape* shape, PxVec4 color, PhysicMaterial material);
-	PxRigidDynamic* Scene::AddPxDynamic(PxVec3 pos, PxShape* shape, PxVec4 color, PhysicMaterial material);
+	//PxRigidDynamic* Scene::AddPxDynamic(PxVec3 pos, PxShape* shape, PxVec4 color, PhysicMaterial material);
 };
 

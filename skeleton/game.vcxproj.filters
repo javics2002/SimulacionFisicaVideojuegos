@@ -30,6 +30,11 @@
     <ClCompile Include="Force\Impulse.cpp" />
     <ClCompile Include="Force\RubberBand.cpp" />
     <ClCompile Include="Force\Buoyancy.cpp" />
+    <ClCompile Include="Particles\RigidParticle.cpp" />
+    <ClCompile Include="Force\ForceRegistryRigid.cpp" />
+    <ClCompile Include="Force\ExplosionRigid.cpp" />
+    <ClCompile Include="Force\SpringRigid.cpp" />
+    <ClCompile Include="Math\Lerp.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core.hpp" />
@@ -64,6 +69,12 @@
     <ClInclude Include="Force\Impulse.h" />
     <ClInclude Include="Force\RubberBand.h" />
     <ClInclude Include="Force\Buoyancy.h" />
+    <ClInclude Include="Particles\RigidParticle.h" />
+    <ClInclude Include="Force\ForceRegistryRigid.h" />
+    <ClInclude Include="Force\ForceGeneratorRigid.h" />
+    <ClInclude Include="Force\ExplosionRigid.h" />
+    <ClInclude Include="Force\SpringRigid.h" />
+    <ClInclude Include="Math\Lerp.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Render">

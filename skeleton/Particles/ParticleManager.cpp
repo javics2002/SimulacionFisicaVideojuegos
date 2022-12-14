@@ -1,9 +1,12 @@
 #include "ParticleManager.h"
 #include "Particle.h"
+#include "RigidParticle.h"
 #include "ParticleSystem/ParticleSystem.h"
 #include "../Force/ForceRegistry.h"
+#include "../Force/ForceRegistryRigid.h"
 
-ParticleManager::ParticleManager(ForceRegistry* forceRegistry) : fr(forceRegistry)
+ParticleManager::ParticleManager(ForceRegistry* forceRegistry, 
+	ForceRegistryRigid* forceRegistryRigid) : fr(forceRegistry), frr(forceRegistryRigid)
 {
 }
 
@@ -21,6 +24,15 @@ int ParticleManager::Add(Particle* p)
 	else return -1;
 }
 
+int ParticleManager::Add(RigidParticle* p)
+{
+	if (p != nullptr ) {
+		mRigidParticles.push_back(p);
+		return mRigidParticles.size() - 1;
+	}
+	else return -1;
+}
+
 Particle* ParticleManager::Get(int id)
 {
 	if (id >= 0 && id < mParticles.size())
@@ -28,24 +40,11 @@ Particle* ParticleManager::Get(int id)
 	else return nullptr;
 }
 
-bool ParticleManager::Remove(int id)
+RigidParticle* ParticleManager::GetRigid(int id)
 {
-	if (id < 0 && id >= mParticles.size())
-		return false;
-
-	vector<Particle*>::iterator it = mParticles.begin();
-	int i = 0;
-	while (i < id) {
-		it++;
-		i++;
-	}
-
-	if ((*it)->GetCheckForces())
-		fr->DeleteParticle(*it);
-	Particle* p = *it;
-	mParticles.erase(it);
-	delete p;
-	return true;
+	if (id >= 0 && id < mRigidParticles.size())
+		return mRigidParticles[id];
+	else return nullptr;
 }
 
 bool ParticleManager::Remove(vector<Particle*>::iterator& it)
@@ -58,19 +57,27 @@ bool ParticleManager::Remove(vector<Particle*>::iterator& it)
 	return true;
 }
 
+bool ParticleManager::Remove(vector<RigidParticle*>::iterator& it)
+{
+	RigidParticle* p = *it;
+	if(frr != nullptr)
+		frr->DeleteParticle(*it);
+	it = mRigidParticles.erase(it);
+	delete p;
+	return true;
+}
+
 void ParticleManager::Clear()
 {
-	/*ParticleSystem* system = nullptr;
-	if (!mParticles.empty()) {
-		system = dynamic_cast<ParticleSystem*>(*mParticles.begin());
-		delete system;
-	}
-	*/
-	
 	for (auto p : mParticles)
 		delete p;
 
 	mParticles.clear();
+	
+	for (auto p : mRigidParticles)
+		delete p;
+
+	mRigidParticles.clear();
 
 	while (particleQueue.size() > 0) {
 		Particle *p = particleQueue.front();
@@ -81,12 +88,17 @@ void ParticleManager::Clear()
 
 bool ParticleManager::Empty()
 {
-	return mParticles.empty();
+	return mParticles.empty() && mRigidParticles.empty();
 }
 
 int ParticleManager::Size()
 {
 	return mParticles.size();
+}
+
+int ParticleManager::SizeRigid()
+{
+	return  mRigidParticles.size();
 }
 
 void ParticleManager::AddSafe(Particle* p) noexcept
@@ -98,6 +110,17 @@ void ParticleManager::AddSafe(Particle* p) noexcept
 void ParticleManager::Integrate(double t)
 {
 	for (auto p = mParticles.begin(); p != mParticles.end(); ) {
+		//Sacamos las particulas muertas de nuestro vector
+		if (!(*p)->active) {
+			Remove(p);
+			continue;
+		}
+
+		(*p)->Integrate(t);
+		p++;
+	}
+
+	for (auto p = mRigidParticles.begin(); p != mRigidParticles.end(); ) {
 		//Sacamos las particulas muertas de nuestro vector
 		if (!(*p)->active) {
 			Remove(p);

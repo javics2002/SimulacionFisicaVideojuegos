@@ -253,6 +253,8 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Force\ExplosionRigid.cpp" />
+    <ClCompile Include="Force\ForceRegistryRigid.cpp" />
     <ClCompile Include="Force\Buoyancy.cpp" />
     <ClCompile Include="Force\AnchoredSpring.cpp" />
     <ClCompile Include="Force\Drag.cpp" />
@@ -260,6 +262,7 @@
     <ClCompile Include="Force\Gravity.cpp" />
     <ClCompile Include="Force\ForceRegistry.cpp" />
     <ClCompile Include="Force\Impulse.cpp" />
+    <ClCompile Include="Math\Lerp.cpp" />
     <ClCompile Include="Particles\Firework.cpp" />
     <ClCompile Include="Particles\ParticleSystem\BoxParticleGenerator.cpp" />
     <ClCompile Include="callbacks.cpp" />
@@ -274,12 +277,17 @@
     <ClCompile Include="Render\Camera.cpp" />
     <ClCompile Include="Render\Render.cpp" />
     <ClCompile Include="Force\RubberBand.cpp" />
+    <ClCompile Include="Particles\RigidParticle.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Force\Whirlwind.cpp" />
     <ClCompile Include="Force\Wind.cpp" />
     <ClCompile Include="Force\Spring.cpp" />
+    <ClCompile Include="Force\SpringRigid.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Force\ExplosionRigid.h" />
+    <ClInclude Include="Force\ForceGeneratorRigid.h" />
+    <ClInclude Include="Force\ForceRegistryRigid.h" />
     <ClInclude Include="Force\Buoyancy.h" />
     <ClInclude Include="Force\AnchoredSpring.h" />
     <ClInclude Include="Force\Drag.h" />
@@ -288,6 +296,7 @@
     <ClInclude Include="Force\ForceGenerator.h" />
     <ClInclude Include="Force\ForceRegistry.h" />
     <ClInclude Include="Force\Impulse.h" />
+    <ClInclude Include="Math\Lerp.h" />
     <ClInclude Include="Particles\Firework.h" />
     <ClInclude Include="Particles\ParticleSystem\BoxParticleGenerator.h" />
     <ClInclude Include="callbacks.hpp" />
@@ -304,10 +313,12 @@
     <ClInclude Include="Render\Camera.h" />
     <ClInclude Include="Render\Render.h" />
     <ClInclude Include="Force\RubberBand.h" />
+    <ClInclude Include="Particles\RigidParticle.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Force\Whirlwind.h" />
     <ClInclude Include="Force\Wind.h" />
     <ClInclude Include="Force\Spring.h" />
+    <ClInclude Include="Force\SpringRigid.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

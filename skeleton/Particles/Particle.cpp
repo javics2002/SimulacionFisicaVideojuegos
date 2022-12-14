@@ -1,4 +1,5 @@
 #include "Particle.h"
+#include "../Math/Lerp.h"
 
 #include "../RenderUtils.hpp"
 #include <climits>
@@ -14,8 +15,8 @@
 #endif
 
 Particle::Particle(PxVec3 p, bool visible, bool forces) : pose(PxTransform(p)), vel({ 0, 0, 0 }), acc({ 0, 0, 0 }),
-damping(.998), inverseMass(1), color({ 1, 1, 1, 1 }), endColor({ 0, 0, 0, 0 }), active(true),
-startingLife(DBL_MAX), lifetime(startingLife), checkForces(forces)
+	damping(.998), inverseMass(1), color({ 1, 1, 1, 1 }), endColor({ 0, 0, 0, 0 }), active(true),
+	startingLife(DBL_MAX), lifetime(startingLife), checkForces(forces)
 {
 	shape = CreateShape(PxSphereGeometry(1.0));
 	
@@ -39,21 +40,10 @@ Particle::Particle(Particle* p) : pose(PxTransform(PxVec3(p->pose.p))), vel(p->v
 
 Particle::~Particle()
 {
-	//shape->release();
-
 	if (renderItem != nullptr) {
 		DeregisterRenderItem(renderItem);
 		delete renderItem;
 	}
-}
-
-float lerp(float a, float b, float f)
-{
-	return a + f * (b - a);
-}
-
-PxVec4 lerp(PxVec4 a, PxVec4 b, float f) {
-	return { lerp(a.x, b.x, f), lerp(a.y, b.y, f), lerp(a.z, b.z, f), lerp(a.w, b.w, f) };
 }
 
 void Particle::Integrate(double t)

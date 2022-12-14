@@ -10,8 +10,9 @@
 #define DBG_NEW new
 #endif
 
-ParticleSystem::ParticleSystem(ForceRegistry* fr, ParticleGenerator* generator, PxVec3 p) 
-	: Particle(p, false), particles(ParticleManager(fr)), particleGenerators(ParticleManager(fr))
+ParticleSystem::ParticleSystem(ForceRegistry* fr, ParticleGenerator* generator, 
+	PxVec3 p) : Particle(p, false), 
+	particles(ParticleManager(fr)), particleGenerators(ParticleManager(fr))
 {
 	if (generator != nullptr)
 		AddGenerator(generator);

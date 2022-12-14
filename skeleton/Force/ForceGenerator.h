@@ -15,5 +15,7 @@ public:
 	virtual ~ForceGenerator() {};
 
 	ForceGeneratorType type;
+
+	bool active = true;
 };
 

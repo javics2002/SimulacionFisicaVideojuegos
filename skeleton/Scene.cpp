@@ -3,6 +3,7 @@
 
 #include "Particles/Firework.h"
 #include "Particles/ParticleSystem/ParticleSystems.h"
+#include "Particles/RigidParticle.h"
 
 //DBG_NEW dice donde hay memory leaks
 #ifdef _DEBUG
@@ -26,6 +27,12 @@ double Scene::AddToAllSprings(double value, bool k)
 	for (auto forceParticle : fr) {
 		if (forceParticle.first->type == SPRING) {
 			Spring* spring = static_cast<Spring*>(forceParticle.first);
+			totalVal = k ? spring->AddK(value) : spring->AddRestLength(value);
+		}
+	}
+	for (auto forceParticle : frr) {
+		if (forceParticle.first->type == SPRING_RIGID) {
+			SpringRigid* spring = static_cast<SpringRigid*>(forceParticle.first);
 			totalVal = k ? spring->AddK(value) : spring->AddRestLength(value);
 		}
 	}
@@ -53,15 +60,15 @@ PxRigidStatic* Scene::AddPxStatic(PxVec3 pos, PxShape* shape, PxVec4 color,
 	return particle;
 }
 
-PxRigidDynamic* Scene::AddPxDynamic(PxVec3 pos, PxShape* shape, PxVec4 color,
-	PhysicMaterial material = DEFAULT) {
-	shape->setMaterials(&gMaterials[material], 1);
-	PxRigidDynamic* particle = gPhysics->createRigidDynamic(PxTransform(pos));
-	particle->attachShape(*shape);
-	renderItems.push_back(new RenderItem(shape, particle, color));
-	gScene->addActor(*particle);
-	return particle;
-}
+//PxRigidDynamic* Scene::AddPxDynamic(PxVec3 pos, PxShape* shape, PxVec4 color,
+//	PhysicMaterial material = DEFAULT) {
+//	shape->setMaterials(&gMaterials[material], 1);
+//	PxRigidDynamic* particle = gPhysics->createRigidDynamic(PxTransform(pos));
+//	particle->attachShape(*shape);
+//	renderItems.push_back(new RenderItem(shape, particle, color));
+//	gScene->addActor(*particle);
+//	return particle;
+//}
 
 Scene::Scene() : particles(ParticleManager(&fr))
 {
@@ -105,7 +112,7 @@ Scene::Scene() : particles(ParticleManager(&fr))
 		<< "': Goma elastica\n"
 		<< "R: Particulas unidas mediante muelles\n"
 		<< "T: Flotacion\n"
-		<< "R: Solidos rigidos con gravedad\n\n";
+		<< "R: Solidos rigidos\n\n";
 
 	LoadScene(LAST_SCENE);
 }
@@ -426,6 +433,9 @@ void Scene::LoadScene(int newID)
 			<< "N: Disminuir volumen del cubo\n"
 			<< ".: Resetear cubo\n";
 		break;
+	case 13:
+		cout << "Puedes provocar una explosion con Z.\n";
+		break;
 	default:
 		break;
 	}
@@ -434,6 +444,7 @@ void Scene::LoadScene(int newID)
 void Scene::Update(double t)
 {
 	fr.Integrate(t);
+	frr.Integrate(t);
 	particles.Integrate(t);
 
 	gScene->simulate(t);
@@ -446,19 +457,21 @@ void Scene::Update(double t)
 		const int maxParticles = 500;
 
 		static double lastSpawn = 0;
-		static int particles = 0;
-		if (lastSpawn > spawnTime && particles < maxParticles) {
+		static int nParticles = 0;
+		if (lastSpawn > spawnTime && nParticles < maxParticles) {
 			const PxVec3 size(.5, .2, .3);
 			PhysicMaterial material = PhysicMaterial(rand() % LAST_PXMATERIAL);
 			float tensorMultiplier = (rand() % 100) * .1;
 
-			PxRigidDynamic* particle = AddPxDynamic({ 0, 50, 0 },
-				CreateShape(PxBoxGeometry(size)), colors[material] * tensorMultiplier * .1, material);
+			RigidParticle* particle = new RigidParticle({ 0, 50, 0 },
+				CreateShape(PxBoxGeometry(size)),
+				colors[material] * tensorMultiplier * .1, material);
 
-			particle->setMassSpaceInertiaTensor(
+			particles.Add(particle);
+			particle->particle->setMassSpaceInertiaTensor(
 				PxVec3(size.y * size.z, size.x * size.z, size.x * size.y) * tensorMultiplier);
-			particle->setLinearVelocity({ 10, 2, 0 });
-			particles++;
+			particle->particle->setLinearVelocity({ 10, 2, 0 });
+			nParticles++;
 			lastSpawn = 0;
 		}
 		else
@@ -793,6 +806,20 @@ void Scene::KeyPress(unsigned char key, const physx::PxTransform& camera)
 			break;
 		}
 	}
+		break;
+	case 13:
+		switch (toupper(key)) {
+		case 'Z':
+		{
+			ExplosionRigid* explosion = new ExplosionRigid(PxVec3(20, 30, 0), 100, 1000, 5);
+			
+			for (int i = 0; i < particles.SizeRigid(); i++)
+				frr.AddRegistry(explosion, particles.GetRigid(i));
+		}
+			break;
+		default:
+			break;
+		}
 		break;
 	default:
 		break;
