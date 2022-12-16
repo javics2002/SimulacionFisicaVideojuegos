@@ -253,6 +253,9 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Pinball\Flipper.cpp" />
+    <ClCompile Include="Pinball\Pinball.cpp" />
+    <ClCompile Include="Pinball\Ball.cpp" />
     <ClCompile Include="Force\ExplosionRigid.cpp" />
     <ClCompile Include="Force\ForceRegistryRigid.cpp" />
     <ClCompile Include="Force\Buoyancy.cpp" />
@@ -273,11 +276,13 @@
     <ClCompile Include="Particles\ParticleSystem\ParticleGenerator.cpp" />
     <ClCompile Include="Particles\ParticleSystem\ParticleSystem.cpp" />
     <ClCompile Include="Particles\ParticleSystem\SimpleParticleGenerator.cpp" />
+    <ClCompile Include="Force\RealSpring.cpp" />
     <ClCompile Include="RenderUtils.cpp" />
     <ClCompile Include="Render\Camera.cpp" />
     <ClCompile Include="Render\Render.cpp" />
     <ClCompile Include="Force\RubberBand.cpp" />
     <ClCompile Include="Particles\RigidParticle.cpp" />
+    <ClCompile Include="Force\Rope.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Force\Whirlwind.cpp" />
     <ClCompile Include="Force\Wind.cpp" />
@@ -285,6 +290,9 @@
     <ClCompile Include="Force\SpringRigid.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Pinball\Flipper.h" />
+    <ClInclude Include="Pinball\Pinball.h" />
+    <ClInclude Include="Pinball\Ball.h" />
     <ClInclude Include="Force\ExplosionRigid.h" />
     <ClInclude Include="Force\ForceGeneratorRigid.h" />
     <ClInclude Include="Force\ForceRegistryRigid.h" />
@@ -309,11 +317,13 @@
     <ClInclude Include="Particles\ParticleSystem\ParticleSystems.h" />
     <ClInclude Include="Particles\ParticleSystem\SimpleParticleGenerator.h" />
     <ClInclude Include="Particles\Projectile.h" />
+    <ClInclude Include="Force\RealSpring.h" />
     <ClInclude Include="RenderUtils.hpp" />
     <ClInclude Include="Render\Camera.h" />
     <ClInclude Include="Render\Render.h" />
     <ClInclude Include="Force\RubberBand.h" />
     <ClInclude Include="Particles\RigidParticle.h" />
+    <ClInclude Include="Force\Rope.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Force\Whirlwind.h" />
     <ClInclude Include="Force\Wind.h" />

@@ -134,6 +134,18 @@ void keyPress(unsigned char key, const PxTransform& camera)
 	case 'Y':
 		mScene->LoadScene(13);
 		return;
+	case 'U':
+		mScene->LoadScene(14);
+		return;
+	case 'I':
+		mScene->LoadScene(15);
+		return;
+	case 'O':
+		mScene->LoadScene(16);
+		return;
+	case 'P':
+		mScene->LoadScene(17);
+		return;
 	default:
 		break;
 	}

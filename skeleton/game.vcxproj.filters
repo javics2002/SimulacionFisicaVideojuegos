@@ -35,6 +35,11 @@
     <ClCompile Include="Force\ExplosionRigid.cpp" />
     <ClCompile Include="Force\SpringRigid.cpp" />
     <ClCompile Include="Math\Lerp.cpp" />
+    <ClCompile Include="Pinball\Ball.cpp" />
+    <ClCompile Include="Pinball\Pinball.cpp" />
+    <ClCompile Include="Pinball\Flipper.cpp" />
+    <ClCompile Include="Force\RealSpring.cpp" />
+    <ClCompile Include="Force\Rope.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core.hpp" />
@@ -75,6 +80,11 @@
     <ClInclude Include="Force\ExplosionRigid.h" />
     <ClInclude Include="Force\SpringRigid.h" />
     <ClInclude Include="Math\Lerp.h" />
+    <ClInclude Include="Pinball\Ball.h" />
+    <ClInclude Include="Pinball\Pinball.h" />
+    <ClInclude Include="Pinball\Flipper.h" />
+    <ClInclude Include="Force\RealSpring.h" />
+    <ClInclude Include="Force\Rope.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Render">

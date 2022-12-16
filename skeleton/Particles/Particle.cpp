@@ -218,3 +218,8 @@ bool Particle::GetCheckForces()
 {
 	return checkForces;
 }
+
+double Particle::GetCoefRestitution()
+{
+	return coefRestitution;
+}

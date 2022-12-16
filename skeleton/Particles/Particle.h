@@ -37,6 +37,8 @@ protected:
 	double windfriction1 = 1;
 	double windfriction2 = 0;
 
+	double coefRestitution;
+
 public:
 	Particle(PxVec3 p = { 0, 0, 0 }, bool visible = true, bool forces = false);
 	Particle(Particle* p);
@@ -69,6 +71,7 @@ public:
 	double GetWindFriction1();
 	double GetWindFriction2();
 	bool GetCheckForces();
+	double GetCoefRestitution();
 
 	bool active;
 };

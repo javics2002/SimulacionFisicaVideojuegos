@@ -112,7 +112,11 @@ Scene::Scene() : particles(ParticleManager(&fr))
 		<< "': Goma elastica\n"
 		<< "R: Particulas unidas mediante muelles\n"
 		<< "T: Flotacion\n"
-		<< "R: Solidos rigidos\n\n";
+		<< "Y: Solidos rigidos\n"
+		<< "U: Muelle realista\n"
+		<< "I: Particulas unidas mediante muelles realistas\n"
+		<< "O: Cuerda con colisiones\n"
+		<< "P: Pinball\n\n";
 
 	LoadScene(LAST_SCENE);
 }
@@ -138,6 +142,7 @@ Scene::~Scene()
 void Scene::LoadScene(int newID)
 {
 	ClearScene();
+	glClearColor(0.3f, 0.4f, 0.5f, 1.0);
 
 	mID = newID;
 
@@ -167,6 +172,7 @@ void Scene::LoadScene(int newID)
 		particles.Add(DBG_NEW ParticleSystem(&fr, CreateGenerator(FOUNTAIN)));
 		break;
 	case 4:
+		glClearColor(0.0f, 0.0f, 0.05f, 1.0);
 		particles.Add(DBG_NEW ParticleSystem());
 		break;
 	case 5:
@@ -339,6 +345,17 @@ void Scene::LoadScene(int newID)
 	case 13:
 		AddPxStatic({ 0, 30, 0 }, CreateShape(PxBoxGeometry(100, 1, 100)), { .42, .23, .16, 1 }, SOAP);
 		AddPxStatic({ -1, 40, -1 }, CreateShape(PxBoxGeometry(.5, 11, .5)), { .3, .3, .3, 1 });
+		break;
+	case 14:
+		break;
+	case 15:
+		break;
+	case 16:
+		break;
+	case 17:
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0);
+
+
 		break;
 	default:
 		cout << "Scene " << mID << " doesn't exist.\n";
