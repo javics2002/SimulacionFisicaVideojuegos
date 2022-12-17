@@ -4,6 +4,7 @@
 #include "Particles/Firework.h"
 #include "Particles/ParticleSystem/ParticleSystems.h"
 #include "Particles/RigidParticle.h"
+#include "Pinball/Pinball.h"
 
 //DBG_NEW dice donde hay memory leaks
 #ifdef _DEBUG
@@ -345,17 +346,72 @@ void Scene::LoadScene(int newID)
 	case 13:
 		AddPxStatic({ 0, 30, 0 }, CreateShape(PxBoxGeometry(100, 1, 100)), { .42, .23, .16, 1 }, SOAP);
 		AddPxStatic({ -1, 40, -1 }, CreateShape(PxBoxGeometry(.5, 11, .5)), { .3, .3, .3, 1 });
+		//Crear mas objetos
 		break;
 	case 14:
+	{
+		Particle* ball = (DBG_NEW Particle({ 40, 48, 40 }, true, true))->SetColor({ 1, .1, .4, 1.0 })
+			->SetShape(CreateShape(PxSphereGeometry(.2)))->SetIntegrationMethod(SEMI_IMPLICIT_EULER)
+			->SetDamp(.7);
+		particles.Add(ball);
+
+		fg.push_back(DBG_NEW Gravity());
+		fr.AddRegistry(fg[0], ball);
+		fg.push_back(DBG_NEW AnchoredRealSpring({ 40, 50, 40 }, 10, 2, 0.5, 3, 3.5));
+		fr.AddRegistry(fg[1], ball);
+	}
 		break;
 	case 15:
+	{
+		const int numBolas = 5;
+		const double distance = .7;
+
+		Particle* lastBall = (DBG_NEW Particle({ 40, 52, 40 }, true, true))->SetColor({ 1, .1, .4, 1.0 })
+			->SetShape(CreateShape(PxSphereGeometry(.2)))->SetIntegrationMethod(SEMI_IMPLICIT_EULER)
+			->SetDamp(.7);
+		particles.Add(lastBall);
+
+		fg.push_back(DBG_NEW Gravity());
+		fr.AddRegistry(fg[0], lastBall);
+		fg.push_back(DBG_NEW AnchoredSpring(lastBall->GetPos() + PxVec3(0, distance, 0), 10, distance));
+		fr.AddRegistry(fg[1], lastBall);
+
+		for (int i = 1; i < numBolas; i++) {
+			Particle* newBall = DBG_NEW Particle(lastBall);
+			newBall->Translate({ 0, -distance, 0 });
+			particles.Add(newBall);
+
+			fr.AddRegistry(fg[0], newBall);
+			fg.push_back(DBG_NEW Spring(lastBall, 10, distance));
+			fr.AddRegistry(fg[2 * i], newBall);
+			fg.push_back(DBG_NEW Spring(newBall, 10, distance));
+			fr.AddRegistry(fg[2 * i + 1], lastBall);
+
+			lastBall = newBall;
+		}
+	}
 		break;
 	case 16:
+	{
+		const double distance = 2;
+		Particle* ball = (DBG_NEW Particle({ 40, 47, 40 }, true, true))->SetColor({ 1, 1, .3, 1 })
+			->SetShape(CreateShape(PxSphereGeometry(.2)))->SetIntegrationMethod(SEMI_IMPLICIT_EULER)
+			->SetDamp(.7);
+		particles.Add(ball);
+		Particle* ball2 = (DBG_NEW Particle(ball))->SetColor({ 1, .1, .4, 1.0 });
+		ball2->Translate({ 0, 0, distance });
+		particles.Add(ball2);
+
+		fg.push_back(DBG_NEW RubberBand(ball2, 10, distance));
+		fr.AddRegistry(fg[0], ball);
+		fg.push_back(DBG_NEW RubberBand(ball, 10, distance));
+		fr.AddRegistry(fg[1], ball2);
+	}
 		break;
 	case 17:
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0);
 
-
+		pinball = new Pinball();
 		break;
 	default:
 		cout << "Scene " << mID << " doesn't exist.\n";
@@ -453,6 +509,57 @@ void Scene::LoadScene(int newID)
 	case 13:
 		cout << "Puedes provocar una explosion con Z.\n";
 		break;
+	case 14:
+		cout << "Puedes interactuar con el muelle.\n"
+			<< "Z: Tirar bolita\n"
+			<< "X: Empujar bolita\n"
+			<< "C: Tocar bolita\n"
+			<< "F: Aumentar k\n"
+			<< "V: Disminuir k\n"
+			<< "G: Aumentar distancia del muelle\n"
+			<< "B: Disminuir distancia del muelle\n"
+			<< "N: Cambiar a Euler\n"
+			<< "M: Cambiar a Euler implicito\n"
+			<< ",: Crear tornado\n"
+			<< ".: Resetear particula\n";
+		break;
+	case 15:
+		cout << "Puedes interactuar con el muelle.\n"
+			<< "Z: Tirar bolita\n"
+			<< "X: Empujar bolita\n"
+			<< "C: Tocar bolita\n"
+			<< "F: Aumentar k\n"
+			<< "V: Disminuir k\n"
+			<< "G: Aumentar distancia del muelle\n"
+			<< "B: Disminuir distancia del muelle\n"
+			<< "N: Cambiar a Euler\n"
+			<< "M: Cambiar a Euler implicito\n"
+			<< ",: Crear tornado\n"
+			<< ".: Resetear slinky\n";
+		break;
+	case 16:
+		cout << "Puedes interactuar con la bola amarilla.\n"
+			<< "Z: Cambiar a Euler\n"
+			<< "X: Cambiar a Euler implicito\n"
+			<< "F: Aumentar k\n"
+			<< "V: Disminuir k\n"
+			<< "G: Aumentar distancia del muelle\n"
+			<< "B: Disminuir distancia del muelle\n"
+			<< "J: Empujarla al frente\n"
+			<< "M: Empujarla atras\n"
+			<< ",: Empujarla a la derecha\n"
+			<< "N: Empujarla a la izquierda\n"
+			<< "K: Empujarla arriba\n"
+			<< "H: Empujarla abajo\n"
+			<< ".: Resetear goma\n";
+		break;
+	case 17:
+		cout << "Juega al pinball!\n"
+			<< "C: Pala izquierda\n"
+			<< "N: Pala derecha\n"
+			<< "M: Lanzar bola\n"
+			<< "L: Resetear juego\n";
+		//Distintos materiales para bola?
 	default:
 		break;
 	}

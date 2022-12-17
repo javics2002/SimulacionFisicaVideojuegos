@@ -5,6 +5,7 @@
 #include "Whirlwind.h"
 #include "Explosion.h"
 #include "AnchoredSpring.h"
+#include "AnchoredRealSpring.h"
 #include "Impulse.h"
 #include "RubberBand.h"
 #include "Buoyancy.h"

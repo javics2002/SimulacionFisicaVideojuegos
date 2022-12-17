@@ -26,6 +26,8 @@ extern unordered_map<PhysicMaterial, physx::PxMaterial*> gMaterials;
 
 constexpr int LAST_SCENE = 13;
 
+class Pinball;
+
 class Scene
 {
 	int mID = 0;
@@ -43,6 +45,9 @@ class Scene
 
 	unordered_map<PhysicMaterial, PxVec4> colors;
 	vector<RenderItem*> renderItems;
+
+	//Proyecto final
+	Pinball* pinball = nullptr;
 
 public:
 	Scene();
