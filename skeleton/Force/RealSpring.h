@@ -5,6 +5,7 @@ class RealSpring : public Spring
 {
 protected:
 	double minLength, maxLength, breakingLength;
+	bool deformed;
 
 public:
 	RealSpring(Particle* other, double k, double restLength,

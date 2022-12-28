@@ -16,7 +16,7 @@ protected:
 	double lifetime;
 
 public:
-	RigidParticle(PxVec3 pos, PxShape* shape, PxVec4 color,
+	RigidParticle(PxVec3 pos, double mass, PxShape* shape, PxVec4 color,
 		PhysicMaterial material = DEFAULT);
 	~RigidParticle();
 

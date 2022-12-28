@@ -37,7 +37,8 @@ protected:
 	double windfriction1 = 1;
 	double windfriction2 = 0;
 
-	double coefRestitution;
+	double coefRestitution = 0;
+	double radius = 1;
 
 public:
 	Particle(PxVec3 p = { 0, 0, 0 }, bool visible = true, bool forces = false);
@@ -60,6 +61,8 @@ public:
 	Particle* SetIntegrationMethod(IntegrationMethod method);
 	Particle* SetWindFriction1(double wf1);
 	Particle* SetWindFriction2(double wf2);
+	Particle* SetCoefRestitution(double res);
+	Particle* SetRadius(double r);
 
 	void AddForce(PxVec3 newForce);
 	void ClearForce();
@@ -72,6 +75,7 @@ public:
 	double GetWindFriction2();
 	bool GetCheckForces();
 	double GetCoefRestitution();
+	double GetRadius();
 
 	bool active;
 };

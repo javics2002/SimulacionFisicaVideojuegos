@@ -4,6 +4,7 @@
 #include "Particles/ParticleManager.h"
 #include "Force/ForceRegistry.h"
 #include "Force/ForceRegistryRigid.h"
+
 #include "callbacks.hpp"
 
 #include <random>
@@ -24,8 +25,9 @@ extern ContactReportCallback gContactReportCallback;
 
 extern unordered_map<PhysicMaterial, physx::PxMaterial*> gMaterials;
 
-constexpr int LAST_SCENE = 13;
+constexpr int LAST_SCENE = 16;
 
+class Contact;
 class Pinball;
 
 class Scene
@@ -45,6 +47,9 @@ class Scene
 
 	unordered_map<PhysicMaterial, PxVec4> colors;
 	vector<RenderItem*> renderItems;
+
+	//Constraints
+	vector<Contact*> contacts;
 
 	//Proyecto final
 	Pinball* pinball = nullptr;

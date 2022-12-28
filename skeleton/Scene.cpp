@@ -4,6 +4,7 @@
 #include "Particles/Firework.h"
 #include "Particles/ParticleSystem/ParticleSystems.h"
 #include "Particles/RigidParticle.h"
+#include "Constraints/Rope.h"
 #include "Pinball/Pinball.h"
 
 //DBG_NEW dice donde hay memory leaks
@@ -60,16 +61,6 @@ PxRigidStatic* Scene::AddPxStatic(PxVec3 pos, PxShape* shape, PxVec4 color,
 	gScene->addActor(*particle);
 	return particle;
 }
-
-//PxRigidDynamic* Scene::AddPxDynamic(PxVec3 pos, PxShape* shape, PxVec4 color,
-//	PhysicMaterial material = DEFAULT) {
-//	shape->setMaterials(&gMaterials[material], 1);
-//	PxRigidDynamic* particle = gPhysics->createRigidDynamic(PxTransform(pos));
-//	particle->attachShape(*shape);
-//	renderItems.push_back(new RenderItem(shape, particle, color));
-//	gScene->addActor(*particle);
-//	return particle;
-//}
 
 Scene::Scene() : particles(ParticleManager(&fr))
 {
@@ -346,7 +337,10 @@ void Scene::LoadScene(int newID)
 	case 13:
 		AddPxStatic({ 0, 30, 0 }, CreateShape(PxBoxGeometry(100, 1, 100)), { .42, .23, .16, 1 }, SOAP);
 		AddPxStatic({ -1, 40, -1 }, CreateShape(PxBoxGeometry(.5, 11, .5)), { .3, .3, .3, 1 });
-		//Crear mas objetos
+		AddPxStatic({ 21, 31, 0 }, CreateShape(PxSphereGeometry(2)), { .9, .7, 1, 1 });
+		AddPxStatic({ 25, 30.5, 0 }, CreateShape(PxBoxGeometry(2, 2, 10)), { .3, .3, .3, 1 });
+		AddPxStatic({ 10, 35, -10 }, CreateShape(PxBoxGeometry(20, 5, 2)), { .9, .9, .9, 1 });
+		AddPxStatic({ -30, 37, 0 }, CreateShape(PxBoxGeometry(20, 5, 10)), { .3, .3, 1, 1 });
 		break;
 	case 14:
 	{
@@ -357,14 +351,24 @@ void Scene::LoadScene(int newID)
 
 		fg.push_back(DBG_NEW Gravity());
 		fr.AddRegistry(fg[0], ball);
-		fg.push_back(DBG_NEW AnchoredRealSpring({ 40, 50, 40 }, 10, 2, 0.5, 3, 3.5));
+		fg.push_back(DBG_NEW AnchoredRealSpring({ 40, 50, 40 }, 10, 2, 1, 4.5, 10));
 		fr.AddRegistry(fg[1], ball);
+
+		//Marcas
+		particles.Add((DBG_NEW Particle({ 40, 49, 39 }))->SetColor({ 0, 0, 0, 1.0 })
+			->SetShape(CreateShape(PxBoxGeometry(.2, .05, .1))));
+		particles.Add((DBG_NEW Particle({ 40, 45.5, 39 }))->SetColor({ 1, 1, 0, 1.0 })
+			->SetShape(CreateShape(PxBoxGeometry(.2, .05, .1))));
+		particles.Add((DBG_NEW Particle({ 40, 40, 39 }))->SetColor({ 1, 0, 0, 1.0 })
+			->SetShape(CreateShape(PxBoxGeometry(.2, .05, .1))));
 	}
 		break;
 	case 15:
 	{
 		const int numBolas = 5;
 		const double distance = .7;
+		const double minDistance = .5, maxDistance = 3, breakingDistance = 4;
+		const double k = 50;
 
 		Particle* lastBall = (DBG_NEW Particle({ 40, 52, 40 }, true, true))->SetColor({ 1, .1, .4, 1.0 })
 			->SetShape(CreateShape(PxSphereGeometry(.2)))->SetIntegrationMethod(SEMI_IMPLICIT_EULER)
@@ -373,7 +377,8 @@ void Scene::LoadScene(int newID)
 
 		fg.push_back(DBG_NEW Gravity());
 		fr.AddRegistry(fg[0], lastBall);
-		fg.push_back(DBG_NEW AnchoredSpring(lastBall->GetPos() + PxVec3(0, distance, 0), 10, distance));
+		fg.push_back(DBG_NEW AnchoredRealSpring(lastBall->GetPos() + PxVec3(0, distance, 0),
+			k, distance, minDistance, maxDistance, breakingDistance));
 		fr.AddRegistry(fg[1], lastBall);
 
 		for (int i = 1; i < numBolas; i++) {
@@ -382,9 +387,11 @@ void Scene::LoadScene(int newID)
 			particles.Add(newBall);
 
 			fr.AddRegistry(fg[0], newBall);
-			fg.push_back(DBG_NEW Spring(lastBall, 10, distance));
+			fg.push_back(DBG_NEW RealSpring(lastBall, k, distance, 
+				minDistance, maxDistance, breakingDistance));
 			fr.AddRegistry(fg[2 * i], newBall);
-			fg.push_back(DBG_NEW Spring(newBall, 10, distance));
+			fg.push_back(DBG_NEW RealSpring(newBall, k, distance, 
+				minDistance, maxDistance, breakingDistance));
 			fr.AddRegistry(fg[2 * i + 1], lastBall);
 
 			lastBall = newBall;
@@ -394,17 +401,17 @@ void Scene::LoadScene(int newID)
 	case 16:
 	{
 		const double distance = 2;
-		Particle* ball = (DBG_NEW Particle({ 40, 47, 40 }, true, true))->SetColor({ 1, 1, .3, 1 })
+		Particle* ball = (DBG_NEW Particle({ 40, 47, 40 }, true, true))->SetColor({ 1, 0, 0, 1 })
 			->SetShape(CreateShape(PxSphereGeometry(.2)))->SetIntegrationMethod(SEMI_IMPLICIT_EULER)
 			->SetDamp(.7);
 		particles.Add(ball);
-		Particle* ball2 = (DBG_NEW Particle(ball))->SetColor({ 1, .1, .4, 1.0 });
+		Particle* ball2 = (DBG_NEW Particle(ball))->SetColor({ 0, 0, 1, 1.0 });
 		ball2->Translate({ 0, 0, distance });
 		particles.Add(ball2);
 
-		fg.push_back(DBG_NEW RubberBand(ball2, 10, distance));
+		fg.push_back(DBG_NEW Rope(ball2, 10, distance));
 		fr.AddRegistry(fg[0], ball);
-		fg.push_back(DBG_NEW RubberBand(ball, 10, distance));
+		fg.push_back(DBG_NEW Rope(ball, 10, distance));
 		fr.AddRegistry(fg[1], ball2);
 	}
 		break;
@@ -538,19 +545,13 @@ void Scene::LoadScene(int newID)
 			<< ".: Resetear slinky\n";
 		break;
 	case 16:
-		cout << "Puedes interactuar con la bola amarilla.\n"
-			<< "Z: Cambiar a Euler\n"
-			<< "X: Cambiar a Euler implicito\n"
-			<< "F: Aumentar k\n"
-			<< "V: Disminuir k\n"
-			<< "G: Aumentar distancia del muelle\n"
-			<< "B: Disminuir distancia del muelle\n"
-			<< "J: Empujarla al frente\n"
-			<< "M: Empujarla atras\n"
-			<< ",: Empujarla a la derecha\n"
-			<< "N: Empujarla a la izquierda\n"
-			<< "K: Empujarla arriba\n"
-			<< "H: Empujarla abajo\n"
+		cout << "Puedes interactuar con la bola roja.\n"
+			<< "Z: Aumentar distancia de la cuerda\n"
+			<< "X: Disminuir distancia de la cuerda\n"
+			<< "V: Empujarla al frente\n"
+			<< "B: Pararla\n"
+			<< "N: Cambiar a Euler\n"
+			<< "M: Cambiar a Euler implicito\n"
 			<< ".: Resetear goma\n";
 		break;
 	case 17:
@@ -563,6 +564,8 @@ void Scene::LoadScene(int newID)
 	default:
 		break;
 	}
+
+	cout << "\n";
 }
 
 void Scene::Update(double t)
@@ -574,6 +577,9 @@ void Scene::Update(double t)
 	gScene->simulate(t);
 	gScene->fetchResults(true);
 
+	for(auto contact : contacts)
+		contact.
+
 	switch (mID) {
 	case 13:
 	{
@@ -583,11 +589,15 @@ void Scene::Update(double t)
 		static double lastSpawn = 0;
 		static int nParticles = 0;
 		if (lastSpawn > spawnTime && nParticles < maxParticles) {
-			const PxVec3 size(.5, .2, .3);
+			float scale = (250 + rand() % 750) / 500.0f;
+			PxVec3 size = PxVec3(.5, .2, .3) * scale;
 			PhysicMaterial material = PhysicMaterial(rand() % LAST_PXMATERIAL);
 			float tensorMultiplier = (rand() % 100) * .1;
 
-			RigidParticle* particle = new RigidParticle({ 0, 50, 0 },
+			/*El color de las particulas esta definido el material
+			su brillo por su tensor de inercia
+			y su tamano por su masa*/
+			RigidParticle* particle = new RigidParticle({ 0, 50, 0 }, pow(scale, 3),
 				CreateShape(PxBoxGeometry(size)),
 				colors[material] * tensorMultiplier * .1, material);
 
@@ -944,6 +954,150 @@ void Scene::KeyPress(unsigned char key, const physx::PxTransform& camera)
 		default:
 			break;
 		}
+		break;
+	case 14:
+	{
+		const int ballID = 0;
+		Particle* ball = particles.Get(ballID);
+		if (ball == nullptr) {
+			cout << "La bolita se ha ido muy lejos. Se va a recargar la escena\n";
+			LoadScene(mID);
+			break;
+		}
+
+		switch (toupper(key)) {
+		case 'Z':
+			Impulse(ball, { 0, -1000, 0 });
+			break;
+		case 'X':
+			Impulse(ball, { 0, 1000, 0 });
+			break;
+		case 'C':
+			Impulse(ball, { 1000, 0, 0 });
+			break;
+		case 'F':
+			ShowSpringsValue(AddToAllSprings(10, true), true);
+			break;
+		case 'V':
+			ShowSpringsValue(AddToAllSprings(-10, true), true);
+			break;
+		case 'G':
+			ShowSpringsValue(AddToAllSprings(.25, false), false);
+			break;
+		case 'B':
+			ShowSpringsValue(AddToAllSprings(-.25, false), false);
+			break;
+		case 'N':
+			ball->SetIntegrationMethod(EULER);
+			cout << "Metodo de integraccion seleccionado: Euler\n";
+			break;
+		case 'M':
+			ball->SetIntegrationMethod(SEMI_IMPLICIT_EULER);
+			cout << "Metodo de integraccion seleccionado: Euler implicito\n";
+			break;
+		case ',':
+			fr.AddRegistry(DBG_NEW Whirlwind(PxVec3(0, 30, 0), 100, 1), ball);
+			break;
+		case '.':
+			LoadScene(mID);
+			break;
+		default:
+			break;
+		}
+	}
+	case 15:
+		switch (toupper(key)) {
+		case 'Z':
+			if (!particles.Empty())
+				Impulse(particles.Get(particles.Size() - 1), { 0, -1000, 0 });
+			break;
+		case 'X':
+			if (!particles.Empty())
+				Impulse(particles.Get(particles.Size() - 1), { 0, 1000, 0 });
+			break;
+		case 'C':
+			if (!particles.Empty())
+				Impulse(particles.Get(particles.Size() - 1), { 1000, 0, 0 });
+			break;
+		case 'F':
+			ShowSpringsValue(AddToAllSprings(10, true), true);
+			break;
+		case 'V':
+			ShowSpringsValue(AddToAllSprings(-10, true), true);
+			break;
+		case 'G':
+			ShowSpringsValue(AddToAllSprings(.25, false), false);
+			break;
+		case 'B':
+			ShowSpringsValue(AddToAllSprings(-.25, false), false);
+			break;
+		case 'N':
+			for (int i = 0; i < particles.Size(); i++)
+				particles.Get(i)->SetIntegrationMethod(EULER);
+			cout << "Metodo de integraccion seleccionado: Euler\n";
+			break;
+		case 'M':
+			for (int i = 0; i < particles.Size(); i++)
+				particles.Get(i)->SetIntegrationMethod(SEMI_IMPLICIT_EULER);
+			cout << "Metodo de integraccion seleccionado: Euler implicito\n";
+			break;
+		case ',': {
+			Whirlwind* whirlwind = DBG_NEW Whirlwind(PxVec3(0, 30, 0), 100, 1);
+			for (int i = 0; i < particles.Size(); i++)
+				fr.AddRegistry(whirlwind, particles.Get(i));
+		}
+				break;
+		case '.':
+			LoadScene(mID);
+			break;
+		default:
+			break;
+		}
+		break;
+	case 16:
+	{
+		vector<Particle*> balls;
+		balls.push_back(particles.Get(0));
+		balls.push_back(particles.Get(1));
+
+		if (balls[0] == nullptr || balls[1] == nullptr) {
+			cout << "Alguna bolita se ha ido muy lejos. Se va a recargar la escena\n";
+			LoadScene(mID);
+			break;
+		}
+
+		const double impulse = 100;
+
+		switch (toupper(key)) {
+		case 'Z':
+			ShowSpringsValue(AddToAllSprings(.25, false), false);
+			break;
+		case 'X':
+			ShowSpringsValue(AddToAllSprings(-.25, false), false);
+			break;
+		case 'V':
+			Impulse(balls[0], { 0, 0, -impulse });
+			break;
+		case 'B':
+			balls[0]->SetVel(PxVec3(0));
+			break;
+		case 'N':
+			for (auto ball : balls)
+				ball->SetIntegrationMethod(EULER);
+			cout << "Metodo de integraccion seleccionado: Euler\n";
+			break;
+		case 'M':
+			for (auto ball : balls)
+				ball->SetIntegrationMethod(SEMI_IMPLICIT_EULER);
+			cout << "Metodo de integraccion seleccionado: Euler implicito\n";
+			break;
+		case '.':
+			LoadScene(mID);
+			break;
+		default:
+			break;
+		}
+	}
 		break;
 	default:
 		break;

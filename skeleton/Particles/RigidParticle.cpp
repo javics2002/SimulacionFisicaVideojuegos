@@ -4,7 +4,7 @@
 extern PxPhysics* gPhysics;
 extern PxScene* gScene;
 
-RigidParticle::RigidParticle(PxVec3 pos, PxShape* shape, PxVec4 color, 
+RigidParticle::RigidParticle(PxVec3 pos, double mass, PxShape* shape, PxVec4 color, 
 	PhysicMaterial material) : color(color), startingLife(DBL_MAX), lifetime(startingLife)
 {
 	shape->setMaterials(&gMaterials[material], 1);
@@ -12,6 +12,7 @@ RigidParticle::RigidParticle(PxVec3 pos, PxShape* shape, PxVec4 color,
 	particle->attachShape(*shape);
 	renderItem = new RenderItem(shape, particle, color);
 	gScene->addActor(*particle);
+	particle->setMass(mass);
 }
 
 RigidParticle::~RigidParticle()

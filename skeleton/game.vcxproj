@@ -254,6 +254,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Force\AnchoredRealSpring.cpp" />
+    <ClCompile Include="Constraints\Contact.cpp" />
+    <ClCompile Include="Constraints\Link.cpp" />
     <ClCompile Include="Pinball\Flipper.cpp" />
     <ClCompile Include="Pinball\Pinball.cpp" />
     <ClCompile Include="Pinball\Ball.cpp" />
@@ -283,7 +285,7 @@
     <ClCompile Include="Render\Render.cpp" />
     <ClCompile Include="Force\RubberBand.cpp" />
     <ClCompile Include="Particles\RigidParticle.cpp" />
-    <ClCompile Include="Force\Rope.cpp" />
+    <ClCompile Include="Constraints\Rope.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Force\Whirlwind.cpp" />
     <ClCompile Include="Force\Wind.cpp" />
@@ -292,6 +294,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Force\AnchoredRealSpring.h" />
+    <ClInclude Include="Constraints\Contact.h" />
+    <ClInclude Include="Constraints\Link.h" />
     <ClInclude Include="Pinball\Flipper.h" />
     <ClInclude Include="Pinball\Pinball.h" />
     <ClInclude Include="Pinball\Ball.h" />
@@ -325,7 +329,7 @@
     <ClInclude Include="Render\Render.h" />
     <ClInclude Include="Force\RubberBand.h" />
     <ClInclude Include="Particles\RigidParticle.h" />
-    <ClInclude Include="Force\Rope.h" />
+    <ClInclude Include="Constraints\Rope.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Force\Whirlwind.h" />
     <ClInclude Include="Force\Wind.h" />

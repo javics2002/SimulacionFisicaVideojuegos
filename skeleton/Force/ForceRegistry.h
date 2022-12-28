@@ -9,6 +9,7 @@
 #include "Impulse.h"
 #include "RubberBand.h"
 #include "Buoyancy.h"
+#include "Rope.h"
 #include <unordered_map>
 #include <climits>
 
