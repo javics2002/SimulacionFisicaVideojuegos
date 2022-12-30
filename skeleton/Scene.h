@@ -28,6 +28,7 @@ extern unordered_map<PhysicMaterial, physx::PxMaterial*> gMaterials;
 constexpr int LAST_SCENE = 16;
 
 class Contact;
+class Link;
 class Pinball;
 
 class Scene
@@ -50,6 +51,7 @@ class Scene
 
 	//Constraints
 	vector<Contact*> contacts;
+	vector<Link*> links;
 
 	//Proyecto final
 	Pinball* pinball = nullptr;

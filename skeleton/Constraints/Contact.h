@@ -7,15 +7,19 @@ using namespace physx;
 
 class Contact
 {
-	void ResolveVelocity(float t);
-	void ResolveInterpenetration(float t);
+	Particle* particle[2];
+	float radius[2];
+	float restitution;
+	PxVec3 normal;
 
-protected:
-	void Resolve(float t);
+	void ResolveVelocity(double t);
+	void ResolveInterpenetration(double t);
+	void Resolve(double t);
 
 public:
-	Particle* particle[2];
-	float restitution, penetration;
-	PxVec3 normal;
+	Contact(Particle* first, float radius1, Particle* second, float radius2, float restitution);
+	~Contact();
+
+	void Update(double t);
 };
 

@@ -5,6 +5,7 @@
 #include "Particles/ParticleSystem/ParticleSystems.h"
 #include "Particles/RigidParticle.h"
 #include "Constraints/Rope.h"
+#include "Constraints/Contact.h"
 #include "Pinball/Pinball.h"
 
 //DBG_NEW dice donde hay memory leaks
@@ -400,26 +401,24 @@ void Scene::LoadScene(int newID)
 		break;
 	case 16:
 	{
-		const double distance = 2;
+		const double radius = .2, distance = 2, restitution = .5;
 		Particle* ball = (DBG_NEW Particle({ 40, 47, 40 }, true, true))->SetColor({ 1, 0, 0, 1 })
-			->SetShape(CreateShape(PxSphereGeometry(.2)))->SetIntegrationMethod(SEMI_IMPLICIT_EULER)
+			->SetShape(CreateShape(PxSphereGeometry(radius)))->SetIntegrationMethod(SEMI_IMPLICIT_EULER)
 			->SetDamp(.7);
 		particles.Add(ball);
 		Particle* ball2 = (DBG_NEW Particle(ball))->SetColor({ 0, 0, 1, 1.0 });
 		ball2->Translate({ 0, 0, distance });
 		particles.Add(ball2);
 
-		fg.push_back(DBG_NEW Rope(ball2, 10, distance));
-		fr.AddRegistry(fg[0], ball);
-		fg.push_back(DBG_NEW Rope(ball, 10, distance));
-		fr.AddRegistry(fg[1], ball2);
+		links.push_back(new Rope(ball, ball2, distance * 2, restitution));
+		contacts.push_back(new Contact(ball, radius, ball2, radius, restitution));
 	}
 		break;
-	case 17:
+	/*case 17:
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0);
 
 		pinball = new Pinball();
-		break;
+		break;*/
 	default:
 		cout << "Scene " << mID << " doesn't exist.\n";
 		return;
@@ -548,7 +547,12 @@ void Scene::LoadScene(int newID)
 		cout << "Puedes interactuar con la bola roja.\n"
 			<< "Z: Aumentar distancia de la cuerda\n"
 			<< "X: Disminuir distancia de la cuerda\n"
+			<< "C: Empujarla atras\n"
 			<< "V: Empujarla al frente\n"
+			<< "F: Empujarla a la izquierda\n"
+			<< "G: Empujarla a la derecha\n"
+			<< "H: Empujarla arriba\n"
+			<< "J: Empujarla abajo\n"
 			<< "B: Pararla\n"
 			<< "N: Cambiar a Euler\n"
 			<< "M: Cambiar a Euler implicito\n"
@@ -572,13 +576,16 @@ void Scene::Update(double t)
 {
 	fr.Integrate(t);
 	frr.Integrate(t);
+
 	particles.Integrate(t);
+	
+	for (int i = 0; i < links.size(); i++)
+		links[i]->Update(t);
+	for (int i = 0; i < contacts.size(); i++)
+		contacts[i]->Update(t);
 
 	gScene->simulate(t);
 	gScene->fetchResults(true);
-
-	for(auto contact : contacts)
-		contact.
 
 	switch (mID) {
 	case 13:
@@ -625,6 +632,8 @@ void Scene::ClearScene()
 	fg.clear();
 
 	particles.Clear();
+	contacts.clear();
+	links.clear();
 
 	if (gScene != NULL) {
 		gScene->release();
@@ -1077,6 +1086,21 @@ void Scene::KeyPress(unsigned char key, const physx::PxTransform& camera)
 			break;
 		case 'V':
 			Impulse(balls[0], { 0, 0, -impulse });
+			break;
+		case 'C':
+			Impulse(balls[0], { 0, 0, impulse });
+			break;
+		case 'F':
+			Impulse(balls[0], { -impulse , 0, 0 });
+			break;
+		case 'G':
+			Impulse(balls[0], { impulse , 0, 0 });
+			break;
+		case 'H':
+			Impulse(balls[0], { 0, impulse , 0 });
+			break;
+		case 'J':
+			Impulse(balls[0], { 0, -impulse , 0 });
 			break;
 		case 'B':
 			balls[0]->SetVel(PxVec3(0));

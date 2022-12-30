@@ -23,6 +23,11 @@ Pulsa las para cambiar entre las escenas.
 ': Goma elastica
 R: Particulas unidas mediante muelle
 T: Flotacion
+Y: Solidos rigidos
+U: Muelle realista
+I: Particulas unidas mediante muelles realistas
+O: Cuerda con colisiones
+P: Pinball
 
 Algunas escenas permiten interacción:
 2. Puedes disparar proyectiles:
@@ -102,3 +107,46 @@ B: Disminuir masa del cubo
 H: Aumentar volumen del cubo
 N: Disminuir volumen del cubo
 .: Resetear cubo
+
+Y. Puedes provocar una explosion con Z.
+
+U. Puedes interactuar con el muelle.
+Z: Tirar bolita
+X: Empujar bolita
+C: Tocar bolita
+F: Aumentar k
+V: Disminuir k
+G: Aumentar distancia del muelle
+B: Disminuir distancia del muelle
+N: Cambiar a Euler
+M: Cambiar a Euler implicito
+,: Crear tornado
+.: Resetear particula
+
+I. Puedes interactuar con el muelle.
+Z: Tirar bolita
+X: Empujar bolita
+C: Tocar bolita
+F: Aumentar k
+V: Disminuir k
+G: Aumentar distancia del muelle
+B: Disminuir distancia del muelle
+N: Cambiar a Euler
+M: Cambiar a Euler implicito
+,: Crear tornado
+.: Resetear slinky
+
+O. Puedes interacturar con la bola roja
+Z: Aumentar distancia de la cuerda
+X: Disminuir distancia de la cuerda
+C: Empujarla atras
+V: Empujarla al frente
+F: Empujarla a la izquierda
+G: Empujarla a la derecha
+H: Empujarla arriba
+J: Empujarla abajo
+B: Pararla
+N: Cambiar a Euler
+M: Cambiar a Euler implicito
+.: Resetear goma
+

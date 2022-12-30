@@ -174,18 +174,6 @@ Particle* Particle::SetWindFriction2(double wf2)
 	return this;
 }
 
-Particle* Particle::SetCoefRestitution(double res)
-{
-	coefRestitution = res;
-	return this;
-}
-
-Particle* Particle::SetRadius(double r)
-{
-	radius = r;
-	return this;
-}
-
 void Particle::AddForce(PxVec3 newForce)
 {
 	force += newForce;
@@ -229,14 +217,4 @@ double Particle::GetWindFriction2()
 bool Particle::GetCheckForces()
 {
 	return checkForces;
-}
-
-double Particle::GetCoefRestitution()
-{
-	return coefRestitution;
-}
-
-double Particle::GetRadius()
-{
-	return radius;
 }

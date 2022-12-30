@@ -3,8 +3,12 @@
 
 class Rope : public Link
 {
-public:
 	float maxLength, restitution;
-	virtual unsigned AddContact(Contact* contact, unsigned limit) const;
+
+public:
+	Rope(Particle* first, Particle* second, float length, float restitution);
+	~Rope();
+
+	void Update(double t) override;
 };
 

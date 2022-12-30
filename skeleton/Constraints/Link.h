@@ -1,13 +1,21 @@
 #pragma once
-#include "Contact.h"
+#include <PxPhysicsAPI.h>
 
-class Link : public Contact
+class Particle;
+
+using namespace physx;
+
+class Link
 {
 protected:
+	Particle* particle[2];
+	
 	float CurrentLength() const;
 
 public:
-	Particle* particle[2];
-	virtual unsigned AddContact(Contact* contact, unsigned limit) const = 0;
+	Link(Particle* first, Particle* second);
+	~Link();
+
+	virtual void Update(double t) = 0;
 };
 
