@@ -11,6 +11,7 @@ enum PinballState { START, PLAYING };
 class Ball;
 class Flipper;
 class RigidParticle;
+class Scene;
 
 class Pinball
 {
@@ -21,16 +22,19 @@ class Pinball
 	int score = 0;
 	int highScore;
 
+	void StartRound();
+	void ResetRound();
+
+	void LoadHighScore();
+	bool SaveHighScore();
+
+	void BuildBoard();
+
 public:
 	Pinball();
 	~Pinball();
 
-	void StartRound();
-	void ResetRound();
 	void Update(double t);
-	void KeyPress(unsigned char key, const PxTransform& camera);
-
-	void LoadHighScore();
-	bool SaveHighScore();
+	void KeyPress(unsigned char key);
 };
 

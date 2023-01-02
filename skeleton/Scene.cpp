@@ -53,8 +53,7 @@ void Scene::ShowSpringsValue(double value, bool k)
 		cout << (k ? "k = " : "Longitud de reposo = ") << value << "\n";
 }
 
-PxRigidStatic* Scene::AddPxStatic(PxVec3 pos, PxShape* shape, PxVec4 color,
-	PhysicMaterial material = DEFAULT) {
+PxRigidStatic* Scene::AddPxStatic(PxVec3 pos, PxShape* shape, PxVec4 color, PhysicMaterial material) {
 	shape->setMaterials(&gMaterials[material], 1);
 	PxRigidStatic* particle = gPhysics->createRigidStatic(PxTransform(pos));
 	particle->attachShape(*shape);
@@ -414,11 +413,11 @@ void Scene::LoadScene(int newID)
 		contacts.push_back(new Contact(ball, radius, ball2, radius, restitution));
 	}
 		break;
-	/*case 17:
+	case 17:
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0);
 
 		pinball = new Pinball();
-		break;*/
+		break;
 	default:
 		cout << "Scene " << mID << " doesn't exist.\n";
 		return;
@@ -646,6 +645,11 @@ void Scene::ClearScene()
 		renderItems.clear();
 	}
 	gScene = gPhysics->createScene(*sceneDesc);
+
+	if (pinball != nullptr) {
+		delete pinball;
+		pinball = nullptr;
+	}
 }
 
 void Scene::KeyPress(unsigned char key, const physx::PxTransform& camera)
@@ -1122,6 +1126,9 @@ void Scene::KeyPress(unsigned char key, const physx::PxTransform& camera)
 			break;
 		}
 	}
+		break;
+	case 17:
+		pinball->KeyPress(key);
 		break;
 	default:
 		break;

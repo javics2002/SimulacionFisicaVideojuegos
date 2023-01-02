@@ -25,7 +25,7 @@ extern ContactReportCallback gContactReportCallback;
 
 extern unordered_map<PhysicMaterial, physx::PxMaterial*> gMaterials;
 
-constexpr int LAST_SCENE = 16;
+constexpr int LAST_SCENE = 17;
 
 class Contact;
 class Link;
@@ -70,7 +70,7 @@ public:
 	void ThrowProyectile(ProjectileType type, const PxTransform& camera);
 
 	//Physx
-	PxRigidStatic* Scene::AddPxStatic(PxVec3 pos, PxShape* shape, PxVec4 color, PhysicMaterial material);
+	PxRigidStatic* AddPxStatic(PxVec3 pos, PxShape* shape, PxVec4 color, PhysicMaterial material = DEFAULT);
 	//PxRigidDynamic* Scene::AddPxDynamic(PxVec3 pos, PxShape* shape, PxVec4 color, PhysicMaterial material);
 };
 

@@ -143,9 +143,9 @@ void keyPress(unsigned char key, const PxTransform& camera)
 	case 'O':
 		mScene->LoadScene(16);
 		return;
-	/*case 'P':
+	case 'P':
 		mScene->LoadScene(17);
-		return;*/
+		return;
 	default:
 		break;
 	}
