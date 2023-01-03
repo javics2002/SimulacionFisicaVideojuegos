@@ -43,6 +43,7 @@
     <ClCompile Include="Force\AnchoredRealSpring.cpp" />
     <ClCompile Include="Constraints\Contact.cpp" />
     <ClCompile Include="Constraints\Link.cpp" />
+    <ClCompile Include="Pinball\Plunger.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core.hpp" />
@@ -91,6 +92,7 @@
     <ClInclude Include="Force\AnchoredRealSpring.h" />
     <ClInclude Include="Constraints\Contact.h" />
     <ClInclude Include="Constraints\Link.h" />
+    <ClInclude Include="Pinball\Plunger.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Render">

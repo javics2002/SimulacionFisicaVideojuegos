@@ -280,6 +280,7 @@
     <ClCompile Include="Particles\ParticleSystem\ParticleSystem.cpp" />
     <ClCompile Include="Particles\ParticleSystem\SimpleParticleGenerator.cpp" />
     <ClCompile Include="Force\RealSpring.cpp" />
+    <ClCompile Include="Pinball\Plunger.cpp" />
     <ClCompile Include="RenderUtils.cpp" />
     <ClCompile Include="Render\Camera.cpp" />
     <ClCompile Include="Render\Render.cpp" />
@@ -324,6 +325,7 @@
     <ClInclude Include="Particles\ParticleSystem\SimpleParticleGenerator.h" />
     <ClInclude Include="Particles\Projectile.h" />
     <ClInclude Include="Force\RealSpring.h" />
+    <ClInclude Include="Pinball\Plunger.h" />
     <ClInclude Include="RenderUtils.hpp" />
     <ClInclude Include="Render\Camera.h" />
     <ClInclude Include="Render\Render.h" />

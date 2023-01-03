@@ -6,17 +6,18 @@
 using namespace std;
 using namespace physx;
 
-enum PinballState { START, PLAYING };
-
 class Ball;
 class Flipper;
 class RigidParticle;
 class Scene;
+class Plunger;
 
 class Pinball
 {
+	Scene* scene;
 	Ball* ball = nullptr;
 	Flipper* leftFlipper = nullptr, *rightFlipper = nullptr;
+	Plunger* plunger = nullptr;
 	vector<RigidParticle*> board;
 
 	int score = 0;
@@ -31,7 +32,7 @@ class Pinball
 	void BuildBoard();
 
 public:
-	Pinball();
+	Pinball(Scene* scene);
 	~Pinball();
 
 	void Update(double t);

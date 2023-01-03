@@ -416,7 +416,7 @@ void Scene::LoadScene(int newID)
 	case 17:
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0);
 
-		pinball = new Pinball();
+		pinball = new Pinball(this);
 		break;
 	default:
 		cout << "Scene " << mID << " doesn't exist.\n";
@@ -618,6 +618,9 @@ void Scene::Update(double t)
 			lastSpawn += t;
 	}
 	break;
+	case 17:
+		pinball->Update(t);
+		break;
 	default:
 		break;
 	}
