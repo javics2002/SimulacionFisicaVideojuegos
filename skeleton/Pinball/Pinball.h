@@ -30,10 +30,18 @@ class Pinball
 		movingRectangleCenter = PxVec3(-.4, 1.72, .1);
 
 	double time = 0;
-	const double contactEpsilon = .6f;
+	double lastContact = 0;
+
+	//Tiempo que tiene que pasar para que dos contactos se consideren distintos
+	const double contactEpsilon = .6;
+	//Tiempo que tarda en resetearse el combo de contactos
+	const double comboTime = 1; 
+	int contactCombo;
+	//Frecuencias de la escala de Do Mayor 5
+	const vector<float> musicNotes = { 523.25, 587.33, 659.25, 698.46, 783.99, 880, 987.77, 1046.5 };
 
 	int score = 0;
-	int highScore;
+	int highScore = 0;
 
 	void ResetRound();
 
@@ -41,9 +49,6 @@ class Pinball
 	bool SaveHighScore();
 
 	void BuildBoard();
-
-	PxGeometry GetGeometry(PxRigidActor* actor);
-	bool Overlap(PxRigidActor* a, PxRigidActor* b);
 
 	void RotateBumpers();
 	void MoveRectangle();

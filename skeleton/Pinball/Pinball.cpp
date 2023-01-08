@@ -5,6 +5,8 @@
 #include "../Scene.h"
 
 #include <iostream>
+#include <fstream>
+#include <thread>
 
 Pinball::Pinball(Scene* scene) : scene(scene)
 {
@@ -38,9 +40,6 @@ Pinball::~Pinball()
 
 	if (!SaveHighScore())
 		cout << "Highscore couldn't be saved\n";
-
-	cout << "Score: " << score << "\n";
-	cout << "Highscore: " << highScore << "\n";
 }
 
 void Pinball::ResetRound()
@@ -50,11 +49,15 @@ void Pinball::ResetRound()
 	rightFlipper->Reset();
 	plunger->Reset();
 
+	contactCombo = 0;
+
 	if (!SaveHighScore())
 		cout << "Highscore couldn't be saved\n";
 
 	cout << "Score: " << score << "\n";
 	cout << "Highscore: " << highScore << "\n";
+
+	score = 0;
 }
 
 void Pinball::Update(double t)
@@ -106,28 +109,29 @@ void Pinball::MoveRectangle()
 void Pinball::onCollision(PxActor* actor1, PxActor* actor2)
 {
 	if (actor1 == ball->particle && obstacles.count(actor2) && obstacles[actor2] + contactEpsilon < time) {
-		cout << "Ultima vez que colisione " << time - obstacles[actor2] << "\n";
-		score += 100;
-		//Beep(1046.5, 300);
+		//Aumentamos la puntuacion
+		score += 100 * (contactCombo + 1);
+
+		//Reproducimos un sonido de forma no bloqueante.
+		thread sound(&Beep, musicNotes[contactCombo], 300);
+		//Quiero poder borrar la variable antes de que acabe el sonido, asi que hago detach
+		sound.detach();
+
+		//Si el ultimo contacto fue hace poco, aumentamos el multiplicador de combo. Si no, se rompe
+		if (lastContact + comboTime > time)
+			contactCombo = PxClamp<int>(contactCombo + 1, 0, musicNotes.size() - 1);
+		else
+			contactCombo = 0;
+
+		//Registramos el momento de este contacto
 		obstacles[actor2] = time;
+		lastContact = time;
 	}
 }
 
 void Pinball::BuildBoard()
 {
 	//Obstaculos
-	PxRigidStatic* superbounceIzquierdo = scene->AddPxStatic(PxVec3(0), //Superbounce izquierdo
-		CreateShape(PxBoxGeometry(PxVec3(.225, .04, .05))), { .08, .04, .08, 1 }, SUPERBOUNCY);
-	superbounceIzquierdo->setGlobalPose(PxTransform(PxVec3(-.8, 1.72, 1.2), 
-		PxQuat(degToRad(-75), PxVec3(0, 1, 0))));
-	obstacles.insert({ superbounceIzquierdo, 0 });
-
-	PxRigidStatic* superbounceDerecho = scene->AddPxStatic(PxVec3(0), //Superbounce derecho
-		CreateShape(PxBoxGeometry(PxVec3(.225, .04, .05))), { .08, .04, .08, 1 }, SUPERBOUNCY);
-	superbounceDerecho->setGlobalPose(PxTransform(PxVec3(.6, 1.72, 1.2), 
-		PxQuat(degToRad(75), PxVec3(0, 1, 0))));
-	obstacles.insert({ superbounceDerecho, 0 });
-
 	PxRigidStatic* topeIzquierdo = scene->AddPxStatic(PxVec3(0), //Tope izquierdo
 		CreateShape(PxBoxGeometry(PxVec3(.04))), { .08, .04, .08, 1 }, SUPERBOUNCY);
 	topeIzquierdo->setGlobalPose(PxTransform(PxVec3(-1.15, 1.72, .5), 
@@ -201,17 +205,37 @@ void Pinball::BuildBoard()
 		CreateShape(PxBoxGeometry(PxVec3(.1, .01, .08))), { .08, .04, .08, 1 }, WALL)
 		->setGlobalPose(PxTransform(PxVec3(.4, 1.725, .15), PxQuat(degToRad(35), PxVec3(1, -.3, 0).getNormalized())));
 	scene->AddPxStatic(PxVec3(1, 1.8, -.5), //Derecha alta
-		CreateShape(PxBoxGeometry(PxVec3(.05, .08, .6))), { .04, .02, .04, 1 }, WALL);
+		CreateShape(PxBoxGeometry(PxVec3(.05, .04, .6))), { .04, .02, .04, 1 }, WALL);
+	scene->AddPxStatic(PxVec3(0), //Superbounce izquierdo
+		CreateShape(PxBoxGeometry(PxVec3(.225, .04, .05))), { .08, .04, .08, 1 }, SUPERBOUNCY)
+		->setGlobalPose(PxTransform(PxVec3(-.8, 1.72, 1.2), PxQuat(degToRad(-75), PxVec3(0, 1, 0))));
+	scene->AddPxStatic(PxVec3(0), //Superbounce derecho
+		CreateShape(PxBoxGeometry(PxVec3(.225, .04, .05))), { .08, .04, .08, 1 }, SUPERBOUNCY)
+		->setGlobalPose(PxTransform(PxVec3(.6, 1.72, 1.2), PxQuat(degToRad(75), PxVec3(0, 1, 0))));
 }
 
 void Pinball::LoadHighScore()
 {
+	ifstream infile("./save.txt");
+	infile >> highScore;
+	if (!infile)
+		highScore = 0;
 }
 
 bool Pinball::SaveHighScore()
 {
 	if (score > highScore)
+	{
 		highScore = score;
 
-	return false;
+		ofstream outfile("./save.txt", ios::trunc);
+		if (!outfile)
+			return false;
+
+		outfile << highScore << std::endl;
+
+		outfile.close();
+	}
+
+	return true;
 }
