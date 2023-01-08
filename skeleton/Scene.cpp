@@ -62,6 +62,12 @@ PxRigidStatic* Scene::AddPxStatic(PxVec3 pos, PxShape* shape, PxVec4 color, Phys
 	return particle;
 }
 
+void Scene::onCollision(PxActor* actor1, PxActor* actor2)
+{
+	if (mID == 17)
+		pinball->onCollision(actor1, actor2);
+}
+
 Scene::Scene() : particles(ParticleManager(&fr))
 {
 	gFoundation = PxCreateFoundation(PX_FOUNDATION_VERSION, gAllocator, gErrorCallback);

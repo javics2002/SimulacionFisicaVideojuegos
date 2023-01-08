@@ -72,5 +72,7 @@ public:
 	//Physx
 	PxRigidStatic* AddPxStatic(PxVec3 pos, PxShape* shape, PxVec4 color, 
 		PhysicMaterial material = DEFAULT);
+
+	void onCollision(PxActor* actor1, PxActor* actor2);
 };
 

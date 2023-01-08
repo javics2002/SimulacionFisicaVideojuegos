@@ -9,21 +9,15 @@ class Flipper : public RigidParticle
 	bool left;
 
 	//Position
-	const float separation = .4f;
-	const PxVec3 rise = PxVec3(0, 0, -.1f);
+	const float separation = .4f, speed = .08f;
+	const PxVec3 rise = PxVec3(0, 0, -.14f);
 	PxVec3 startPos = { -.1, 1.72, 1.5 };
-
-	//Timing
-	const double flipTime = .2; //Cantidad de tiempo que una pala tarda en subir y bajar tras pulsarla
-	double tweenTime; //Valor del tween que va moviendo la pala desde flipTime hasta 0
-
-	double LerpValue();
+	float lerp = 0;
 
 public:
 	Flipper(bool left);
 	~Flipper();
 
-	void Flip();
 	void Reset();
 
 	void Update(double t);
