@@ -10,7 +10,6 @@ protected:
 	PxVec4 color;
 	PxVec4 endColor;
 
-	RenderItem* renderItem = nullptr;
 
 	double startingLife;
 	double lifetime;
@@ -29,5 +28,6 @@ public:
 
 	bool active;
 	PxRigidDynamic* particle;
+	RenderItem* renderItem = nullptr;
 };
 

@@ -8,11 +8,11 @@ double Flipper::LerpValue()
 		return 2 - 2 * tweenTime / flipTime;
 }
 
-Flipper::Flipper(bool left) : RigidParticle(startPos, .1, CreateShape(PxBoxGeometry(PxVec3(.225, .036, .05))),
-	{ 1, 1, 0, 1 }, METAL), left(left)
+Flipper::Flipper(bool left) : RigidParticle(startPos, .1, 
+	CreateShape(PxBoxGeometry(PxVec3(.225, .04, .05))), { 1, 1, 0, 1 }, FLIPPER), left(left)
 {
 	//Cada pala va a un lado
-	startPos.x = pow(-1, left) * separation;
+	startPos.x += pow(-1, left) * separation;
 
 	//Las palas las quiero controlar yo. Las marco como cinematicas
 	particle->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);

@@ -11,7 +11,7 @@ class Flipper : public RigidParticle
 	//Position
 	const float separation = .4f;
 	const PxVec3 rise = PxVec3(0, 0, -.1f);
-	PxVec3 startPos = { 0, 1.75, 1.5 };
+	PxVec3 startPos = { -.1, 1.72, 1.5 };
 
 	//Timing
 	const double flipTime = .2; //Cantidad de tiempo que una pala tarda en subir y bajar tras pulsarla

@@ -80,6 +80,14 @@ Scene::Scene() : particles(ParticleManager(&fr))
 	colors[METAL] = { 0, 1, 0, 1 };
 	gMaterials[SOAP] = gPhysics->createMaterial(0.05f, 0.02f, 0.5f);
 	colors[SOAP] = { 0, 0, 1, 1 };
+	gMaterials[BALL] = gPhysics->createMaterial(.01f, .01f, .6f);
+	colors[BALL] = { 0, 1, 1, 1 };
+	gMaterials[FLIPPER] = gPhysics->createMaterial(.01f, .01f, 0.2f);
+	colors[FLIPPER] = { .5, 1, 1, 1 };
+	gMaterials[WALL] = gPhysics->createMaterial(.01f, .01f, 1);
+	colors[WALL] = { 1, 0, 1, 1 };
+	gMaterials[SUPERBOUNCY] = gPhysics->createMaterial(0.05f, 0.02f, 1.2f);
+	colors[SUPERBOUNCY] = { 1, 1, 0, 1 };
 
 	// For Solid Rigids +++++++++++++++++++++++++++++++++++++
 	sceneDesc = new PxSceneDesc(gPhysics->getTolerancesScale());
@@ -425,6 +433,7 @@ void Scene::LoadScene(int newID)
 
 	//Mensaje
 	cout << "Scene " << mID << " loaded.\n";
+	
 	switch (mID) {
 	case 2:
 		cout << "Puedes disparar proyectiles.\n"

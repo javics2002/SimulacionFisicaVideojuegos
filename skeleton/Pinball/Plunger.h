@@ -6,7 +6,7 @@ class Plunger : public RigidParticle
 	bool pulling = false;
 
 	//Position
-	const PxVec3 startPos = { 1.1, 1.75, 1.5 };
+	const PxVec3 startPos = { 1.1, 1.72, 1.5 };
 	PxVec3 pulledPos;
 	const float maxPulledPos = 1.8;
 

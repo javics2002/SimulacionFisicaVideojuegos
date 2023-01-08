@@ -6,7 +6,7 @@ double Plunger::LerpValue()
     return 1 - tweenTime / plungeTime;
 }
 
-Plunger::Plunger() : RigidParticle(startPos, .3, CreateShape(PxBoxGeometry(PxVec3(.04, .036, .3))),
+Plunger::Plunger() : RigidParticle(startPos, .3, CreateShape(PxBoxGeometry(PxVec3(.04, .04, .3))),
 	{ .01, .01, .01, 1 }, METAL)
 {
 	particle->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);

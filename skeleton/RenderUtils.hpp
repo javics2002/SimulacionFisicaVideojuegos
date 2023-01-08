@@ -9,7 +9,7 @@ class RenderItem;
 void RegisterRenderItem(const RenderItem* _item);
 void DeregisterRenderItem(const RenderItem* _item);
 
-enum PhysicMaterial { DEFAULT, RUBBER, METAL, SOAP, LAST_PXMATERIAL };
+enum PhysicMaterial { DEFAULT, RUBBER, METAL, SOAP, BALL, FLIPPER, WALL, SUPERBOUNCY, LAST_PXMATERIAL };
 extern std::unordered_map<PhysicMaterial, physx::PxMaterial*> gMaterials;
 
 class RenderItem
