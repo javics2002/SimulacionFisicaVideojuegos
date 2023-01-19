@@ -12,10 +12,10 @@
 #define DBG_NEW new
 #endif
 
-enum ParticleSystemType { FOUNTAIN, MIST, DUST, FIRE, RAIN, SPARK, BLAST, SNOW };
+enum ParticleSystemType { FOUNTAIN, MIST, DUST, FIRE, RAIN, SPARK, BLAST, SNOW, TRAIL };
 
-static ParticleGenerator* CreateGenerator(ParticleSystemType type) {
-	Particle* prefab = DBG_NEW Particle({ 0, 0, 0 }, false);
+static ParticleGenerator* CreateGenerator(ParticleSystemType type, ForceRegistry* fr = nullptr) {
+	Particle* prefab = DBG_NEW Particle({ 0, 0, 0 }, false, type == TRAIL);
 
 	switch (type) {
 	case FOUNTAIN:
@@ -51,6 +51,10 @@ static ParticleGenerator* CreateGenerator(ParticleSystemType type) {
 	case SNOW:
 		prefab->SetAcc({ .2, -2, .5 })->SetDamp(.3)->SetShape(CreateShape(PxSphereGeometry(.05)));
 		return DBG_NEW BoxParticleGenerator(prefab, 10000, { 0, 100, 0 }, { 100, 100, 100 }, { .1,.1,.1 });
+	case TRAIL:
+		prefab->SetColor({ 1, 0, 0, 1 })->SetEndColor({ 1, 1, .6, 1 })
+			->SetShape(CreateShape(PxSphereGeometry(.01)))->SetLifetime(1);
+		return DBG_NEW SimpleParticleGenerator(prefab, fr);
 	default:
 		return DBG_NEW SimpleParticleGenerator(prefab);
 	}

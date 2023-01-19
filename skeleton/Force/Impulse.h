@@ -1,5 +1,6 @@
 #pragma once
 #include "ForceGenerator.h"
+
 class Impulse : public ForceGenerator
 {
 	PxVec3 force;

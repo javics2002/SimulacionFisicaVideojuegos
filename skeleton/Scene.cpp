@@ -17,6 +17,8 @@
 #define DBG_NEW new
 #endif
 
+std::string display_text = "";
+
 double Scene::AddToAllSprings(double value, bool k)
 {
 	/*Con este metodo he aprendido que dynamic_cast solo funciona 
@@ -428,9 +430,21 @@ void Scene::LoadScene(int newID)
 	}
 		break;
 	case 17:
+	{
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0);
 
 		pinball = new Pinball(this);
+
+		Particle* ball = (DBG_NEW Particle({ 0, 4, 0 }, true, true))->SetColor({ 1, 1, 0, 1.0 })
+			->SetShape(CreateShape(PxSphereGeometry(.2)))->SetIntegrationMethod(SEMI_IMPLICIT_EULER)
+			->SetDamp(.7);
+		particles.Add(ball);
+
+		fg.push_back(DBG_NEW Gravity());
+		fr.AddRegistry(fg[0], ball);
+		fg.push_back(DBG_NEW AnchoredSpring({ 0, 5, 0 }, 10, 1.5));
+		fr.AddRegistry(fg[1], ball);
+	}
 		break;
 	default:
 		cout << "Scene " << mID << " doesn't exist.\n";
@@ -577,8 +591,12 @@ void Scene::LoadScene(int newID)
 			<< "C: Pala izquierda\n"
 			<< "N: Pala derecha\n"
 			<< "M: Lanzar bola\n"
-			<< "L: Resetear juego\n";
-		//Distintos materiales para bola?
+			<< "L: Resetear juego\n"
+			<< "Z: Golpear la mesa por la izquierda\n"
+			<< ",: Golpear la mesa por la derecha\n"
+			<< "K: Cambiar a bola gamer\n"
+			<< "J: Activar/desactivar tornado\n";
+		
 	default:
 		break;
 	}
@@ -643,6 +661,11 @@ void Scene::Update(double t)
 
 void Scene::ClearScene()
 {
+	if (pinball != nullptr) {
+		delete pinball;
+		pinball = nullptr;
+	}
+
 	fr.clear();
 	for (auto f : fg)
 		delete f;
@@ -663,11 +686,6 @@ void Scene::ClearScene()
 		renderItems.clear();
 	}
 	gScene = gPhysics->createScene(*sceneDesc);
-
-	if (pinball != nullptr) {
-		delete pinball;
-		pinball = nullptr;
-	}
 }
 
 void Scene::KeyPress(unsigned char key, const physx::PxTransform& camera)

@@ -10,7 +10,8 @@
 #define DBG_NEW new
 #endif
 
-Firework::Firework(ParticleSystem* sys, FireworkType t) : Particle(), system(sys), type(t)
+Firework::Firework(ParticleSystem* sys, FireworkType t, PxVec3 spawnPos) 
+	: Particle(spawnPos), system(sys), type(t)
 {
 	colorDistribution = uniform_int_distribution<>(0, LAST - 1);
 
@@ -32,11 +33,12 @@ Firework::Firework(Firework* f) : Particle(f), system(f->system), type(f->type)
 
 	if (type == GORDO)
 		SetLifetime(0.2f * lifetimeDistribution(generator));
-	else if(type ==FOUNTAIN_FIREWORK)
+	else if (type ==FOUNTAIN_FIREWORK)
 		SetLifetime(3 * lifetimeDistribution(generator));
 	else
 		SetLifetime(lifetimeDistribution(generator));
-	SetColor(fireworkColor[color]);
+	if(type != COLLISION)
+		SetColor(fireworkColor[color]);
 	SetShape(CreateShape(PxSphereGeometry(size)));
 }
 
@@ -135,13 +137,29 @@ void Firework::CreateFirework(FireworkType type)
 		SetAcc({ 0, -10, 0 });
 		SetDamp(.98);
 		break;
+	case COLLISION:
+		generations = 1;
+		divitions = 10;
+		divitionsMultiplier = 0;
+		lifetimeDistribution = normal_distribution<>(.4, .1);
+		velocityDistribution = normal_distribution<>(0, .1);
+		blastForce = 1.0f;
+		blastMultiplier = .1f;
+		size = 0.01f;
+		SetLifetime(0);
+
+		SetVel(PxVec3(velocityDistribution(generator), velocityDistribution(generator), velocityDistribution(generator)));
+		SetDamp(.2);
+		break;
 	}
 
-	SetLifetime(lifetimeDistribution(generator));
-	color = colorDistribution(generator);
-	SetColor(fireworkColor[color]);
 	SetShape(CreateShape(PxSphereGeometry(size)));
 
-	static uniform_real_distribution<float> spawn = uniform_real_distribution<float>(-20, 20);
-	SetPos({ spawn(generator), 0, spawn(generator) });
+	if (type != COLLISION) {
+		color = colorDistribution(generator);
+		SetColor(fireworkColor[color]);
+		SetLifetime(lifetimeDistribution(generator));
+		static uniform_real_distribution<float> spawn = uniform_real_distribution<float>(-20, 20);
+		SetPos({ spawn(generator), 0, spawn(generator) });
+	}
 }

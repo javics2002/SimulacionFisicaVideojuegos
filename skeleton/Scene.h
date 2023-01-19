@@ -38,10 +38,6 @@ class Scene
 	random_device rand;
 	default_random_engine generator = default_random_engine(rand());
 
-	ForceRegistry fr;
-	ForceRegistryRigid frr;
-	vector<ForceGenerator*> fg;
-
 	//Scene 11
 	double AddToAllSprings(double value, bool k);
 	void ShowSpringsValue(double value, bool k);
@@ -65,6 +61,10 @@ public:
 	void ClearScene();
 
 	ParticleManager particles;
+
+	ForceRegistry fr;
+	ForceRegistryRigid frr;
+	vector<ForceGenerator*> fg;
 
 	void KeyPress(unsigned char key, const PxTransform& camera);
 	void ThrowProyectile(ProjectileType type, const PxTransform& camera);

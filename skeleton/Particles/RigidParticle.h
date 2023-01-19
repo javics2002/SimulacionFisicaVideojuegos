@@ -17,7 +17,7 @@ protected:
 public:
 	RigidParticle(PxVec3 pos, double mass, PxShape* shape, PxVec4 color,
 		PhysicMaterial material = DEFAULT);
-	~RigidParticle();
+	virtual ~RigidParticle();
 
 	virtual void Integrate(double t);
 

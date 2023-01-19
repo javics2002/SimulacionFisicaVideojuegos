@@ -150,3 +150,12 @@ N: Cambiar a Euler
 M: Cambiar a Euler implicito
 .: Resetear goma
 
+P. Pinball
+C: Pala izquierda
+N: Pala derecha
+M: Lanzar bola
+L: Resetear juego
+Z: Golpear la mesa por la izquierda
+,: Golpear la mesa por la derecha
+K: Cambiar a bola gamer
+J: Activar/desactivar tornado

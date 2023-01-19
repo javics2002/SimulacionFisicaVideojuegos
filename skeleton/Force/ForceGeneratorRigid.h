@@ -8,7 +8,7 @@ using namespace physx;
 
 class RigidParticle;
 
-enum ForceGeneratorRigidType { EXPLOSION_RIGID, SPRING_RIGID };
+enum ForceGeneratorRigidType { EXPLOSION_RIGID, SPRING_RIGID, IMPULSE_RIGID };
 
 class ForceGeneratorRigid
 {

@@ -3,6 +3,9 @@
 #include "Flipper.h"
 #include "Plunger.h"
 #include "../Scene.h"
+#include "../Particles/ParticleSystem/ParticleSystems.h"
+#include "../Particles/Firework.h"
+#include "../Force/ImpulseRigid.h"
 
 #include <iostream>
 #include <fstream>
@@ -15,7 +18,7 @@ Pinball::Pinball(Scene* scene) : scene(scene)
 
 	BuildBoard();
 
-	ball = new Ball();
+	ball = new Ball(scene);
 	leftFlipper = new Flipper(true);
 	rightFlipper = new Flipper(false);
 	plunger = new Plunger();
@@ -56,12 +59,14 @@ void Pinball::ResetRound()
 
 	cout << "Score: " << score << "\n";
 	cout << "Highscore: " << highScore << "\n";
+	DisplayScore();
 
 	score = 0;
 }
 
 void Pinball::Update(double t)
 {
+	ball->Integrate(t);
 	leftFlipper->Update(t);
 	rightFlipper->Update(t);
 	plunger->Update(t);
@@ -80,6 +85,18 @@ void Pinball::KeyPress(unsigned char key)
 		break;
 	case 'L': //Resetear juego
 		ResetRound();
+		break;
+	case ',': //Golpe a la mesa por la derecha
+		ImpulseRigid(ball, { -1, 0, 0 });
+		break;
+	case 'Z': //Golpe a la mesa por la izquierda
+		ImpulseRigid(ball, { 1, 0, 0 });
+		break;
+	case 'K': //Bola gamer: mas masa, tensor de inercia de esfera hueca
+		ball->ToggleGamer();
+		break;
+	case 'J': //Tornado
+		ball->ToggleTornado();
 		break;
 	default:
 		break;
@@ -106,11 +123,17 @@ void Pinball::MoveRectangle()
 			movingRectangleCenter.y, movingRectangleCenter.z), PxQuat(degToRad(5), PxVec3(0, 1, 0))));
 }
 
+void Pinball::DisplayScore()
+{
+	display_text = "  Score: " + to_string(score) + "  Highscore: " + to_string(highScore);
+}
+
 void Pinball::onCollision(PxActor* actor1, PxActor* actor2)
 {
 	if (actor1 == ball->particle && obstacles.count(actor2) && obstacles[actor2] + contactEpsilon < time) {
 		//Aumentamos la puntuacion
 		score += 100 * (contactCombo + 1);
+		DisplayScore();
 
 		//Reproducimos un sonido de forma no bloqueante.
 		thread sound(&Beep, musicNotes[contactCombo], 300);
@@ -126,6 +149,9 @@ void Pinball::onCollision(PxActor* actor1, PxActor* actor2)
 		//Registramos el momento de este contacto
 		obstacles[actor2] = time;
 		lastContact = time;
+
+		//Efecto de particulas
+		ball->system->ShootFirework(COLLISION, ball->particle->getGlobalPose().p);
 	}
 }
 
@@ -199,13 +225,13 @@ void Pinball::BuildBoard()
 	scene->AddPxStatic(PxVec3(0), //Esquina superior derecha
 		CreateShape(PxBoxGeometry(PxVec3(.1, .1, .4))), { .08, .04, .08, 1 }, WALL)
 		->setGlobalPose(PxTransform(PxVec3(1.1, 1.75, -1.1), PxQuat(degToRad(45), PxVec3(0, 1, 0))));
-	scene->AddPxStatic(PxVec3(.6, 1.755, -.5), //Parte alta
+	scene->AddPxStatic(PxVec3(.6, 1.76, -.5), //Parte alta
 		CreateShape(PxBoxGeometry(PxVec3(.4, .01, .6))), { .004, .002, .004, 1 }, WALL);
 	scene->AddPxStatic(PxVec3(0), //Rampa
 		CreateShape(PxBoxGeometry(PxVec3(.1, .01, .08))), { .08, .04, .08, 1 }, WALL)
 		->setGlobalPose(PxTransform(PxVec3(.4, 1.725, .15), PxQuat(degToRad(35), PxVec3(1, -.3, 0).getNormalized())));
 	scene->AddPxStatic(PxVec3(1, 1.8, -.5), //Derecha alta
-		CreateShape(PxBoxGeometry(PxVec3(.05, .04, .6))), { .04, .02, .04, 1 }, WALL);
+		CreateShape(PxBoxGeometry(PxVec3(.05, .03, .6))), { .04, .02, .04, 1 }, WALL);
 	scene->AddPxStatic(PxVec3(0), //Superbounce izquierdo
 		CreateShape(PxBoxGeometry(PxVec3(.225, .04, .05))), { .08, .04, .08, 1 }, SUPERBOUNCY)
 		->setGlobalPose(PxTransform(PxVec3(-.8, 1.72, 1.2), PxQuat(degToRad(-75), PxVec3(0, 1, 0))));

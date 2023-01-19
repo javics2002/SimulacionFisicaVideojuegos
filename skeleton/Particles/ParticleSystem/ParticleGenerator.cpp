@@ -24,7 +24,10 @@ void ParticleGenerator::Integrate(double t)
 		for (auto p : newParticles) {
 			system->particles.Add(p);
 			for (auto f : fg)
-				fr->AddRegistry(f.get(), p);
+				if (f->active)
+					fr->AddRegistry(f.get(), p);
+				else
+					fr->DeleteForce(f.get());
 		}
 	}
 }
@@ -39,5 +42,13 @@ ParticleGenerator* ParticleGenerator::AddForceGenerator(shared_ptr<ForceGenerato
 {
 	fg.push_back(forceGenerator);
 	
+	return this;
+}
+
+ParticleGenerator* ParticleGenerator::ClearForceGenerators()
+{
+	for (auto f : fg)
+		f->active = false;
+
 	return this;
 }

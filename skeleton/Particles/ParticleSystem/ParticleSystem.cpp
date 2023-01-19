@@ -49,7 +49,7 @@ void ParticleSystem::ReplaceGenerators(ParticleGenerator* generator)
 	AddGenerator(generator);
 }
 
-void ParticleSystem::ShootFirework(FireworkType type)
+void ParticleSystem::ShootFirework(FireworkType type, PxVec3 spawnPos)
 {
-	particles.Add(DBG_NEW Firework(this, type));
+	particles.Add(DBG_NEW Firework(this, type, spawnPos));
 }

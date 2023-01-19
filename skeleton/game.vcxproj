@@ -256,6 +256,7 @@
     <ClCompile Include="Force\AnchoredRealSpring.cpp" />
     <ClCompile Include="Constraints\Contact.cpp" />
     <ClCompile Include="Constraints\Link.cpp" />
+    <ClCompile Include="Force\ImpulseRigid.cpp" />
     <ClCompile Include="Pinball\Flipper.cpp" />
     <ClCompile Include="Pinball\Pinball.cpp" />
     <ClCompile Include="Pinball\Ball.cpp" />
@@ -297,6 +298,7 @@
     <ClInclude Include="Force\AnchoredRealSpring.h" />
     <ClInclude Include="Constraints\Contact.h" />
     <ClInclude Include="Constraints\Link.h" />
+    <ClInclude Include="Force\ImpulseRigid.h" />
     <ClInclude Include="Pinball\Flipper.h" />
     <ClInclude Include="Pinball\Pinball.h" />
     <ClInclude Include="Pinball\Ball.h" />

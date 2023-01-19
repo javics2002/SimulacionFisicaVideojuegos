@@ -3,6 +3,7 @@
 #include <windows.h>
 #include <PxPhysicsAPI.h>
 #include <unordered_map>
+#include <string>
 
 using namespace std;
 using namespace physx;
@@ -12,6 +13,8 @@ class Flipper;
 class RigidParticle;
 class Scene;
 class Plunger;
+
+extern std::string display_text;
 
 class Pinball
 {
@@ -52,6 +55,8 @@ class Pinball
 
 	void RotateBumpers();
 	void MoveRectangle();
+
+	void DisplayScore();
 
 public:
 	Pinball(Scene* scene);

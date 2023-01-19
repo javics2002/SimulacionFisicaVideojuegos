@@ -22,7 +22,7 @@ public:
 	void AddGenerator(ParticleGenerator* generator);
 	void ClearGenerators();
 	void ReplaceGenerators(ParticleGenerator* generator);
-	void ShootFirework(FireworkType type);
+	void ShootFirework(FireworkType type, PxVec3 spawnPos = PxVec3(0));
 
 	ParticleManager particles;
 	ParticleManager particleGenerators;

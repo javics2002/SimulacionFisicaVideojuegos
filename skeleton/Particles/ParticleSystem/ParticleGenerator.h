@@ -16,7 +16,6 @@ using namespace physx;
 class ParticleGenerator : public Particle
 {
 protected:
-	Particle* prefab;
 	ParticleSystem* system;
 
 	ForceRegistry* fr;
@@ -28,9 +27,12 @@ public:
 
 	virtual void Integrate(double t);
 
+	Particle* prefab;
+
 	virtual vector<Particle*> GenerateParticles() = 0;
 
 	ParticleGenerator* SetSystem(ParticleSystem* s);
 	ParticleGenerator* AddForceGenerator(shared_ptr<ForceGenerator> forceGenerator);
+	ParticleGenerator* ClearForceGenerators();
 };
 
